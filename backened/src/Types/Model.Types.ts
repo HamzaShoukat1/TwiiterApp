@@ -10,7 +10,10 @@ export interface IUser extends Document {
   following: Types.ObjectId[];
 
   profileImage: string;
-  coverImage: string;
+  coverImage?: string ,
   bio: string;
   link: string;
+  refreshToken:string
+    isPasswordCorrect(password:string): Promise<boolean>
+
 }

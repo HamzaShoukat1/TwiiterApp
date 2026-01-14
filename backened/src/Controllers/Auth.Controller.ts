@@ -1,0 +1,138 @@
+import { Apiresponse } from "../Utils/apiResponse.js";
+import { Apierror } from "../Utils/apiError.js";
+import { asynchandler } from "../Utils/asynchandler.js";
+import { USERSCHEMA } from "../Models/User.Model.js";
+import type { MulterFile } from "../Types/types.js";
+import { uploadCloudinary } from "../Services/Cloudinary.js";
+import { generateAccessToken, generateRefreshToken } from "../Services/Token.Service.js";
+
+const generateAcessandRefreshTokens = async (userId: string) => {
+    try {
+        //get user
+        const user = await USERSCHEMA.findById(userId)
+        if (!user) {
+            throw new Apierror(404, "User not found");
+        }
+        const accessToken = generateAccessToken({
+            _id: user._id.toString()
+        });
+        const refreshToken = generateRefreshToken({
+            _id: user._id.toString()
+        });
+        user.refreshToken = refreshToken
+
+        await user.save({ validateBeforeSave: false })
+
+        return { accessToken, refreshToken }
+
+    } catch (error) {
+        throw new Apierror(500, "Something went wrong while generating access and refresh tokens")
+
+    }
+
+}
+
+
+
+const SignUp = asynchandler(async (req, res) => {
+    //get userdetails for froneted
+    //validation not emtpy
+    // format check
+    // check user already exist
+    //check for img check for avavatr
+    //upload on cloudianry
+    //create user obj in db
+    //remvoe password and refresh token from res
+    //retunr res
+    const { email, username, fullName, password } = req.body
+
+    if ([
+        fullName, email, username, password
+    ].some((field) => field?.trim() === "")) {
+        throw new Apierror(400, "all fields are required")
+
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        throw new Apierror(400, "invalid email format")
+    }
+
+
+
+    const exitsedUser = await USERSCHEMA.findOne({
+        $or: [{ email }, { username }]
+    })
+    if (exitsedUser) {
+        throw new Apierror(400, "user with this email or username already exist")
+    }
+    if(password.length < 6){
+        throw new Apierror(400,"password must be at least 6 character long")
+    }
+
+    //images
+    const files = req.files as MulterFile
+
+
+    const LocalPicturePath = files?.profileImage?.[0]?.path
+    const LocalcoverPath = files?.coverImage?.[0]?.path
+
+    if (!LocalPicturePath) {
+        throw new Apierror(400, "profile picture required")
+    }
+
+    // upload on clouniary
+    const ProfilePic = await uploadCloudinary(LocalPicturePath)
+    if (!ProfilePic) {
+        throw new Apierror(400, "upload profile picture is failed")
+    };
+
+    let coverImageUrl: string | undefined
+    if (LocalcoverPath) {
+        const coverPic = await uploadCloudinary(LocalcoverPath)
+        if (!coverPic?.url) {
+            throw new Apierror(400, "Upload cover image failed")
+        }
+        coverImageUrl = coverPic.url
+    }
+
+
+    // const coverPic = LocalcoverPath ? await uploadCloudinary(LocalcoverPath) : null
+    // if (!coverPic) {
+    //     throw new Apierror(400, "Upload cover image failed")
+    // }
+
+
+
+
+
+
+    //create user in db
+    const user = await USERSCHEMA.create({
+        username,
+        fullName,
+        email,
+        password,
+        profileImage: ProfilePic.url,
+        ...(coverImageUrl && { coverImage: coverImageUrl })
+    })
+
+    const createUser = await USERSCHEMA.findById(user._id).select("-password -refreshToken")
+    if (!createUser) {
+        throw new Apierror(500, "Something wrong while register User")
+    };
+    return res.status(201).json(
+        new Apiresponse(201, createUser, "User register successfully")
+    )
+
+
+
+
+
+
+
+
+
+})
+export {
+    SignUp
+}
