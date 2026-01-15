@@ -5,6 +5,7 @@ import { USERSCHEMA } from "../Models/User.Model.js";
 import type { MulterFile } from "../Types/types.js";
 import { uploadCloudinary } from "../Services/Cloudinary.js";
 import { generateAccessToken, generateRefreshToken } from "../Services/Token.Service.js";
+import { options } from "../Services/Token.Service.js";
 
 const generateAcessandRefreshTokens = async (userId: string) => {
     try {
@@ -65,10 +66,9 @@ const SignUp = asynchandler(async (req, res) => {
     if (exitsedUser) {
         throw new Apierror(400, "user with this email or username already exist")
     }
-    if(password.length < 6){
-        throw new Apierror(400,"password must be at least 6 character long")
+    if (password.length < 6) {
+        throw new Apierror(400, "password must be at least 6 character long")
     }
-
     //images
     const files = req.files as MulterFile
 
@@ -133,6 +133,85 @@ const SignUp = asynchandler(async (req, res) => {
 
 
 })
+
+const Signin = asynchandler(async (req, res) => {
+    //get daata
+    //find the user
+    //password check
+    //access and refresh token
+    // send cookies
+    const { email, password } = req.body
+    if (!email || !password) {
+        throw new Apierror(400, "username or password is required")
+
+    };
+    const user = await USERSCHEMA.findOne({
+        $or: [{ email }]
+
+    });
+    if (!user) {
+        throw new Apierror(400, "user does not exist")
+
+    };
+    const isPasswordValid = await user.isPasswordCorrect(password)
+    if (!isPasswordValid) {
+        throw new Apierror(401, "Invalid password ")
+
+    };
+
+    const { accessToken, refreshToken } = await generateAcessandRefreshTokens(user._id.toString())
+    const logedInUser = await USERSCHEMA.findById(user._id).select("-password -refreshToken")
+
+
+    return res.status(200)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(
+            new Apiresponse(
+                200,
+                {
+                    user: logedInUser, accessToken, refreshToken
+                }
+            )
+        )
+
+
+
+})
+const Logout = asynchandler(async (req, res) => {
+    await USERSCHEMA.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set: {
+                refreshToken: undefined
+            }
+        },
+        {
+            new: true
+        }
+    );
+
+
+    return res.status(200)
+        .clearCookie("accessToken", options)
+        .clearCookie("refreshToken", options)
+        .json(
+            new Apiresponse(200, {}, "user logged out")
+
+        )
+
+
+});
+const getCurrentUser = asynchandler(async (req, res) => {
+    return res.status(200).json(
+        new Apiresponse(200, req.user, "current User fetched successfully")
+
+    )
+
+});
 export {
-    SignUp
+    SignUp,
+    Signin,
+    Logout,
+    getCurrentUser,
 }

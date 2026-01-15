@@ -1,7 +1,9 @@
 import { Router } from "express";
-import { SignUp } from "../Controllers/Auth.Controller.js";
+import { getCurrentUser, SignUp } from "../Controllers/Auth.Controller.js";
 import { upload } from "../Middlewares/Multer.middleware.js";
-
+import { Signin } from "../Controllers/Auth.Controller.js";
+import { Logout } from "../Controllers/Auth.Controller.js";
+import { verifyjwt } from "../Middlewares/auth.middleware.js";
 
 
 const router = Router()
@@ -12,7 +14,7 @@ router.route("/signup").post(
             name: "profileImage",
             maxCount: 1
         },
-           {
+        {
             name: "coverImage",
             maxCount: 1
         }
@@ -20,6 +22,11 @@ router.route("/signup").post(
     ]),
     SignUp)
 
+router.route("/signin").post(Signin)
+router.route("/logout").post(
+    verifyjwt,
+    Logout)
 
+router.get("/currentUser", verifyjwt, getCurrentUser)
 
-export  default router
+export default router

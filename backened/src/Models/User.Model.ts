@@ -16,7 +16,6 @@ const userSchema = new Schema<IUser>({
         type: String,
         required: true,
         minLenth: 6,
-        select:false
     },
     email: {
         type: String,
@@ -51,7 +50,6 @@ const userSchema = new Schema<IUser>({
     },
     refreshToken:{
         type:String,
-        select:true
     }
 
 },
