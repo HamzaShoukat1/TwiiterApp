@@ -6,6 +6,7 @@ import type { MulterFile } from "../Types/types.js";
 import { uploadCloudinary } from "../Services/Cloudinary.js";
 import { generateAccessToken, generateRefreshToken } from "../Services/Token.Service.js";
 import { options } from "../Services/Token.Service.js";
+import type { IUser } from "../Types/Model.Types.js";
 
 const generateAcessandRefreshTokens = async (userId: string) => {
     try {
@@ -86,20 +87,16 @@ const SignUp = asynchandler(async (req, res) => {
         throw new Apierror(400, "upload profile picture is failed")
     };
 
-    let coverImageUrl: string | undefined
+    let coverImageUrl: { url: string, publicId: string } | undefined
+
     if (LocalcoverPath) {
         const coverPic = await uploadCloudinary(LocalcoverPath)
         if (!coverPic?.url) {
             throw new Apierror(400, "Upload cover image failed")
         }
-        coverImageUrl = coverPic.url
+        coverImageUrl = { url: coverPic.url, publicId: coverPic.publicId };
     }
 
-
-    // const coverPic = LocalcoverPath ? await uploadCloudinary(LocalcoverPath) : null
-    // if (!coverPic) {
-    //     throw new Apierror(400, "Upload cover image failed")
-    // }
 
 
 
@@ -107,14 +104,23 @@ const SignUp = asynchandler(async (req, res) => {
 
 
     //create user in db
-    const user = await USERSCHEMA.create({
+    const userData: Partial<IUser> = {
         username,
         fullName,
         email,
         password,
-        profileImage: ProfilePic.url,
-        ...(coverImageUrl && { coverImage: coverImageUrl })
-    })
+        profileImage: { url: ProfilePic.url, publicId: ProfilePic.publicId },
+        followers: [],
+        following: [],
+        bio: "",
+        link: "",
+        refreshToken: ""
+    };
+    if (coverImageUrl) {
+        userData.coverImage = { url: coverImageUrl.url, publicId: coverImageUrl.publicId };
+    }
+    const user = await USERSCHEMA.create(userData)
+
 
     const createUser = await USERSCHEMA.findById(user._id).select("-password -refreshToken")
     if (!createUser) {
