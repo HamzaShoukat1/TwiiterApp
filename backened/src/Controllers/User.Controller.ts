@@ -128,13 +128,13 @@ const updateCurrentPassword = asynchandler(async (req, res) => {
 
 
   if (!currentPassword || !newPassword) {
-    throw new Apierror(400, "Both current and new password are required");
+    throw new Apierror(400, "Both current and new password are required to change password");
   };
   if (newPassword.length < 6) {
     throw new Apierror(400, "Password must be at least 6 characters long");
   }
   if (newPassword === currentPassword) {
-    throw new Apierror(400, "choose different password ")
+    throw new Apierror(400, " password must not same ")
   }
 
   const user = await USERSCHEMA.findById(req.user?._id)
