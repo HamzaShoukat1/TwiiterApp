@@ -24,35 +24,48 @@ const userSchema = new Schema<IUser>({
     },
     followers: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "USERSCHEMA",
         default: []
     }],
     following: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "USERSCHEMA",
         default: []
     }],
     profileImage: {
-        type: String,
-        default: "",
+        url: {
+            type: String,
+            default: "",
+
+
+            publicId: {
+                type: String,
+            }
+        },
     },
     coverImage: {
-        type: String,
-        default: ""
-    },
-    bio: {
-        type: String,
-        default: ""
-    },
-    link: {
-        type: String,
-        default: ""
-    },
-    refreshToken:{
-        type:String,
-    }
+        url: {
+            type: String,
+            default: "",
 
-},
+            publicId: {
+                type: String,
+            }
+        },
+    },
+        bio: {
+            type: String,
+            default: ""
+        },
+        link: {
+            type: String,
+            default: ""
+        },
+        refreshToken: {
+            type: String,
+        }
+
+    },
     { timestamps: true })
 
 userSchema.pre("save", async function (): Promise<void> {
@@ -62,8 +75,8 @@ userSchema.pre("save", async function (): Promise<void> {
 
 })
 
-userSchema.methods.isPasswordCorrect = async function(password:string):Promise<boolean>{
-    return await bcrypt.compare(password,this.password)
+userSchema.methods.isPasswordCorrect = async function (password: string): Promise<boolean> {
+    return await bcrypt.compare(password, this.password)
 }
 
 export const USERSCHEMA = mongoose.model<IUser>("USERSCHEMA", userSchema) 

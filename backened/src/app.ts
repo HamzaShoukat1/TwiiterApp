@@ -3,7 +3,7 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import AuthRoutes from "./Routes/AuthRoutes.js"
 import path from "node:path"
-
+import UserRoutes from "./Routes/User.Routes.js"
 
 
 
@@ -20,8 +20,11 @@ app.use(express.urlencoded({ extended: true, limit: "20kb" }))
 app.use("assets",express.static(path.join(process.cwd(), "backened/Public/assets")))
 app.use(cookieParser())
 
+//auth routes
+app.use("/api/v1/auth",AuthRoutes)
 
-app.use("/api/v1/user",AuthRoutes)
 
+//user routes
+app.use("/api/v1/user",UserRoutes)
 export { app }
 
