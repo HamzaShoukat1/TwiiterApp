@@ -15,7 +15,7 @@ export interface IUser extends Document {
   following: Types.ObjectId[];
 
   profileImage: IrofileImage;
-  coverImage?: IrofileImage 
+  coverImage?: IrofileImage
   bio: string;
   link: string;
   refreshToken: string
@@ -29,5 +29,16 @@ export interface INoti {
 
   type: string;
   read: Boolean;
+
+}
+
+export interface IPost {
+  user: Types.ObjectId,
+  text: string,
+  postimg: string,
+  likes: Types.ObjectId,
+  comments: string
+
+
 
 }
