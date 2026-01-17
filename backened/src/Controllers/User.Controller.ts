@@ -158,12 +158,7 @@ const updateCurrentPassword = asynchandler(async (req, res) => {
   )
 
 })
-/* const updateUserProfile = asynchandler(async (req, res) => {
 
-  const { fullName, username, email, cuurenPassword, newPassword, bii, link } = req.body
-
-
-}) */
  const updateAccountDetails = asynchandler(async (req, res) => {
   const { username, fullName, email, bio, link } = req.body;
 
