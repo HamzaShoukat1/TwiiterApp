@@ -89,6 +89,14 @@ const followUnfollowUser = asynchandler(async (req, res) => {
   )
 });
 
+
+
+/* “Suggest random users I don’t follow yet and not myself
+1. Identify ME
+2. Identify who I already know (following)
+3. Exclude them from search
+4. Randomly suggest new people
+.” */
 const getSuggestedUser = asynchandler(async (req, res) => {
   const userId = req.user._id.toString();
 
@@ -310,3 +318,10 @@ export {
 
 // $in:Field value exists in the array */
 //$nin; Field value does NOT exist in the array
+
+// MongoDB first creates a random pool of 10 sample: {size:10}
+
+// Then you pick 4 out of that pool limit: 4
+
+// More combinations possible
+//if we wrtie sample:4 only high chance it shows same users

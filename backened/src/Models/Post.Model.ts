@@ -11,16 +11,15 @@ const postSchema = new Schema<IPost>({
         trim: true //remvoe spaces
 
     },
-    postimg: {
-       
-        url: {
-            type:String,
+postimg: {
+  url: {
+    type: String
+  },
+  publicId: {
+    type: String
+  }
+},
 
-            publicId: {
-                type:String
-            }
-        }
-    },
     likes: [
         {
         type: mongoose.Schema.Types.ObjectId,

@@ -25,6 +25,7 @@ export interface IUser extends Document {
   coverImage?: IrofileImage
   bio: string;
   link: string;
+  likedPost:Types.ObjectId[];
   refreshToken: string
   isPasswordCorrect(password: string): Promise<boolean>
 
