@@ -12,8 +12,14 @@ const postSchema = new Schema<IPost>({
 
     },
     postimg: {
-        type: String,
-        default: "",
+       
+        url: {
+            type:String,
+
+            publicId: {
+                type:String
+            }
+        }
     },
     likes: [
         {

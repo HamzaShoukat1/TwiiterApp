@@ -305,7 +305,6 @@ export {
   getUserProfile,
   followUnfollowUser,
   getSuggestedUser,
-  // updateUserProfile,
   updateCurrentPassword,
   updateAccountDetails,
   updateProfilePic,

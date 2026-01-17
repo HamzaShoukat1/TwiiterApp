@@ -5,6 +5,13 @@ interface IrofileImage {
   url: string,
   publicId: string;
 }
+
+interface IComment {
+  user:Types.ObjectId
+  text:string,
+  createdAt?:Date
+
+}
 export interface IUser extends Document {
   username: string;
   fullName: string;
@@ -35,9 +42,9 @@ export interface INoti {
 export interface IPost {
   user: Types.ObjectId,
   text: string,
-  postimg: string,
-  likes: Types.ObjectId,
-  comments: string
+  postimg?: IrofileImage,
+  likes: Types.ObjectId[]
+  comments: IComment[]
 
 
 
