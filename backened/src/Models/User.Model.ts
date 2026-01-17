@@ -36,23 +36,23 @@ const userSchema = new Schema<IUser>({
         url: {
             type: String,
             default: "",
-
+        },
 
             publicId: {
                 type: String,
             }
         },
-    },
-    coverImage: {
+         coverImage: {
         url: {
             type: String,
             default: "",
+        },
 
             publicId: {
                 type: String,
             }
         },
-    },
+    
         bio: {
             type: String,
             default: ""
@@ -61,11 +61,20 @@ const userSchema = new Schema<IUser>({
             type: String,
             default: ""
         },
+        likedPost: [
+            {
+                type:mongoose.Schema.Types.ObjectId,
+                ref: "POSTSCHEMA",
+                default: []
+            },
+        ],
         refreshToken: {
             type: String,
         }
-
     },
+   
+
+    
     { timestamps: true })
 
 userSchema.pre("save", async function (): Promise<void> {
