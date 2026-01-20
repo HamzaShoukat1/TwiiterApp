@@ -36,7 +36,7 @@ const generateAcessandRefreshTokens = async (userId: string) => {
 
 
 
-const SignUp = asynchandler(async (req, res) => {
+const SignUp = asynchandler(async (req:any, res:any) => {
     //get userdetails for froneted
     //validation not emtpy
     // format check
@@ -140,7 +140,7 @@ const SignUp = asynchandler(async (req, res) => {
 
 })
 
-const Signin = asynchandler(async (req, res) => {
+const Signin = asynchandler(async (req:any, res:any) => {
     //get daata
     //find the user
     //password check
@@ -184,7 +184,7 @@ const Signin = asynchandler(async (req, res) => {
 
 
 })
-const Logout = asynchandler(async (req, res) => {
+const Logout = asynchandler(async (req:any, res:any) => {
     await USERSCHEMA.findByIdAndUpdate(
         req.user?._id,
         {
@@ -208,7 +208,7 @@ const Logout = asynchandler(async (req, res) => {
 
 
 });
-const getCurrentUser = asynchandler(async (req, res) => {
+const getCurrentUser = asynchandler(async (req:any, res:any) => {
     return res.status(200).json(
         new Apiresponse(200, req.user, "current User fetched successfully")
 
