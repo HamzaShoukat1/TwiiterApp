@@ -187,12 +187,12 @@ const LikeUnlikePost = asynchandler(async (req, res) => {
 
 
 
-        const newNoti =    await NOTISCHEMA.create({
-                from: userId,
-                to: post.user,
-                type: "like"
-            })
-console.log("Created Notification:", newNoti);
+        const newNoti = await NOTISCHEMA.create({
+            from: userId,
+            to: post.user,
+            type: "like"
+        })
+        console.log("Created Notification:", newNoti);
 
 
         return res.status(200).json(
@@ -267,14 +267,14 @@ const getFollowingPosts = asynchandler(async (req, res) => {
 
 
 });
-const getUserPosts = asynchandler(async(req,res)=> {
-    const {username} = req.params
-    const user = await USERSCHEMA.findOne({username:username as string})
-      if (!user) {
+const getUserPosts = asynchandler(async (req, res) => {
+    const { username } = req.params
+    const user = await USERSCHEMA.findOne({ username: username as string })
+    if (!user) {
         throw new Apierror(403, "user not found")
     };
 
-    const posts = await POSTSCHEMA.find({user:user._id}).sort({ createdAt: -1 }).populate({
+    const posts = await POSTSCHEMA.find({ user: user._id }).sort({ createdAt: -1 }).populate({
         path: "user",
         select: "-password -refreshToken"
     }).populate({
@@ -282,9 +282,9 @@ const getUserPosts = asynchandler(async(req,res)=> {
         select: "-password -refreshToken"
     });
 
-    const postDocuments = await POSTSCHEMA.countDocuments({user:user._id})
+    const postDocuments = await POSTSCHEMA.countDocuments({ user: user._id })
     return res.status(200).json(
-        new Apiresponse(200, {posts,postDocuments},"user posts fetched succesfully")
+        new Apiresponse(200, { posts, postDocuments }, "user posts fetched succesfully")
     )
 
 
