@@ -207,7 +207,7 @@ const LikeUnlikePost = asynchandler(async (req, res) => {
 
 
 });
-const getallPost = asynchandler(async (req, res) => {
+const getallPost = asynchandler(async (_req, res) => {
     const posts = await POSTSCHEMA.find().sort({ createdAt: -1 }).populate({
         path: "user",
         select: "-password -refreshToken"
@@ -245,7 +245,55 @@ const getLikedPost = asynchandler(async (req, res) => {
     return res.status(200).json(
         new Apiresponse(200, likedPosts, "likes post fetched successfully")
     )
+});
+const getFollowingPosts = asynchandler(async (req, res) => {
+    const userId = req.user._id
+    const user = await USERSCHEMA.findById(userId)
+    if (!user) {
+        throw new Apierror(403, "user not found")
+    };
+
+    const following = user.following
+
+    const followingPost = await POSTSCHEMA.find({ user: { $in: following } }).sort({ createdAt: -1 }).populate({
+        path: "user",
+        select: "-password -refreshToken"
+    }).populate({
+        path: "comments.user",
+        select: "-password -refreshToken"
+    });
+
+    return res.status(200).json(
+        new Apiresponse(200, followingPost, "followingPostByuser fetched successfully")
+    )
+
+
+});
+const getUserPosts = asynchandler(async(req,res)=> {
+    const {username} = req.params
+    const user = await USERSCHEMA.findOne({username:username as string})
+      if (!user) {
+        throw new Apierror(403, "user not found")
+    };
+
+    const posts = await POSTSCHEMA.find({user:user._id}).sort({ createdAt: -1 }).populate({
+        path: "user",
+        select: "-password -refreshToken"
+    }).populate({
+        path: "comments.user",
+        select: "-password -refreshToken"
+    });
+
+    const postDocuments = await POSTSCHEMA.countDocuments({user:user._id})
+    return res.status(200).json(
+        new Apiresponse(200, {posts,postDocuments},"user posts fetched succesfully")
+    )
+
+
+
+
 })
+
 
 
 
@@ -256,7 +304,9 @@ export {
     commentonPost,
     deletePost,
     getallPost,
-    getLikedPost
+    getLikedPost,
+    getFollowingPosts,
+    getUserPosts
 
 }
 

@@ -4,28 +4,28 @@ const postSchema = new Schema<IPost>({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "USERSCHEMA",
-        required: true,
+        required:true,
     },
     text: {
         type: String,
         trim: true //remvoe spaces
 
     },
-postimg: {
-  url: {
-    type: String
-  },
-  publicId: {
-    type: String
-  }
-},
+    postimg: {
+        url: {
+            type: String
+        },
+        publicId: {
+            type: String
+        }
+    },
 
     likes: [
         {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "USERSCHEMA",
-    }
-],
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "USERSCHEMA",
+        }
+    ],
     comments: [
         {
             user: {
@@ -37,7 +37,7 @@ postimg: {
                 type: String,
                 required: true
             },
-                createdAt: {
+            createdAt: {
                 type: Date,
                 default: Date.now
             }
