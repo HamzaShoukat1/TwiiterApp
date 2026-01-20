@@ -5,7 +5,7 @@ import AuthRoutes from "./Routes/AuthRoutes.js"
 import path from "node:path"
 import UserRoutes from "./Routes/User.Routes.js"
 import PostRoutes from "./Routes/Post.Routes.js"
-
+import NotificationRoutes from "./Routes/Notification.Routes.js"
 
 const app = express()
 
@@ -27,6 +27,8 @@ app.use("/api/v1/auth",AuthRoutes)
 //user routes
 app.use("/api/v1/user",UserRoutes)
 app.use("/api/v1/post",PostRoutes)
+app.use("/api/v1/notification",NotificationRoutes)
+
 
 export { app }
 
