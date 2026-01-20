@@ -187,14 +187,12 @@ const LikeUnlikePost = asynchandler(async (req, res) => {
 
 
 
-        if (post.user.toString() !== userId.toString()) {
-            await NOTISCHEMA.create({
+        const newNoti =    await NOTISCHEMA.create({
                 from: userId,
                 to: post.user,
                 type: "like"
             })
-
-        }
+console.log("Created Notification:", newNoti);
 
 
         return res.status(200).json(
