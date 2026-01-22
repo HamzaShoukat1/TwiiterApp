@@ -79,7 +79,7 @@ export default function SignupPage() {
 
 
 <label
-  className="input input-bordered rounded flex items-center gap-2
+  className="input input-bordered rounded flex items-center gap-2 w-full
              focus-within:border-base-500
              focus-within:outline-none
              focus-within:ring-0">
@@ -87,7 +87,7 @@ export default function SignupPage() {
 
   <input
     type="email"
-    className="grow border-none outline-none focus:outline-none focus:ring-0"
+    className="grow border-none outline-none w-full focus:outline-none focus:ring-0"
     placeholder="email"
     name="email"
       onChange={handleInputChange}

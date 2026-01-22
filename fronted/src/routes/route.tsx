@@ -7,6 +7,7 @@ import Rootlayout from "../Root/Rootlayout"
 import {HomePage} from "../Root/index"
 import NotificationPage from "../Root/pages/Nitifications"
 import ProfilePage from "../Root/ProfilePage"
+import ProtectedRoute from '../components/ProectedRoute'
 
 
 const router = createBrowserRouter(
@@ -19,12 +20,15 @@ const router = createBrowserRouter(
       </Route>
 
       //private route
-      <Route element={<Rootlayout />}>
+      <Route element={<ProtectedRoute />}>
+
+      <Route   element={<Rootlayout /> }>
         <Route index element={<HomePage />} />
                 <Route path="notifications" element={<NotificationPage />} />
                                 <Route path="profile" element={<ProfilePage />} />
 
 
+      </Route>
       </Route>
 
 
