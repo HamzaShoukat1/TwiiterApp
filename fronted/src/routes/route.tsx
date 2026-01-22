@@ -5,6 +5,8 @@ import SigninPage from "../Auth/SigninPage"
 import SignupPage from "../Auth/SignupPage"
 import Rootlayout from "../Root/Rootlayout"
 import {HomePage} from "../Root/index"
+import NotificationPage from "../Root/pages/Nitifications"
+import ProfilePage from "../Root/ProfilePage"
 
 
 const router = createBrowserRouter(
@@ -18,7 +20,11 @@ const router = createBrowserRouter(
 
       //private route
       <Route element={<Rootlayout />}>
-        <Route path="/" element={<HomePage />} />
+        <Route index element={<HomePage />} />
+                <Route path="notifications" element={<NotificationPage />} />
+                                <Route path="profile" element={<ProfilePage />} />
+
+
       </Route>
 
 
