@@ -1,6 +1,6 @@
 import { useState } from "react";
 import CreatePost from "../../components/Svgs/shared/ CreatePost";
-
+import Posts from "../../components/Svgs/shared/Posts";
 
 // import Posts from "../../components/common/Posts";
 // import CreatePost from "./CreatePost";
@@ -39,7 +39,7 @@ const HomePage = () => {
 				<CreatePost />
 
 				{/* POSTS */}
-				{/* <Posts /> */}
+				<Posts feedType={feedType} />
 			</div>
 		</>
 	);

@@ -4,7 +4,7 @@ import AuthLayout from "../Auth/AuthLayout"
 import SigninPage from "../Auth/SigninPage"
 import SignupPage from "../Auth/SignupPage"
 import Rootlayout from "../Root/Rootlayout"
-import {HomePage} from "../Root/index"
+import { HomePage } from "../Root/index"
 import NotificationPage from "../Root/pages/Nitifications"
 import ProfilePage from "../Root/ProfilePage"
 import ProtectedRoute from '../components/ProectedRoute'
@@ -22,13 +22,13 @@ const router = createBrowserRouter(
       //private route
       <Route element={<ProtectedRoute />}>
 
-      <Route   element={<Rootlayout /> }>
-        <Route index element={<HomePage />} />
-                <Route path="notifications" element={<NotificationPage />} />
-                                <Route path="profile" element={<ProfilePage />} />
+        <Route element={<Rootlayout />}>
+          <Route index element={<HomePage />} />
+          <Route path="notifications" element={<NotificationPage />} />
+          <Route path="profile/:username" element={<ProfilePage />} />
 
 
-      </Route>
+        </Route>
       </Route>
 
 
@@ -36,4 +36,4 @@ const router = createBrowserRouter(
   )
 )
 
-export {router}
+export { router }
