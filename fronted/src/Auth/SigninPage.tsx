@@ -1,26 +1,74 @@
 
 import { MdOutlineMail } from "react-icons/md";
 import { MdPassword } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, type FormEvent } from "react";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 
 
 export default function SignupPage() {
+  const navigate = useNavigate()
   const [formData, setformData] = useState({
     email: "",
     password: "",
   })
+    const { mutate:Signup, isError, isPending, error } = useMutation({
+    mutationFn: async (formData: {
+      email: string,
+      password: string
+    }) => {
+      try {
+        const res = await fetch("/api/v1/auth/signin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body:JSON.stringify(formData)
+        })
+
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.message || "Signup failed")
+        console.log(data)
+        return data
+
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error)
+          throw error
+        } else {
+          throw new Error("Something went wrong")
+        }
+
+
+
+      };
+
+    },
+    onSuccess: () => {
+      toast.success("Account created successfully")
+      navigate("/")
+
+    },
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(error.message)
+      } else {
+        toast.error("Account creation failed")
+      }
+    }
+  })
+
   const handleSubmit = (e:FormEvent<HTMLFormElement>)=> {
     e.preventDefault()
-    console.log(formData)
+    Signup(formData)
     
   }
   const handleInputChange = (e:React.ChangeEvent<HTMLInputElement>)=> {
     setformData({...formData, [e.target.name]:e.target.value})
     
   }
-  const isError = false
   return (
     <div className="max-h-screen m-auto flex h-screen ">
 
@@ -62,8 +110,8 @@ export default function SignupPage() {
     value={formData.password}
   />
 </label>
-<button type="submit" className='btn rounded-full btn-primary text-white'>Sign in</button>
-					{isError && <p className='text-red-500 text-xs' >Something went wrong</p>}
+<button type="submit" className='btn rounded-full btn-primary text-white'>{isPending ? "loading" : "Signin"}</button>
+					{isError && error instanceof Error && <p className='text-red-500 text-xs' >{error.message}</p>}
 
 
 

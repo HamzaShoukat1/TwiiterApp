@@ -2,10 +2,54 @@ import XSvg from "../X.svg";
 import { MdHomeFilled } from "react-icons/md";
 import { IoNotifications } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const Sidebar = () => {
+	const navigate = useNavigate()
+
+    const { mutate:Logout, } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await fetch("/api/v1/auth/logout", {
+          method: "POST",
+        
+        })
+
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.message || "Signup failed")
+        console.log(data)
+        return data
+
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error)
+          throw error
+        } else {
+          throw new Error("Something went wrong")
+        }
+
+
+
+      };
+
+    },
+    onSuccess: () => {
+      toast.success("Account logout successfully")
+      navigate("/sign-in")
+
+    },
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(error.message)
+      } else {
+        toast.error("Logout failed")
+      }
+    }
+  })
+  
 	const data = {
 		fullName: "John Doe",
 		username: "johndoe",
@@ -63,8 +107,17 @@ const Sidebar = () => {
 								<p className='text-white font-bold text-sm w-20 truncate'>{data?.fullName}</p>
 								<p className='text-slate-500 text-sm'>@{data?.username}</p>
 							</div>
-							<BiLogOut className='w-5 h-5 cursor-pointer' />
+							
 						</div>
+						<BiLogOut className='w-5 h-5 cursor-pointer' 
+							onClick={(e)=> {
+									e.preventDefault(),
+								Logout()}
+							}
+
+							
+							
+							/>
 					</Link>
 				)}
 			</div>
