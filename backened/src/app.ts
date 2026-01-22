@@ -6,6 +6,7 @@ import path from "node:path"
 import UserRoutes from "./Routes/User.Routes.js"
 import PostRoutes from "./Routes/Post.Routes.js"
 import NotificationRoutes from "./Routes/Notification.Routes.js"
+import { errorHandler } from "./Middlewares/error.middleware.js"
 
 const app = express()
 
@@ -18,7 +19,7 @@ app.use(express.json({ limit: "20kb" })) //to parse req.body
 app.use(express.urlencoded({ extended: true, limit: "20kb" }))
 // app.use(express.static("pub"))
 app.use("assets",express.static(path.join(process.cwd(), "backened/Public/assets")))
-app.use(cookieParser())
+app.use(cookieParser());
 
 //auth routes
 app.use("/api/v1/auth",AuthRoutes)
@@ -29,6 +30,7 @@ app.use("/api/v1/user",UserRoutes)
 app.use("/api/v1/post",PostRoutes)
 app.use("/api/v1/notification",NotificationRoutes)
 
+app.use(errorHandler); 
 
 export { app }
 

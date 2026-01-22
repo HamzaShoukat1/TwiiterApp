@@ -2,8 +2,8 @@ import { Apiresponse } from "../Utils/apiResponse.js";
 import { Apierror } from "../Utils/apiError.js";
 import { asynchandler } from "../Utils/asynchandler.js";
 import { USERSCHEMA } from "../Models/User.Model.js";
-import type { MulterFile } from "../Types/types.js";
-import { uploadCloudinary } from "../Services/Cloudinary.js";
+// import type { MulterFile } from "../Types/types.js";
+// import { uploadCloudinary } from "../Services/Cloudinary.js";
 import { generateAccessToken, generateRefreshToken } from "../Services/Token.Service.js";
 import { options } from "../Services/Token.Service.js";
 import type { IUser } from "../Types/Model.Types.js";
@@ -71,31 +71,31 @@ const SignUp = asynchandler(async (req:any, res:any) => {
         throw new Apierror(400, "password must be at least 6 character long")
     }
     //images
-    const files = req.files as MulterFile
+    // const files = req.files as MulterFile
 
 
-    const LocalPicturePath = files?.profileImage?.[0]?.path
-    const LocalcoverPath = files?.coverImage?.[0]?.path
+    // const LocalPicturePath = files?.profileImage?.[0]?.path
+    // const LocalcoverPath = files?.coverImage?.[0]?.path
 
-    if (!LocalPicturePath) {
-        throw new Apierror(400, "profile picture required")
-    }
+    // if (!LocalPicturePath) {
+    //     throw new Apierror(400, "profile picture required")
+    // }
 
-    // upload on clouniary
-    const ProfilePic = await uploadCloudinary(LocalPicturePath)
-    if (!ProfilePic) {
-        throw new Apierror(400, "upload profile picture is failed")
-    };
+    // // upload on clouniary
+    // const ProfilePic = await uploadCloudinary(LocalPicturePath)
+    // if (!ProfilePic) {
+    //     throw new Apierror(400, "upload profile picture is failed")
+    // };
 
-    let coverImageUrl: { url: string, publicId: string } | undefined
+    // let coverImageUrl: { url: string, publicId: string } | undefined
 
-    if (LocalcoverPath) {
-        const coverPic = await uploadCloudinary(LocalcoverPath)
-        if (!coverPic?.url) {
-            throw new Apierror(400, "Upload cover image failed")
-        }
-        coverImageUrl = { url: coverPic.url, publicId: coverPic.publicId };
-    }
+    // if (LocalcoverPath) {
+    //     const coverPic = await uploadCloudinary(LocalcoverPath)
+    //     if (!coverPic?.url) {
+    //         throw new Apierror(400, "Upload cover image failed")
+    //     }
+    //     coverImageUrl = { url: coverPic.url, publicId: coverPic.publicId };
+    // }
 
 
 
@@ -109,16 +109,16 @@ const SignUp = asynchandler(async (req:any, res:any) => {
         fullName,
         email,
         password,
-        profileImage: { url: ProfilePic.url, publicId: ProfilePic.publicId },
+        // profileImage: { url: ProfilePic.url, publicId: ProfilePic.publicId },
         followers: [],
         following: [],
         bio: "",
         link: "",
         refreshToken: ""
     };
-    if (coverImageUrl) {
-        userData.coverImage = { url: coverImageUrl.url, publicId: coverImageUrl.publicId };
-    }
+    // if (coverImageUrl) {
+    //     userData.coverImage = { url: coverImageUrl.url, publicId: coverImageUrl.publicId };
+    // }
     const user = await USERSCHEMA.create(userData)
 
 
@@ -208,7 +208,7 @@ const Logout = asynchandler(async (req:any, res:any) => {
 
 
 });
-const getCurrentUser = asynchandler(async (req:any, res:any) => {
+const getCurrentUser = asynchandler(async (req, res) => {
     return res.status(200).json(
         new Apiresponse(200, req.user, "current User fetched successfully")
 
