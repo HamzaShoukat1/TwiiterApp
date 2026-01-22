@@ -15,6 +15,7 @@ const Sidebar = () => {
       try {
         const res = await fetch("/api/v1/auth/logout", {
           method: "POST",
+		  credentials:"include"
         
         })
 
@@ -112,7 +113,8 @@ const Sidebar = () => {
 						<BiLogOut className='w-5 h-5 cursor-pointer' 
 							onClick={(e)=> {
 									e.preventDefault(),
-								Logout()}
+								Logout()
+							}
 							}
 
 							
