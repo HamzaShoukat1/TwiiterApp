@@ -6,3 +6,4 @@ export const fetchAuthUser = async () => {
   if (!res.ok) return null;
   return res.json();
 };
+
