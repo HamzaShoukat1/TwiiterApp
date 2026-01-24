@@ -15,7 +15,7 @@ app.use(cors({
     credentials: true
 }))
 
-app.use(express.json({ limit: "20kb" })) //to parse req.body
+app.use(express.json({ limit: "5mb" })) //to parse req.body
 app.use(express.urlencoded({ extended: true, limit: "20kb" }))
 // app.use(express.static("pub"))
 app.use("assets",express.static(path.join(process.cwd(), "backened/Public/assets")))
