@@ -8,11 +8,12 @@ import { HomePage } from "../Root/index"
 import NotificationPage from "../Root/pages/Nitifications"
 import ProfilePage from "../Root/ProfilePage"
 import ProtectedRoute from '../components/ProectedRoute'
+import ErrorPage from "../components/ErrorPage"
 
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path='/' element={<App />}>
+    <Route errorElement={<ErrorPage />} path='/' element={<App />}>
       //public route
       <Route element={<AuthLayout />}>
         <Route path="/sign-in" element={<SigninPage />} />

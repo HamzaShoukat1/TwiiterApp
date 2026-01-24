@@ -5,26 +5,61 @@ import { FaTrash } from "react-icons/fa";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import type { PostType } from "../types"; // adjust path
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import LoadingSpinner from "./LoadingSpinner";
+import { formatRelativeTime } from "../lib/createAtfunc";
 type PostProps = {
   post: PostType;
   currentUserId?: string;
+  
 };
 
 const Post = ({ post, currentUserId }: PostProps) => {
   const [comment, setComment] = useState("");
+  const queryClient = useQueryClient()
+
+  const {mutate:deletePost,isPending} = useMutation({
+    mutationFn: async ()=> {
+      try {
+        const res = await fetch(`/api/v1/post/${post._id}`,{
+          method:"delete"
+        });
+          const data = await res.json()
+        if (!res.ok) throw new Error(data.message || "delete post failed")
+        return data
+      } catch (error) {
+if (error instanceof Error) {
+          console.error(error)
+          throw error
+        } else {
+          throw new Error("Something went wrong")
+        }      }
+    },
+    onSuccess:()=> {
+      toast.success("Post created Successfully")
+      //invalidate the query to refetch
+          queryClient.invalidateQueries({
+      queryKey: ["posts"]
+    })
+    }
+
+  })
 
   const postOwner = post.user;
+  console.log("a",currentUserId)
 
   const isMyPost = currentUserId === postOwner._id;
   const isLiked = currentUserId
     ? post.likes.includes(currentUserId)
     : false;
 
-  const formattedDate = "1h"; // TODO: real date formatter
+  const formattedDate = formatRelativeTime(post.createdAt) // TODO: real date formatter
   const isCommenting = false;
 
   const handleDeletePost = () => {
+    deletePost()
+
     console.log("delete post:", post._id);
   };
 
@@ -55,7 +90,7 @@ const Post = ({ post, currentUserId }: PostProps) => {
           className="w-8 rounded-full overflow-hidden"
         >
           <img
-            src={postOwner.profileImage?.url || "/avatar-placeholder.png"}
+            src={  "/avatar-placeholder.png"}
             alt="avatar"
           />
         </Link>
@@ -81,11 +116,14 @@ const Post = ({ post, currentUserId }: PostProps) => {
           </span>
 
           {isMyPost && (
-            <span className="flex justify-end flex-1">
-              <FaTrash
-                className="cursor-pointer hover:text-red-500"
+            <span className="flex justify-end flex-1 z-10">
+            {!isPending && <FaTrash
+                className="cursor-pointer  hover:text-red-500"
                 onClick={handleDeletePost}
-              />
+              />}
+              {isPending && (
+                <LoadingSpinner size="sm"/>
+              )}
             </span>
           )}
         </div>
@@ -97,7 +135,7 @@ const Post = ({ post, currentUserId }: PostProps) => {
           {post.postimg && (
             <img
               src={post.postimg.url}
-              className="h-80 object-contain rounded-lg border border-gray-700"
+              className="h-80  w-full object-cover  rounded-lg border border-gray-700"
               alt="post"
             />
           )}

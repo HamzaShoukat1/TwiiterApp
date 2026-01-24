@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import PostSkeleton from "./PostSkeletan";
 import Post from "../../Post";
-import { useEffect } from "react";
+import { fetchAuthUser } from "../../../CurrentUser";
 
 const Posts = ({ feedType }:any) => {
 	
@@ -20,7 +20,15 @@ const Posts = ({ feedType }:any) => {
 
 	const POST_ENDPOINT = getPostsendPoint()
 
-	const { data:Posts, isLoading,refetch,isRefetching } = useQuery({
+
+
+  // Fetch current user
+  const { data: authUser, isLoading: authLoading } = useQuery({
+    queryKey: ["authUser"],
+    queryFn: ()=> fetchAuthUser()
+  });
+
+	const { data:Posts, isLoading:ispostloading,isRefetching } = useQuery({
 		queryKey: ["posts",feedType],
 		queryFn: async () => {
 			try {
@@ -42,13 +50,11 @@ const Posts = ({ feedType }:any) => {
 
 				}
 			}
-		}
+		},
+		enabled: !!authUser
 	})
 
-	useEffect(()=> {
-		refetch()
-
-	},[feedType,refetch])
+	const isLoading = authLoading  || ispostloading
 	return (
 		<>
 			{(isLoading || isRefetching) && (
@@ -62,7 +68,7 @@ const Posts = ({ feedType }:any) => {
 			{!isLoading && !isRefetching && Posts && (
 				<div>
      {Posts.map((post:any) => (
-            <Post key={post._id} post={post} />
+            <Post key={post._id} post={post} currentUserId={authUser?.data._id}/>
           ))}
 				</div>
 			)}
