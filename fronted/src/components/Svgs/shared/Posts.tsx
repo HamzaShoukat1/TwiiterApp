@@ -3,8 +3,8 @@ import PostSkeleton from "./PostSkeletan";
 import Post from "../../Post";
 import { fetchAuthUser } from "../../../CurrentUser";
 
-const Posts = ({ feedType }:any) => {
-	
+const Posts = ({ feedType }: any) => {
+
 	const getPostsendPoint = () => {
 		switch (feedType) {
 			case "forYou":
@@ -22,18 +22,18 @@ const Posts = ({ feedType }:any) => {
 
 
 
-  // Fetch current user
-  const { data: authUser, isLoading: authLoading } = useQuery({
-    queryKey: ["authUser"],
-    queryFn: ()=> fetchAuthUser()
-  });
+	// Fetch current user
+	const { data: authUser, isLoading: authLoading } = useQuery({
+		queryKey: ["authUser"],
+		queryFn: () => fetchAuthUser()
+	});
 
-	const { data:Posts, isLoading:ispostloading,isRefetching } = useQuery({
-		queryKey: ["posts",feedType],
+	const { data: Posts, isLoading: ispostloading, isRefetching } = useQuery({
+		queryKey: ["posts", feedType],
 		queryFn: async () => {
 			try {
-				const res = await fetch(POST_ENDPOINT,{
-					credentials:"include"
+				const res = await fetch(POST_ENDPOINT, {
+					credentials: "include"
 				})
 				const json = await res.json()
 				if (!res.ok) throw new Error(json.message || "cannot fetch posts")
@@ -54,7 +54,7 @@ const Posts = ({ feedType }:any) => {
 		enabled: !!authUser
 	})
 
-	const isLoading = authLoading  || ispostloading
+	const isLoading = authLoading || ispostloading
 	return (
 		<>
 			{(isLoading || isRefetching) && (
@@ -64,12 +64,12 @@ const Posts = ({ feedType }:any) => {
 					<PostSkeleton />
 				</div>
 			)}
-			{!isLoading  && !isRefetching && Posts?.length === 0 && <p className='text-center my-4'>No posts in this tab. Switch 👻</p>}
+			{!isLoading && !isRefetching && Posts?.length === 0 && <p className='text-center my-4'>No posts in this tab. Switch 👻</p>}
 			{!isLoading && !isRefetching && Posts && (
 				<div>
-     {Posts.map((post:any) => (
-            <Post key={post._id} post={post} currentUserId={authUser?.data._id}/>
-          ))}
+					{Posts.map((post: any) => (
+						<Post key={post._id} post={post} currentUserId={authUser?.data._id} />
+					))}
 				</div>
 			)}
 		</>

@@ -9,58 +9,67 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import LoadingSpinner from "./LoadingSpinner";
 import { formatRelativeTime } from "../lib/createAtfunc";
+import { useLikesAndUnlike } from "../mutationsAndQueries.tsx";
 type PostProps = {
   post: PostType;
   currentUserId?: string;
-  
+
 };
 
 const Post = ({ post, currentUserId }: PostProps) => {
+  const [likes, setLikes] = useState(post.likes); // start with initial likes
+
+  const { LikedPost, isLiking } = useLikesAndUnlike({
+    post,
+    onSuccess: (updatedLikes) => setLikes(updatedLikes)
+
+  })
+  console.log("z", LikedPost)
   const [comment, setComment] = useState("");
   const queryClient = useQueryClient()
 
-  const {mutate:deletePost,isPending} = useMutation({
-    mutationFn: async ()=> {
+  const { mutate: deletePost, isPending } = useMutation({
+    mutationFn: async () => {
       try {
-        const res = await fetch(`/api/v1/post/${post._id}`,{
-          method:"delete"
+        const res = await fetch(`/api/v1/post/${post._id}`, {
+          method: "delete"
         });
-          const data = await res.json()
+        const data = await res.json()
         if (!res.ok) throw new Error(data.message || "delete post failed")
         return data
       } catch (error) {
-if (error instanceof Error) {
+        if (error instanceof Error) {
           console.error(error)
           throw error
         } else {
           throw new Error("Something went wrong")
-        }      }
+        }
+      }
     },
-    onSuccess:()=> {
+    onSuccess: () => {
       toast.success("Post created Successfully")
       //invalidate the query to refetch
-          queryClient.invalidateQueries({
-      queryKey: ["posts"]
-    })
+      queryClient.invalidateQueries({
+        queryKey: ["posts"]
+      })
     }
 
   })
 
   const postOwner = post.user;
-  console.log("a",currentUserId)
+  console.log("a", currentUserId)
 
   const isMyPost = currentUserId === postOwner._id;
-  const isLiked = currentUserId
-    ? post.likes.includes(currentUserId)
-    : false;
+  const isLiked = currentUserId ? likes.includes(currentUserId) : false
 
+
+  console.log("sa", isLiked)
   const formattedDate = formatRelativeTime(post.createdAt) // TODO: real date formatter
   const isCommenting = false;
 
   const handleDeletePost = () => {
     deletePost()
 
-    console.log("delete post:", post._id);
   };
 
   const handlePostComment = (e: React.FormEvent<HTMLFormElement>) => {
@@ -70,7 +79,8 @@ if (error instanceof Error) {
   };
 
   const handleLikePost = () => {
-    console.log("like post:", post._id);
+    if (isLiking) return
+    LikedPost()
   };
 
   const openCommentsModal = () => {
@@ -90,7 +100,7 @@ if (error instanceof Error) {
           className="w-8 rounded-full overflow-hidden"
         >
           <img
-            src={  "/avatar-placeholder.png"}
+            src={"/avatar-placeholder.png"}
             alt="avatar"
           />
         </Link>
@@ -117,17 +127,16 @@ if (error instanceof Error) {
 
           {isMyPost && (
             <span className="flex justify-end flex-1 z-10">
-            {!isPending && <FaTrash
+              {!isPending && <FaTrash
                 className="cursor-pointer  hover:text-red-500"
                 onClick={handleDeletePost}
               />}
               {isPending && (
-                <LoadingSpinner size="sm"/>
+                <LoadingSpinner size="sm" />
               )}
             </span>
           )}
         </div>
-
         {/* Body */}
         <div className="flex flex-col gap-3 overflow-hidden">
           <span>{post.text}</span>
@@ -136,7 +145,6 @@ if (error instanceof Error) {
             <img
               src={post.postimg.url}
               className="h-80  w-full object-cover  rounded-lg border border-gray-700"
-              alt="post"
             />
           )}
         </div>
@@ -166,7 +174,7 @@ if (error instanceof Error) {
                 <div className="flex flex-col gap-3 max-h-60 overflow-auto">
                   {post.comments.length === 0 && (
                     <p className="text-sm text-slate-500">
-                      No comments yet 🤔
+                      No comments yet
                     </p>
                   )}
 
@@ -204,7 +212,7 @@ if (error instanceof Error) {
                     onChange={(e) => setComment(e.target.value)}
                   />
                   <button className="btn btn-primary btn-sm rounded-full text-white px-4">
-                    {isCommenting ? "..." : "Post"}
+                    {isCommenting ? <LoadingSpinner size="md" /> : "Post"}
                   </button>
                 </form>
               </div>
@@ -223,25 +231,29 @@ if (error instanceof Error) {
             </div>
 
             {/* Like */}
-            <div
-              className="flex gap-1 items-center group cursor-pointer"
-              onClick={handleLikePost}
-            >
-              <FaRegHeart
-                className={`w-4 h-4 ${
-                  isLiked
-                    ? "text-pink-500"
-                    : "text-slate-500 group-hover:text-pink-500"
-                }`}
-              />
-              <span
-                className={`text-sm ${
-                  isLiked ? "text-pink-500" : "text-slate-500"
-                }`}
-              >
-                {post.likes.length}
-              </span>
-            </div>
+          <div
+  className="flex gap-1 items-center group cursor-pointer"
+  onClick={handleLikePost}
+>
+  {isLiking && <LoadingSpinner size="sm" />}
+
+  {!isLiked && !isLiking && (
+    <FaRegHeart
+      className="w-4 h-4 cursor-pointer text-slate-500 group-hover:text-pink-500"
+    />
+  )}
+
+  {isLiked && !isLiking && (
+    <FaRegHeart
+      className="w-4 h-4 cursor-pointer text-pink-500"
+    />
+  )}
+
+  <span className={`text-sm flex items-center group-hover:text-pink-500`}>
+    {likes.length}
+  </span>
+</div>
+
           </div>
 
           <div className="flex w-1/3 justify-end items-center">

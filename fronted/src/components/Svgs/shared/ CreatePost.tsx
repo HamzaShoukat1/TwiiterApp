@@ -115,7 +115,7 @@ const CreatePost = () => {
 
 							}}
 						/>
-						<img src={img.url.toSting()} className='w-full mx-auto h-72 object-contain rounded'   />
+						<img src={img} className='w-full mx-auto h-72 object-contain rounded'   />
 					</div>
 				)}
 

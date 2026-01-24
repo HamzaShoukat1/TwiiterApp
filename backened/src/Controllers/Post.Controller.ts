@@ -124,87 +124,61 @@ const commentonPost = asynchandler(async (req, res) => {
 
 })
 const LikeUnlikePost = asynchandler(async (req, res) => {
-    const userId = req.user._id
-    const { id: postId } = req.params
+  const userId = req.user._id;
+  const { id: postId } = req.params;
 
-    const post = await POSTSCHEMA.findById(postId)
+  const post = await POSTSCHEMA.findById(postId);
+  if (!post) {
+    throw new Apierror(404, "post not found");
+  }
 
-    if (!post) {
-        throw new Apierror(404, "post not found")
-    }
+  const alreadyLiked = post.likes.some(
+    (id) => id.toString() === userId.toString()
+  );
 
-    // const isLikedByUser = post.likes.includes(userId)
-    const alreadyLiked = post.likes.some(
-        (id) => id.toString() === userId.toString()
+  if (alreadyLiked) {
+    // unlike
+    const updatedPost = await POSTSCHEMA.findByIdAndUpdate(
+      postId,
+      { $pull: { likes: userId } },
+      { new: true }
     );
 
-    if (alreadyLiked) {
-        //unike
-        await POSTSCHEMA.findByIdAndUpdate(
-            postId,
-            {
-                $pull: {
-                    likes: userId,
-                }
-            }
-        );
-        await USERSCHEMA.findByIdAndUpdate(
-            userId,
-            {
-                $pull: {
-                    likedPost: postId
+    await USERSCHEMA.findByIdAndUpdate(
+      userId,
+      { $pull: { likedPost: postId } }
+    );
 
-                }
-            }
-        )
+    return res.status(200).json(
+      new Apiresponse(201, updatedPost?.likes, "post unliked successfully")
+    );
 
-        return res.status(200).json(
-            new Apiresponse(201, {}, "post unliked successfully")
-        )
+  } else {
+    // like
+    const updatedPost = await POSTSCHEMA.findByIdAndUpdate(
+      postId,
+      { $addToSet: { likes: userId } },
+      { new: true }
+    );
 
+    await USERSCHEMA.findByIdAndUpdate(
+      userId,
+      { $addToSet: { likedPost: postId } }
+    );
 
-    } else {
-        //like
-        await POSTSCHEMA.findByIdAndUpdate(
-            postId,
-            {
-                $addToSet: {
-                    likes: userId
-                }
-            }
-        );
-        // add in likes post also after like
-        await USERSCHEMA.findByIdAndUpdate(
-            userId,
-            {
-                $addToSet: {
-                    likedPost: postId
+    const newNoti = await NOTISCHEMA.create({
+      from: userId,
+      to: post.user,
+      type: "like"
+    });
+    console.log("Created Notification:", newNoti);
 
-                }
-            }
-        )
-
-
-
-
-        const newNoti = await NOTISCHEMA.create({
-            from: userId,
-            to: post.user,
-            type: "like"
-        })
-        console.log("Created Notification:", newNoti);
-
-
-        return res.status(200).json(
-            new Apiresponse(201, {}, "post liked successfully")
-        )
-    }
-
-
-
-
-
+    return res.status(200).json(
+      new Apiresponse(201, updatedPost?.likes, "post liked successfully")
+    );
+  }
 });
+
 const getallPost = asynchandler(async (_req, res) => {
     const posts = await POSTSCHEMA.find().sort({ createdAt: -1 }).populate({
         path: "user",
