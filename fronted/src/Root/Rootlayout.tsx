@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Svgs/shared/Sidebar";
+import RightPanel from "../components/Svgs/shared/RightPanel";
 // import RightPanel from "../components/Svgs/shared/RightPanel";
 
 
@@ -21,8 +22,7 @@ function RootLayout() {
                 </section>
 
                 <div>
-                    {/* <RightPanel /> */}
-                    aaaaaaaaaaaaaaaaaaaaaaaaaaa
+                    <RightPanel />
                 </div>
             </div>
 
