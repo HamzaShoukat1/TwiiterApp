@@ -165,7 +165,7 @@ export const UseGetAllPosts = ({ endpoint, feedType, enabled }: { endpoint: stri
 
       }
 
-      
+
       catch (error) {
         if (error instanceof Error) {
           console.error(error)
@@ -175,10 +175,42 @@ export const UseGetAllPosts = ({ endpoint, feedType, enabled }: { endpoint: stri
 
         }
       }
-      
+
     },
   }
-)
-enabled
+  )
+  enabled
   return { Posts, ispostloading, isRefetching }
-}
+};
+export const UseCommentPost = ({ post, comment }: { post: any, comment: string }) => {
+  const queryClient = useQueryClient()
+
+  const { mutate: CommentPost, isPending: isCommenting } = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`/api/v1/post/comment/${post._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ text: comment })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "add  comment failed");
+      return data.data
+    },
+    onSuccess: () => {
+      toast.success("comment addedd successfully")
+      queryClient.invalidateQueries({
+        queryKey: ["posts"]
+      })
+
+
+    },
+    onError: (error) => {
+      if (error instanceof Error) toast.error(error.message);
+      else toast.error("Something went wrong");
+    },
+  });
+
+  return { CommentPost, isCommenting };
+};

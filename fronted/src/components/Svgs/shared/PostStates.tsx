@@ -2,7 +2,7 @@ import { FaRegComment, FaRegHeart } from "react-icons/fa";
 
 import { BiRepost } from "react-icons/bi";
 import { useState } from "react";
-import { useLikesAndUnlike } from "../../../mutationsAndQueries.tsx";
+import { UseCommentPost, useLikesAndUnlike } from "../../../mutationsAndQueries.tsx";
 import LoadingSpinner from "../../LoadingSpinner";
 
 
@@ -10,7 +10,6 @@ export default function PostStates({currentUserId,post}:{currentUserId?:string,p
     const [likes, setLikes] = useState(post.likes); // start with initial likes
     // const likes = post.likes;
     const [comment, setComment] = useState("");
-  const isCommenting = false;
   const isLiked = currentUserId ? likes.includes(currentUserId) : false
 
 
@@ -19,12 +18,17 @@ export default function PostStates({currentUserId,post}:{currentUserId?:string,p
         post,
         onSuccess: (updatedLikes) => setLikes(updatedLikes)
 
+    });
+    const {CommentPost,isCommenting} = UseCommentPost({
+        post:post,
+        comment:comment
     })
 
     const handlePostComment = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log("comment:", comment);
-        setComment("");
+        if(isCommenting) return
+        CommentPost()
     };
 
     const handleLikePost = () => {
@@ -71,8 +75,7 @@ export default function PostStates({currentUserId,post}:{currentUserId?:string,p
                             <div key={c._id} className="flex gap-2 items-start">
                                 <div className="avatar w-8 rounded-full">
                                     <img
-                                        src={c.user.profileImage || "/avatar-placeholder.png"}
-                                        alt="avatar"
+                                        src={ "/avatar-placeholder.png"}
                                     />
                                 </div>
                                 <div>
@@ -80,9 +83,7 @@ export default function PostStates({currentUserId,post}:{currentUserId?:string,p
                                         <span className="font-bold">
                                             {c.user.fullName}
                                         </span>
-                                        <span className="text-gray-700 text-sm">
-                                            @{c.user.username}
-                                        </span>
+                                  
                                     </div>
                                     <div className="text-sm">{c.text}</div>
                                 </div>
