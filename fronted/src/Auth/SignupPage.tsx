@@ -3,15 +3,13 @@ import { MdOutlineMail } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
 import { MdPassword } from "react-icons/md";
 import { MdDriveFileRenameOutline } from "react-icons/md";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState, type FormEvent } from "react";
-import { useMutation } from "@tanstack/react-query";
-import toast from "react-hot-toast";
+import { UseSignUp } from "../mutationsAndQueries.tsx";
 // http://localhost:8003/api/v1/auth/signup 
 
 
 export default function SignupPage() {
-  const navigate = useNavigate()
   const [formData, setformData] = useState({
     email: "",
     username: "",
@@ -19,58 +17,15 @@ export default function SignupPage() {
     password: "",
   })
 
-  const { mutate:login, isError, isPending, error } = useMutation({
-    mutationFn: async (formData: {
-      email: string,
-      username: string,
-      fullName: string,
-      password: string
-    }) => {
-      try {
-        const res = await fetch("/api/v1/auth/signup", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body:JSON.stringify(formData)
-        })
-
-        const data = await res.json()
-        if (!res.ok) throw new Error(data.message || "Signup failed")
-        console.log(data)
-        return data
-
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error(error)
-          throw error
-        } else {
-          throw new Error("Something went wrong")
-        }
+  const { Signup, isPending, isError, error } = UseSignUp();
 
 
 
-      };
-
-    },
-    onSuccess: () => {
-      toast.success("Account created successfully")
-      navigate("/")
-
-    },
-    onError: (error) => {
-      if (error instanceof Error) {
-        toast.error(error.message)
-      } else {
-        toast.error("Account creation failed")
-      }
-    }
-  })
 
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    login(formData)
+    Signup(formData)
   }
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setformData({ ...formData, [e.target.name]: e.target.value })
@@ -148,7 +103,7 @@ export default function SignupPage() {
             />
           </label>
           <button type="submit" className='btn rounded-full btn-primary text-white'>{isPending ? "Loading..." : "Sign up"}</button>
-          {isError && error instanceof Error &&  <p className='text-red-500 text-xs' >{error.message}</p>}
+          {isError && error instanceof Error && <p className='text-red-500 text-xs' >{error.message}</p>}
 
 
 
@@ -174,3 +129,4 @@ export default function SignupPage() {
     </div>
   )
 }
+

@@ -1,10 +1,10 @@
 import { CiImageOn } from "react-icons/ci";
 import { BsEmojiSmileFill } from "react-icons/bs";
-import React, {  useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
-import { fetchAuthUser } from "../../../CurrentUser";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { useCurrentUser } from "../../../hooks/getCurrentUser";
 
 const CreatePost = () => {
 	const [text, setText] = useState("");
@@ -12,20 +12,17 @@ const CreatePost = () => {
 	const imgRef = useRef<HTMLInputElement | null>(null);
 
 	// Fetch current user
-	const { data: authUser } = useQuery({
-		queryKey: ["authUser"],
-		queryFn: () => fetchAuthUser()
-	});
+	const { authUser } = useCurrentUser()
 	console.log(authUser)
 	const queryClient = useQueryClient()
 	const { mutate: CreatePost, isError, isPending, error } = useMutation({
 		mutationFn: async () => {
 			const formData = new FormData()
 
-			formData.append("text",text)
+			formData.append("text", text)
 
-			if(imgRef.current?.files?.[0]){
-				formData.append("postimg",imgRef.current?.files?.[0])
+			if (imgRef.current?.files?.[0]) {
+				formData.append("postimg", imgRef.current?.files?.[0])
 			}
 			try {
 				const res = await fetch("/api/v1/post/create", {
@@ -83,8 +80,8 @@ const CreatePost = () => {
 		const reader = new FileReader();
 		reader.onload = () => {
 			setImg(reader.result as string);
-			    console.log("🖼 Base64 image result:", reader.result);
-    console.log("🖼 Base64 type:", typeof reader.result);
+			console.log("🖼 Base64 image result:", reader.result);
+			console.log("🖼 Base64 type:", typeof reader.result);
 		}
 		reader.readAsDataURL(file);
 	};
@@ -93,7 +90,7 @@ const CreatePost = () => {
 		<div className='flex p-4 items-start gap-4 border-b border-gray-700'>
 			<div className='avatar'>
 				<div className='w-8 rounded-full'>
-					<img src={authUser.profileImage || "/avatar-placeholder.png"} />
+					<img src={ "/avatar-placeholder.png"} />
 				</div>
 			</div>
 			<form className='flex flex-col gap-2 w-full' onSubmit={handleSubmit}>
@@ -115,7 +112,7 @@ const CreatePost = () => {
 
 							}}
 						/>
-						<img src={img} className='w-full mx-auto h-72 object-contain rounded'   />
+						<img src={img} className='w-full mx-auto h-72 object-contain rounded' />
 					</div>
 				)}
 

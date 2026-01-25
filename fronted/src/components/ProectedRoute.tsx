@@ -1,29 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import LoadingSpinner from "./LoadingSpinner";
+import { useCurrentUser } from "../hooks/getCurrentUser";
 
 export default function App() {
   const navigate = useNavigate();
 
-  const { data: currentUser, isLoading } = useQuery({
-    queryKey: ['authUser'],
-    queryFn: async () => {
-      const res = await fetch("/api/v1/auth/currentUser", {
-        credentials: "include" // if using cookies
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Something went wrong");
-      return data;
-    },
-  });
+
+  const {authUser,isLoading} = useCurrentUser()
 
   // Redirect unauthenticated users
   useEffect(() => {
-    if (!isLoading && !currentUser) {
+    if (!isLoading && !authUser) {
       navigate("/sign-in");
     }
-  }, [currentUser, isLoading, navigate]);
+  }, [authUser, isLoading, navigate]);
 
   // Block UI until auth is resolved
   if (isLoading) {

@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
 import PostSkeleton from "./PostSkeletan";
 import Post from "../../Post";
-import { fetchAuthUser } from "../../../CurrentUser";
+import { useCurrentUser } from "../../../hooks/getCurrentUser";
+import { UseGetAllPosts } from "../../../mutationsAndQueries.tsx";
 
 const Posts = ({ feedType }: any) => {
 
@@ -21,43 +21,19 @@ const Posts = ({ feedType }: any) => {
 	const POST_ENDPOINT = getPostsendPoint()
 
 
-
 	// Fetch current user
-	const { data: authUser, isLoading: authLoading } = useQuery({
-		queryKey: ["authUser"],
-		queryFn: () => fetchAuthUser()
-	});
-
-	const { data: Posts, isLoading: ispostloading, isRefetching } = useQuery({
-		queryKey: ["posts", feedType],
-		queryFn: async () => {
-			try {
-				const res = await fetch(POST_ENDPOINT, {
-					credentials: "include"
-				})
-				const json = await res.json()
-				if (!res.ok) throw new Error(json.message || "cannot fetch posts")
-				console.log(json)
-				return json?.data?.posts ?? []
+	const { authUser, isLoading } = useCurrentUser()
 
 
-			} catch (error) {
-				if (error instanceof Error) {
-					console.error(error)
-					throw error
-				} else {
-					throw new Error("Something went wrong")
-
-				}
-			}
-		},
+	const { Posts, isRefetching, ispostloading } = UseGetAllPosts({
+		endpoint: POST_ENDPOINT,
+		feedType,
 		enabled: !!authUser
 	})
 
-	const isLoading = authLoading || ispostloading
 	return (
 		<>
-			{(isLoading || isRefetching) && (
+			{(isLoading || isRefetching || ispostloading) && (
 				<div className='flex flex-col justify-center'>
 					<PostSkeleton />
 					<PostSkeleton />

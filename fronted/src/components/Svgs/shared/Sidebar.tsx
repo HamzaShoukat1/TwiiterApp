@@ -4,9 +4,9 @@ import { IoNotifications } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { fetchAuthUser } from "../../../CurrentUser";
+import { useCurrentUser } from "../../../hooks/getCurrentUser";
 const Sidebar = () => {
 	const navigate = useNavigate()
 
@@ -51,10 +51,7 @@ const Sidebar = () => {
     }
   })
 //centrialed
-
-  const {data:AuthUser} = useQuery({queryKey:["authUser"],
-	queryFn: fetchAuthUser
-  })
+const {authUser} = useCurrentUser()
 
 
 	return (
@@ -85,7 +82,7 @@ const Sidebar = () => {
 
 					<li className='flex justify-center md:justify-start'>
 						<Link
-							to={`/profile/${AuthUser?.data.username}`}
+							to={`/profile/${authUser?.data.username}`}
 							className='flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
 						>
 							<FaUser className='w-6 h-6' />
@@ -93,20 +90,20 @@ const Sidebar = () => {
 						</Link>
 					</li>
 				</ul>
-				{AuthUser && (
+				{authUser && (
 					<Link
-						to={`/profile/${AuthUser.data.username}`}
+						to={`/profile/${authUser.data.username}`}
 						className='mt-auto mb-10 flex gap-2 items-start transition-all duration-300 hover:bg-[#181818] py-2 px-4 rounded-full'
 					>
 						<div className='avatar hidden md:inline-flex'>
 							<div className='w-8 rounded-full'>
-								<img src={AuthUser?.profileImg || "/avatar-placeholder.png"} />
+								<img src={authUser?.profileImg || "/avatar-placeholder.png"} />
 							</div>
 						</div>
 						<div className='flex justify-between flex-1'>
 							<div className='hidden md:block'>
-								<p className='text-white font-bold text-sm w-20 truncate'>{AuthUser?.data.fullName}</p>
-								<p className='text-slate-500 text-sm'>@{AuthUser?.data.username}</p>
+								<p className='text-white font-bold text-sm w-20 truncate'>{authUser?.data.fullName}</p>
+								<p className='text-slate-500 text-sm'>@{authUser?.data.username}</p>
 							</div>
 							
 						</div>
