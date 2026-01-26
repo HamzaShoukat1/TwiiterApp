@@ -3,16 +3,36 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
-import { UseDeleteNotification, UseNotification } from "../../mutationsAndQueries.tsx";
+import { deleteNoti, Notifications } from "../../mutationsAndQueries.tsx";
+import {  useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const NotificationPage = () => {
-	const { notifications, isLoading } = UseNotification()
-	const { deleteNotification } = UseDeleteNotification()
+	const queryClient =  useQueryClient()
+	const { data: notifications, isLoading } = useQuery({
+		queryKey: ["notifications"],
+		queryFn: () => Notifications()
+	})
+	const { mutate: deleteNotification } = useMutation({
+		mutationFn: () => deleteNoti(),
+
+		onSuccess: () => {
+			toast.success("notification deleted successfully")
+			queryClient.invalidateQueries({ queryKey: ["notifications"] })
+			// queryClient.setQueryData(["notifications"], []);
+
+		},
+		onError: (error) => {
+			if (error instanceof Error) {
+				toast.error(error.message)
+			} else {
+				toast.error("delelte notification  failed")
+			}
+		}
+	})
 
 
-	const deleteNotifications = () => {
-		deleteNotification()
-	};
+
 
 	return (
 		<>
@@ -20,28 +40,29 @@ const NotificationPage = () => {
 				<div className='flex justify-between items-center p-4 border-b border-gray-700'>
 					<p className='font-bold'>Notifications</p>
 					{notifications?.length > 0 && (
-							<div className='dropdown '>
-						<div tabIndex={0} role='button' className='m-1'>
-							<IoSettingsOutline className='w-4' />
+						<div className='dropdown '>
+							<div tabIndex={0} role='button' className='m-1'>
+								<IoSettingsOutline className='w-4' />
+							</div>
+							<ul
+								tabIndex={0}
+								className='dropdown-content z-1 menu p-2 shadow bg-base-100 rounded-box w-52'
+							>
+								<li>
+									<button
+									className="cursor-pointer"
+										onClick={(e) => {
+											e.preventDefault();
+											deleteNotification()
+										}}
+									>
+										Delete all notifications
+									</button>
+								</li>
+							</ul>
 						</div>
-						<ul
-							tabIndex={0}
-							className='dropdown-content z-1 menu p-2 shadow bg-base-100 rounded-box w-52'
-						>
-							<li>
-										<button
-									onClick={(e) => {
-										e.preventDefault();
-										deleteNotifications();
-									}}
-								>
-									Delete all notifications
-								</button>
-							</li>
-						</ul>
-					</div>
 					)}
-				
+
 				</div>
 				{isLoading && (
 					<div className='flex justify-center h-full items-center'>

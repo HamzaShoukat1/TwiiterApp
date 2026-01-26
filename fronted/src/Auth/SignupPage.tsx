@@ -3,13 +3,17 @@ import { MdOutlineMail } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
 import { MdPassword } from "react-icons/md";
 import { MdDriveFileRenameOutline } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, type FormEvent } from "react";
-import { UseSignUp } from "../mutationsAndQueries.tsx";
+import { signup } from "../mutationsAndQueries.tsx";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import LoadingSpinner from "../components/LoadingSpinner.tsx";
 // http://localhost:8003/api/v1/auth/signup 
 
 
 export default function SignupPage() {
+  const navigate = useNavigate()
   const [formData, setformData] = useState({
     email: "",
     username: "",
@@ -17,7 +21,17 @@ export default function SignupPage() {
     password: "",
   })
 
-  const { Signup, isPending, isError, error } = UseSignUp();
+  const {mutate:Signup,isPending,isError,error} = useMutation({
+    mutationFn: signup,
+    onSuccess: () => {
+      toast.success("Account created successfully");
+      navigate("/");
+    },
+    onError: (error) => {
+      if (error instanceof Error) toast.error(error.message);
+      else toast.error("Account creation failed");
+    },
+  })
 
 
 
@@ -102,7 +116,7 @@ export default function SignupPage() {
               value={formData.password}
             />
           </label>
-          <button type="submit" className='btn rounded-full btn-primary text-white'>{isPending ? "Loading..." : "Sign up"}</button>
+          <button type="submit" className='btn rounded-full btn-primary text-white'>{isPending ? (<LoadingSpinner />): "Sign up"}</button>
           {isError && error instanceof Error && <p className='text-red-500 text-xs' >{error.message}</p>}
 
 

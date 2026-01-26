@@ -4,19 +4,36 @@ import React, { useRef, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 import toast from "react-hot-toast";
 import { useCurrentUser } from "../../../hooks/getCurrentUser";
-import { UseCreatePost } from "../../../mutationsAndQueries.tsx";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { CreatePost } from "../../../mutationsAndQueries.tsx";
 
-const CreatePost = () => {
+
+const Createpost = () => {
+	const queryClient = useQueryClient()
 	const [text, setText] = useState("");
 	const [img, setImg] = useState<string | null>(null);
 	const imgRef = useRef<HTMLInputElement | null>(null);
-	const {CreatePost,isError,isPending,error} = UseCreatePost()
+	// const {CreatePost,isError,isPending,error} = UseCreatePost()
+	const { mutate: createPost, isPending, isError, error } = useMutation({
+		mutationFn: (formData: FormData) => CreatePost(formData),
+		onSuccess: () => {
+			toast.success("Post created successfully!");
+			queryClient.invalidateQueries({ queryKey: ["posts"] });
+			setText("");
+			setImg(null);
+			if (imgRef.current) imgRef.current.value = "";
+		},
+		onError: (err) => {
+			if (err instanceof Error) toast.error(err.message);
+			else toast.error("Post creation failed");
+		},
+
+	})
 
 	// Fetch current user
 	const { authUser } = useCurrentUser()
 	console.log(authUser)
 
-	console.log(CreatePost)
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -25,17 +42,11 @@ const CreatePost = () => {
 			return
 		}
 		const formData = new FormData()
-		formData.append("text",text)
-		if(imgRef?.current?.files?.[0]){
-			      formData.append("postimg", imgRef.current.files[0]);
+		formData.append("text", text)
+		if (imgRef?.current?.files?.[0]) {
+			formData.append("postimg", imgRef.current.files[0]);
 		}
-		CreatePost(formData,{
-			onSuccess:()=> {
-				setText(""),
-				setImg(null)
-
-			}
-		})
+		createPost(formData)
 	};
 
 	const handleImgChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,7 +65,7 @@ const CreatePost = () => {
 		<div className='flex p-4 items-start gap-4 border-b border-gray-700'>
 			<div className='avatar'>
 				<div className='w-8 rounded-full'>
-					<img src={ "/avatar-placeholder.png"} />
+					<img src={"/avatar-placeholder.png"} />
 				</div>
 			</div>
 			<form className='flex flex-col gap-2 w-full' onSubmit={handleSubmit}>
@@ -98,4 +109,4 @@ const CreatePost = () => {
 		</div>
 	);
 };
-export default CreatePost;
+export default Createpost;

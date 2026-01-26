@@ -1,7 +1,8 @@
 import PostSkeleton from "./PostSkeletan";
 import Post from "../../Post";
 import { useCurrentUser } from "../../../hooks/getCurrentUser";
-import { UseGetAllPosts } from "../../../mutationsAndQueries.tsx";
+import { GetAllPosts } from "../../../mutationsAndQueries.tsx";
+import { useQuery } from "@tanstack/react-query";
 
 const Posts = ({ feedType }: any) => {
 
@@ -23,27 +24,28 @@ const Posts = ({ feedType }: any) => {
 
 	// Fetch current user
 	const { authUser, isLoading } = useCurrentUser()
+	const {data:Posts,isPending:ispostloading,} = useQuery({
+		queryKey: ["posts",feedType],
+		queryFn: ()=>GetAllPosts(POST_ENDPOINT)
 
-
-	const { Posts, isRefetching, ispostloading } = UseGetAllPosts({
-		endpoint: POST_ENDPOINT,
-		feedType,
-		enabled: !!authUser
 	})
+
+
+
 
 	return (
 		<>
-			{(isLoading || isRefetching || ispostloading) && (
+			{(isLoading  || ispostloading) && (
 				<div className='flex flex-col justify-center'>
 					<PostSkeleton />
 					<PostSkeleton />
 					<PostSkeleton />
 				</div>
 			)}
-			{!isLoading && !isRefetching && Posts?.length === 0 && <p className='text-center my-4'>No posts in this tab. Switch 👻</p>}
-			{!isLoading && !isRefetching && Posts && (
+			{!isLoading &&  Posts?.length === 0 && <p className='text-center my-4'>No posts in this tab. Switch 👻</p>}
+			{!isLoading  && Posts && (
 				<div>
-					{Posts.map((post: any) => (
+					{Posts?.map((post: any) => (
 						<Post key={post._id} post={post} currentUserId={authUser?.data._id} />
 					))}
 				</div>

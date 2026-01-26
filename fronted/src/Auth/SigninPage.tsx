@@ -1,19 +1,32 @@
 
 import { MdOutlineMail } from "react-icons/md";
 import { MdPassword } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, type FormEvent } from "react";
-import { UseSignin } from "../mutationsAndQueries.tsx";
+import { signin } from "../mutationsAndQueries.tsx";
+import toast from "react-hot-toast";
+import { useMutation } from "@tanstack/react-query";
+import LoadingSpinner from "../components/LoadingSpinner.tsx";
 
 
 
 export default function SignupPage() {
+  const navigate = useNavigate()
   const [formData, setformData] = useState({
     email: "",
     password: "",
   })
-  const { Signin, isError, isPending, error } = UseSignin()
-
+  const {mutate:Signin,isPending,isError,error} = useMutation({
+    mutationFn: signin,
+    onSuccess: () => {
+      toast.success("login  successfully");
+      navigate("/");
+    },
+    onError: (error) => {
+      if (error instanceof Error) toast.error(error.message);
+      else toast.error("login  failed");
+    },
+  })
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     Signin(formData)
@@ -64,7 +77,7 @@ export default function SignupPage() {
               value={formData.password}
             />
           </label>
-          <button type="submit" className='btn rounded-full btn-primary text-white'>{isPending ? "loading" : "Signin"}</button>
+          <button type="submit" className='btn rounded-full btn-primary text-white'>{isPending ? (<LoadingSpinner />) : "Signin"}</button>
           {isError && error instanceof Error && <p className='text-red-500 text-xs' >{error.message}</p>}
 
 

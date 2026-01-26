@@ -2,8 +2,10 @@ import { FaRegComment, FaRegHeart } from "react-icons/fa";
 
 import { BiRepost } from "react-icons/bi";
 import { useState } from "react";
-import { UseCommentPost, useLikesAndUnlike } from "../../../mutationsAndQueries.tsx";
+import { CommentPost, likePost } from "../../../mutationsAndQueries.tsx";
 import LoadingSpinner from "../../LoadingSpinner";
+import toast from "react-hot-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 
 export default function PostStates({ currentUserId, post }: { currentUserId?: string, post: any }) {
@@ -13,21 +15,57 @@ export default function PostStates({ currentUserId, post }: { currentUserId?: st
     const isLiked = currentUserId ? likes.includes(currentUserId) : false
 
 
+    const queryClient = useQueryClient();
 
-    const { LikedPost, isLiking } = useLikesAndUnlike({
-        post,
-        onSuccess: (updatedLikes) => setLikes(updatedLikes)
+    const { mutate: LikedPost, isPending: isLiking } = useMutation({
+        mutationFn: () => likePost(post._id),
+        onSuccess: (updatedLikes: string[]) => {
+            setLikes(updatedLikes)
 
+            queryClient.setQueryData(["posts"], (oldData: any | undefined) => {
+                if (!oldData) return [];
+                return oldData.map((p: any) => {
+                    if (p._id === post._id) {
+                        return { ...p, likes: updatedLikes }
+
+                    }
+                    return p
+                });
+
+            })
+        },
+        onError: (error) => {
+            if (error instanceof Error) toast.error(error.message);
+            else toast.error("Something went wrong");
+        },
     });
-    const { CommentPost, isCommenting } = UseCommentPost()
+    const { mutate: commentPost, isPending: isCommenting } = useMutation({
+        mutationFn: (text:string) => CommentPost(post._id, text),
+        onSuccess: () => {
+            toast.success("comment addedd successfully")
+
+            queryClient.invalidateQueries({
+                queryKey: ["posts"]
+            })
+
+
+        },
+
+        
+        
+        onError: (error) => {
+            if (error instanceof Error) toast.error(error.message);
+            else toast.error("Something went wrong");
+        },
+    })
+
+
+    // const { CommentPost, isCommenting } = UseCommentPost()
 
     const handlePostComment = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!comment.trim() || isCommenting) return;
-        CommentPost({
-            postId: post._id,
-            text: comment
-        });
+        commentPost(comment)
         setComment("")
 
     };

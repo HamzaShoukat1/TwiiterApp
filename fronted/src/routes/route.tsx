@@ -24,7 +24,7 @@ const router = createBrowserRouter(
       //private route
 
         <Route element={<Rootlayout />}>
-          <Route index element={<HomePage />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="notifications" element={<NotificationPage />} />
           <Route path="profile/:username" element={<ProfilePage />} />
 
