@@ -6,12 +6,10 @@ import { Apierror } from "../Utils/apiError.js";
 
 const getNotifications = asynchandler(async (req, res) => {
     const userId = req.user._id
-    console.log("USER ID:", userId);
-    const all = await NOTISCHEMA.find();
-    console.log("ALL NOTIS:", all);
+    await NOTISCHEMA.updateMany({ to: userId, read: false }, { read: true }) //update(filter,update)
+    const all = await NOTISCHEMA.find({to:userId});
 
     //🔹 Mark notifications as read
-    await NOTISCHEMA.updateMany({ to: userId, read: false }, { read: true }) //update(filter,update)
 
     return res.status(200).json(
         new Apiresponse(200, all, "noti send successfully")
@@ -22,9 +20,10 @@ const getNotifications = asynchandler(async (req, res) => {
 });
 const deleteNotifications = asynchandler(async (req, res) => {
     const userId = req.user._id
-    await NOTISCHEMA.deleteMany({ to: userId })
+   const result = await NOTISCHEMA.deleteMany({ to: userId })
+   console.log("result",result.deletedCount)
     return res.status(200).json(
-        new Apiresponse(200, {}, "noti deleted successfully")
+        new Apiresponse(200, {deletedCount:result.deletedCount}, "noti deleted successfully")
     )
 });
 const deleteSingleNotification = asynchandler(async (req, res) => {

@@ -6,7 +6,7 @@ const router = Router()
 
 router.route("/").get(verifyjwt,getNotifications)
 
-router.route("/").delete(verifyjwt,deleteNotifications)
+router.delete('/', verifyjwt, deleteNotifications);
 
 // router.route("/:id").delete(verifyjwt,deleteSingleNotification)
 
