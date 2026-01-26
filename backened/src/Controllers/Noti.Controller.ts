@@ -7,7 +7,7 @@ import { Apierror } from "../Utils/apiError.js";
 const getNotifications = asynchandler(async (req, res) => {
     const userId = req.user._id
     await NOTISCHEMA.updateMany({ to: userId, read: false }, { read: true }) //update(filter,update)
-    const all = await NOTISCHEMA.find({to:userId});
+    const all = await NOTISCHEMA.find({to:userId}).populate("from","username profileImage")
 
     //🔹 Mark notifications as read
 
