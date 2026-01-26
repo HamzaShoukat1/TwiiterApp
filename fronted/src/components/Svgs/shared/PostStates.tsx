@@ -6,11 +6,11 @@ import { UseCommentPost, useLikesAndUnlike } from "../../../mutationsAndQueries.
 import LoadingSpinner from "../../LoadingSpinner";
 
 
-export default function PostStates({currentUserId,post}:{currentUserId?:string,post:any}) {
+export default function PostStates({ currentUserId, post }: { currentUserId?: string, post: any }) {
     const [likes, setLikes] = useState(post.likes); // start with initial likes
     // const likes = post.likes;
     const [comment, setComment] = useState("");
-  const isLiked = currentUserId ? likes.includes(currentUserId) : false
+    const isLiked = currentUserId ? likes.includes(currentUserId) : false
 
 
 
@@ -19,16 +19,17 @@ export default function PostStates({currentUserId,post}:{currentUserId?:string,p
         onSuccess: (updatedLikes) => setLikes(updatedLikes)
 
     });
-    const {CommentPost,isCommenting} = UseCommentPost({
-        post:post,
-        comment:comment
-    })
+    const { CommentPost, isCommenting } = UseCommentPost()
 
     const handlePostComment = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log("comment:", comment);
-        if(isCommenting) return
-        CommentPost()
+        if (!comment.trim() || isCommenting) return;
+        CommentPost({
+            postId: post._id,
+            text: comment
+        });
+        setComment("")
+
     };
 
     const handleLikePost = () => {
@@ -71,11 +72,11 @@ export default function PostStates({currentUserId,post}:{currentUserId?:string,p
                             </p>
                         )}
 
-                        {post.comments.map((c:any) => (
+                        {post.comments.map((c: any) => (
                             <div key={c._id} className="flex gap-2 items-start">
                                 <div className="avatar w-8 rounded-full">
                                     <img
-                                        src={ "/avatar-placeholder.png"}
+                                        src={"/avatar-placeholder.png"}
                                     />
                                 </div>
                                 <div>
@@ -83,7 +84,7 @@ export default function PostStates({currentUserId,post}:{currentUserId?:string,p
                                         <span className="font-bold">
                                             {c.user.fullName}
                                         </span>
-                                  
+
                                     </div>
                                     <div className="text-sm">{c.text}</div>
                                 </div>
@@ -111,6 +112,10 @@ export default function PostStates({currentUserId,post}:{currentUserId?:string,p
                     <button>close</button>
                 </form>
             </dialog>
+
+
+
+
 
             {/* Repost */}
             <div className="flex gap-1 items-center group cursor-pointer">
@@ -143,7 +148,7 @@ export default function PostStates({currentUserId,post}:{currentUserId?:string,p
                     {likes.length}
                 </span>
             </div>
-         
+
 
 
         </>

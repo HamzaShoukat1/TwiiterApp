@@ -117,9 +117,7 @@ export const useLikesAndUnlike = ({ post, onSuccess }: { post: any, onSuccess?: 
       const res = await fetch(`/api/v1/post/like/${post._id}`, {
         method: "POST",
       });
-      console.log("Raw response object:", res);
       const data = await res.json();
-      console.log("Parsed response data:", data);
       if (!res.ok) throw new Error(data.message || "Post like failed");
       return data.data
     },
@@ -182,17 +180,17 @@ export const UseGetAllPosts = ({ endpoint, feedType, enabled }: { endpoint: stri
   enabled
   return { Posts, ispostloading, isRefetching }
 };
-export const UseCommentPost = ({ post, comment }: { post: any, comment: string }) => {
+export const UseCommentPost = () => {
   const queryClient = useQueryClient()
 
   const { mutate: CommentPost, isPending: isCommenting } = useMutation({
-    mutationFn: async () => {
-      const res = await fetch(`/api/v1/post/comment/${post._id}`, {
+    mutationFn: async ({ postId, text }: { postId: string, text: string }) => {
+      const res = await fetch(`/api/v1/post/comment/${postId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ text: comment })
+        body: JSON.stringify({ text })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "add  comment failed");
@@ -200,6 +198,7 @@ export const UseCommentPost = ({ post, comment }: { post: any, comment: string }
     },
     onSuccess: () => {
       toast.success("comment addedd successfully")
+
       queryClient.invalidateQueries({
         queryKey: ["posts"]
       })
@@ -214,3 +213,104 @@ export const UseCommentPost = ({ post, comment }: { post: any, comment: string }
 
   return { CommentPost, isCommenting };
 };
+
+export const UseCreatePost = () => {
+  const queryClient = useQueryClient()
+  const { mutate: CreatePost, isError, isPending, error } = useMutation({
+    mutationFn: async (formData: FormData) => {
+      const res = await fetch("/api/v1/post/create", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.message || "post creation failed")
+      console.log(data)
+      return data
+
+    },
+
+
+    onSuccess: () => {
+      toast.success("post created successfully")
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
+
+    },
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(error.message)
+      } else {
+        toast.error("Post creation creation failed")
+      }
+    }
+  })
+  return { CreatePost, isPending, isError, error }
+
+};
+
+export const UseNotification = () => {
+  const { data: notifications, isLoading, isError } = useQuery({
+    queryKey: ["notifications"],
+    queryFn: async () => {
+      try {
+        const res = await fetch("/api/v1/notification");
+
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.message || "cannot fetch posts")
+        console.log(data)
+        return data.data
+
+
+      }
+
+
+      catch (error) {
+        if (error instanceof Error) {
+          console.error(error)
+          throw error
+        } else {
+          throw new Error("Something went wrong")
+
+        }
+      }
+    },
+
+  })
+  return { notifications, isLoading, isError }
+
+}
+export const UseDeleteNotification = () => {
+  const queryClient = useQueryClient()
+  const { mutate: deleteNotification } = useMutation({
+    mutationFn: async () => {
+      const res = await fetch("/api/v1/notification", {
+        method: "DELETE",
+                credentials: "include",
+      });
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.message || "delete notification failed")
+          console.log("Delete response:", data);
+      return data
+
+    },
+
+
+    onSuccess: () => {
+      toast.success("notification deleted successfully")
+      queryClient.invalidateQueries({queryKey: ["notifications"]})
+        // queryClient.setQueryData(["notifications"], []);
+
+    },
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(error.message)
+      } else {
+        toast.error("delelte notification  failed")
+      }
+    }
+
+  })
+  return {deleteNotification}
+}
+

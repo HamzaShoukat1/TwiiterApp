@@ -13,6 +13,7 @@ import ErrorPage from "../components/ErrorPage"
 
 const router = createBrowserRouter(
   createRoutesFromElements(
+      <Route element={<ProtectedRoute />}>
     <Route errorElement={<ErrorPage />} path='/' element={<App />}>
       //public route
       <Route element={<AuthLayout />}>
@@ -21,7 +22,6 @@ const router = createBrowserRouter(
       </Route>
 
       //private route
-      <Route element={<ProtectedRoute />}>
 
         <Route element={<Rootlayout />}>
           <Route index element={<HomePage />} />

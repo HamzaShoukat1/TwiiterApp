@@ -2,67 +2,20 @@ import { CiImageOn } from "react-icons/ci";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import React, { useRef, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useCurrentUser } from "../../../hooks/getCurrentUser";
+import { UseCreatePost } from "../../../mutationsAndQueries.tsx";
 
 const CreatePost = () => {
 	const [text, setText] = useState("");
 	const [img, setImg] = useState<string | null>(null);
 	const imgRef = useRef<HTMLInputElement | null>(null);
+	const {CreatePost,isError,isPending,error} = UseCreatePost()
 
 	// Fetch current user
 	const { authUser } = useCurrentUser()
 	console.log(authUser)
-	const queryClient = useQueryClient()
-	const { mutate: CreatePost, isError, isPending, error } = useMutation({
-		mutationFn: async () => {
-			const formData = new FormData()
 
-			formData.append("text", text)
-
-			if (imgRef.current?.files?.[0]) {
-				formData.append("postimg", imgRef.current?.files?.[0])
-			}
-			try {
-				const res = await fetch("/api/v1/post/create", {
-					method: "POST",
-					body: formData
-				})
-
-				const data = await res.json()
-				if (!res.ok) throw new Error(data.message || "post creation failed")
-				console.log(data)
-				return data
-
-			} catch (error) {
-				if (error instanceof Error) {
-					console.error(error)
-					throw error
-				} else {
-					throw new Error("Something went wrong while")
-				}
-
-
-
-			};
-
-		},
-		onSuccess: () => {
-			setText('')
-			setImg(null)
-			toast.success("post created successfully")
-			queryClient.invalidateQueries({ queryKey: ['posts'] })
-
-		},
-		onError: (error) => {
-			if (error instanceof Error) {
-				toast.error(error.message)
-			} else {
-				toast.error("Post creation creation failed")
-			}
-		}
-	})
 	console.log(CreatePost)
 
 	const handleSubmit = (e: React.FormEvent) => {
@@ -71,7 +24,18 @@ const CreatePost = () => {
 			toast.error("Post cannot be empty");
 			return
 		}
-		CreatePost()
+		const formData = new FormData()
+		formData.append("text",text)
+		if(imgRef?.current?.files?.[0]){
+			      formData.append("postimg", imgRef.current.files[0]);
+		}
+		CreatePost(formData,{
+			onSuccess:()=> {
+				setText(""),
+				setImg(null)
+
+			}
+		})
 	};
 
 	const handleImgChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -129,7 +93,7 @@ const CreatePost = () => {
 						{isPending ? "Posting..." : "Post"}
 					</button>
 				</div>
-				{isError && <div className='text-red-500'>{error.message}</div>}
+				{isError && <div className='text-red-500'>{error?.message}</div>}
 			</form>
 		</div>
 	);
