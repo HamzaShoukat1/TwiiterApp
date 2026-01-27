@@ -7,6 +7,7 @@ import { Apierror } from "../Utils/apiError.js";
 import { Apiresponse } from "../Utils/apiResponse.js";
 import { asynchandler } from "../Utils/asynchandler.js";
 import { NOTISCHEMA } from "../Models/Notification.model.js";
+import mongoose from "mongoose";
 
 const createPost = asynchandler(async (req, res) => {
     const { text } = req.body;
@@ -202,17 +203,22 @@ const getallPost = asynchandler(async (_req, res) => {
 })
 const getLikedPost = asynchandler(async (req, res) => {
     const userId = req.params.id
+    console.log("REQ PARAMS ID 👉", req.params.id);
+
+  if (!userId) throw new Apierror(400, "User ID is required");
     const user = await USERSCHEMA.findById(userId)
     if (!user) {
         throw new Apierror(404, "user not found")
     }
-    const likedPosts = await POSTSCHEMA.find({ _id: { $in: user.likedPost } }).populate({
+    const likedPosts = await POSTSCHEMA.find({ _id: { $in: user.likedPost.map((id)=>  new mongoose.Types.ObjectId(id)) } }).populate({
         path: "user",
         select: "-password -refreshToken"
     }).populate({
         path: "comments.user",
         select: "-password -refreshToken"
     })
+    console.log("USER LIKED POSTS 👉", user.likedPost);
+
 
     return res.status(200).json(
         new Apiresponse(200, likedPosts, "likes post fetched successfully")

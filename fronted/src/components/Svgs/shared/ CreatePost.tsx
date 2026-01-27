@@ -5,7 +5,7 @@ import { IoCloseSharp } from "react-icons/io5";
 import toast from "react-hot-toast";
 import { useCurrentUser } from "../../../hooks/getCurrentUser";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { CreatePost } from "../../../mutationsAndQueries.tsx";
+import { CreatePost } from "../../../Apis.tsx/index.ts";
 
 
 const Createpost = () => {

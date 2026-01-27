@@ -1,5 +1,3 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
 
 // api.ts (or a separate file for API calls)
 export const signup = async (formData: {
@@ -39,6 +37,14 @@ export const signin = async (formData: {
   if (!res.ok) throw new Error(data.message || "Signin failed");
 
   return data;
+};
+export const fetchAuthUser = async () => {
+  const res = await fetch("/api/v1/auth/currentUser", {
+    credentials: "include",
+  });
+
+  if (!res.ok) return null;
+  return res.json();
 };
 
 
@@ -138,7 +144,27 @@ export const deleteNoti = async () => {
   }
 
 
-}
+};
+export const UserProfile = async (username:any) => {
+  try {
+    const res = await fetch(`/api/v1/user/profile/${username}`)
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || "cannot fetch user profile")
+    console.log(data)
+    return data.data
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log(error)
+      throw error
+    } else {
+      throw new Error("Something went wrong")
+
+    }
+
+  }
+
+
+};
 
 
 

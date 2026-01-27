@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import LoadingSpinner from "./LoadingSpinner";
 import { FaRegBookmark } from "react-icons/fa6";
 
-import { formatRelativeTime } from "../lib/createAtfunc";
+import { formatRelativeTime } from "../lib";
 import PostStates from "./Svgs/shared/PostStates";
 type PostProps = {
   post: PostType;

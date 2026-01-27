@@ -2,7 +2,7 @@ import { FaRegComment, FaRegHeart } from "react-icons/fa";
 
 import { BiRepost } from "react-icons/bi";
 import { useState } from "react";
-import { CommentPost, likePost } from "../../../mutationsAndQueries.tsx";
+import { CommentPost, likePost } from "../../../Apis.tsx/index.ts";
 import LoadingSpinner from "../../LoadingSpinner";
 import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

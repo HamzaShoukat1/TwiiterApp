@@ -1,3 +1,23 @@
+export const formatMemberSinceDate = (createdAt:any) => {
+	const date = new Date(createdAt);
+	const months = [
+		"January",
+		"February",
+		"March",
+		"April",
+		"May",
+		"June",
+		"July",
+		"August",
+		"September",
+		"October",
+		"November",
+		"December",
+	];
+	const month = months[date.getMonth()];
+	const year = date.getFullYear();
+	return `Joined ${month} ${year}`;
+};
 /**
  * Formats a timestamp into a human-readable relative time string (e.g., "5 minutes ago").
  * @param {string} timestampString The ISO 8601 timestamp string (e.g., "2025-01-24T12:00:00Z").

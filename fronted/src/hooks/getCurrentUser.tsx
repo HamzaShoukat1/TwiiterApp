@@ -1,13 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchAuthUser } from "../Apis.tsx";
 
-export const fetchAuthUser = async () => {
-  const res = await fetch("/api/v1/auth/currentUser", {
-    credentials: "include",
-  });
 
-  if (!res.ok) return null;
-  return res.json();
-};
 
 export const useCurrentUser = () => {
   const {

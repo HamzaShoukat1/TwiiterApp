@@ -5,7 +5,7 @@ import { MdPassword } from "react-icons/md";
 import { MdDriveFileRenameOutline } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, type FormEvent } from "react";
-import { signup } from "../mutationsAndQueries.tsx";
+import { signup } from "../Apis.tsx/index.ts";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../components/LoadingSpinner.tsx";
