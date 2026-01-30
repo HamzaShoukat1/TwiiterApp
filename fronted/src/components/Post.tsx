@@ -8,6 +8,7 @@ import { FaRegBookmark } from "react-icons/fa6";
 
 import { formatRelativeTime } from "../lib";
 import PostStates from "./Svgs/shared/PostStates";
+import { useCurrentUser } from "../hooks/getCurrentUser";
 type PostProps = {
   post: PostType;
   currentUserId?: string;
@@ -16,6 +17,7 @@ type PostProps = {
 
 const Post = ({ post, currentUserId }: PostProps) => {
 
+  const {authUser} = useCurrentUser()
   //like mutation
 
   const queryClient = useQueryClient()
@@ -71,10 +73,12 @@ const Post = ({ post, currentUserId }: PostProps) => {
           to={`/profile/${postOwner.username}`}
           className="w-8 rounded-full overflow-hidden"
         >
-          <img
-            src={"/avatar-placeholder.png"}
-            alt="avatar"
-          />
+      <img
+  src={authUser?.data?.profileImage?.url || "/avatar-placeholder.png"}
+  className="w-8 h-8 rounded-full object-cover"
+  alt="avatar"
+/>
+
         </Link>
       </div>
 

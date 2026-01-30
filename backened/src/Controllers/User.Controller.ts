@@ -5,6 +5,7 @@ import { asynchandler } from "../Utils/asynchandler.js";
 import { NOTISCHEMA } from "../Models/Notification.model.js";
 import mongoose from "mongoose";
 import { deleteFromCloudinary, uploadCloudinary } from "../Services/Cloudinary.js";
+import {type  MulterFile } from "../Types/types.js";
 
 const getUserProfile = asynchandler(async (req, res) => {
   const { username } = req.params
@@ -198,109 +199,183 @@ const updateCurrentPassword = asynchandler(async (req, res) => {
 });
 
 
-const updateProfilePic = asynchandler(async (req, res) => {
-  const localProfilePic = req.file?.path;
-  if (!localProfilePic) {
-    throw new Apierror(400, "Avatar file is missing");
+// const updateProfilePic = asynchandler(async (req, res) => {
+//   const localProfilePic = req.file?.path;
+  
+//   if (!localProfilePic) {
+//     throw new Apierror(400, "Avatar file is missing");
+//   }
+
+//   // 1️⃣ Upload new image
+//   const uploadedImage = await uploadCloudinary(localProfilePic);
+//   if (!uploadedImage?.url || !uploadedImage?.publicId) {
+//     throw new Apierror(500, "Error while uploading profile image");
+//   }
+
+//   // 2️⃣ Get OLD publicId BEFORE update
+//   const existingUser = await USERSCHEMA.findById(req.user._id).select(
+//     "profileImage.publicId"
+//   );
+
+//   if (!existingUser) {
+//     await deleteFromCloudinary(uploadedImage.publicId);
+//     throw new Apierror(404, "User not found");
+//   }
+
+//   const oldPublicId = existingUser.profileImage?.publicId;
+
+//   // 3️⃣ Update DB with new image
+//   const user = await USERSCHEMA.findByIdAndUpdate(
+//     req.user._id,
+//     {
+//       $set: {
+//         profileImage: {
+//           url: uploadedImage.url,
+//           publicId: uploadedImage.publicId,
+//         },
+//       },
+//     },
+//     { new: true, runValidators: true }
+//   ).select("-password -refreshToken");
+
+//   if (!user) {
+//     await deleteFromCloudinary(uploadedImage.publicId);
+//     throw new Apierror(500, "Failed to update profile image");
+//   }
+
+//   // 4️⃣ Delete OLD image AFTER success
+//   if (oldPublicId) {
+//     await deleteFromCloudinary(oldPublicId);
+//   }
+
+//   return res.status(200).json(
+//     new Apiresponse(200, user, "Profile image updated successfully")
+//   );
+// });
+
+// const updateUserCoverImage = asynchandler(async (req, res) => {
+//   const coverLocalPath = req.file?.path;
+  
+//   if (!coverLocalPath) {
+//     throw new Apierror(400, "Cover image file is missing");
+//   }
+
+//   // 1️⃣ Upload new image
+//   const uploadedImage = await uploadCloudinary(coverLocalPath);
+//   if (!uploadedImage?.url || !uploadedImage?.publicId) {
+//     throw new Apierror(500, "Error while uploading cover image");
+//   }
+
+//   // 2️⃣ Fetch OLD publicId BEFORE update
+//   const existingUser = await USERSCHEMA.findById(req.user._id).select(
+//     "coverImage.publicId"
+//   );
+
+//   if (!existingUser) {
+//     await deleteFromCloudinary(uploadedImage.publicId);
+//     throw new Apierror(404, "User not found");
+//   }
+
+//   const oldPublicId = existingUser.coverImage?.publicId;
+
+//   // 3️⃣ Update DB
+//   const user = await USERSCHEMA.findByIdAndUpdate(
+//     req.user._id,
+//     {
+//       $set: {
+//         coverImage: {
+//           url: uploadedImage.url,
+//           publicId: uploadedImage.publicId,
+//         },
+//       },
+//     },
+//     { new: true, runValidators: true }
+//   ).select("-password -refreshToken");
+
+//   if (!user) {
+//     await deleteFromCloudinary(uploadedImage.publicId);
+//     throw new Apierror(500, "Failed to update cover image");
+//   }
+
+//   // 4️⃣ Delete OLD image AFTER success
+//   if (oldPublicId) {
+//     await deleteFromCloudinary(oldPublicId);
+//   }
+
+//   return res.status(200).json(
+//     new Apiresponse(200, user, "Cover image updated successfully")
+//   );
+// });
+const updateProfileAndCover = asynchandler(async (req, res) => {
+  // multer: upload.fields([{ name: "profileImage" }, { name: "coverImage" }])
+  const files = req.files as MulterFile
+  const profileFile = files?.profileImage?.[0];
+  const coverFile = files?.coverImage?.[0];
+
+  const updatedFields: any = {}; // to update DB
+  const oldPublicIds: string[] = []; // to delete old images after success
+
+  // 1️⃣ Handle profile image
+  if (profileFile) {
+    const uploadedProfile = await uploadCloudinary(profileFile.path);
+    if (!uploadedProfile?.url || !uploadedProfile?.publicId)
+      throw new Apierror(500, "Error while uploading profile image");
+
+    const existingUser = await USERSCHEMA.findById(req.user._id).select("profileImage.publicId");
+    if (!existingUser) {
+      await deleteFromCloudinary(uploadedProfile.publicId);
+      throw new Apierror(404, "User not found");
+    }
+
+    if (existingUser.profileImage?.publicId) oldPublicIds.push(existingUser.profileImage.publicId);
+
+    updatedFields.profileImage = {
+      url: uploadedProfile.url,
+      publicId: uploadedProfile.publicId,
+    };
   }
 
-  // 1️⃣ Upload new image
-  const uploadedImage = await uploadCloudinary(localProfilePic);
-  if (!uploadedImage?.url || !uploadedImage?.publicId) {
-    throw new Apierror(500, "Error while uploading profile image");
+  // 2️⃣ Handle cover image
+  if (coverFile) {
+    const uploadedCover = await uploadCloudinary(coverFile.path);
+    if (!uploadedCover?.url || !uploadedCover?.publicId)
+      throw new Apierror(500, "Error while uploading cover image");
+
+    const existingUser = await USERSCHEMA.findById(req.user._id).select("coverImage.publicId");
+    if (!existingUser) {
+      await deleteFromCloudinary(uploadedCover.publicId);
+      throw new Apierror(404, "User not found");
+    }
+
+    if (existingUser.coverImage?.publicId) oldPublicIds.push(existingUser.coverImage.publicId);
+
+    updatedFields.coverImage = {
+      url: uploadedCover.url,
+      publicId: uploadedCover.publicId,
+    };
   }
-
-  // 2️⃣ Get OLD publicId BEFORE update
-  const existingUser = await USERSCHEMA.findById(req.user._id).select(
-    "profileImage.publicId"
-  );
-
-  if (!existingUser) {
-    await deleteFromCloudinary(uploadedImage.publicId);
-    throw new Apierror(404, "User not found");
-  }
-
-  const oldPublicId = existingUser.profileImage?.publicId;
-
-  // 3️⃣ Update DB with new image
-  const user = await USERSCHEMA.findByIdAndUpdate(
-    req.user._id,
-    {
-      $set: {
-        profileImage: {
-          url: uploadedImage.url,
-          publicId: uploadedImage.publicId,
-        },
-      },
-    },
-    { new: true, runValidators: true }
-  ).select("-password -refreshToken");
-
-  if (!user) {
-    await deleteFromCloudinary(uploadedImage.publicId);
-    throw new Apierror(500, "Failed to update profile image");
-  }
-
-  // 4️⃣ Delete OLD image AFTER success
-  if (oldPublicId) {
-    await deleteFromCloudinary(oldPublicId);
-  }
-
-  return res.status(200).json(
-    new Apiresponse(200, user, "Profile image updated successfully")
-  );
-});
-
-const updateUserCoverImage = asynchandler(async (req, res) => {
-  const coverLocalPath = req.file?.path;
-  if (!coverLocalPath) {
-    throw new Apierror(400, "Cover image file is missing");
-  }
-
-  // 1️⃣ Upload new image
-  const uploadedImage = await uploadCloudinary(coverLocalPath);
-  if (!uploadedImage?.url || !uploadedImage?.publicId) {
-    throw new Apierror(500, "Error while uploading cover image");
-  }
-
-  // 2️⃣ Fetch OLD publicId BEFORE update
-  const existingUser = await USERSCHEMA.findById(req.user._id).select(
-    "coverImage.publicId"
-  );
-
-  if (!existingUser) {
-    await deleteFromCloudinary(uploadedImage.publicId);
-    throw new Apierror(404, "User not found");
-  }
-
-  const oldPublicId = existingUser.coverImage?.publicId;
 
   // 3️⃣ Update DB
   const user = await USERSCHEMA.findByIdAndUpdate(
     req.user._id,
-    {
-      $set: {
-        coverImage: {
-          url: uploadedImage.url,
-          publicId: uploadedImage.publicId,
-        },
-      },
-    },
+    { $set: updatedFields },
     { new: true, runValidators: true }
   ).select("-password -refreshToken");
 
   if (!user) {
-    await deleteFromCloudinary(uploadedImage.publicId);
-    throw new Apierror(500, "Failed to update cover image");
+    // rollback uploads
+    if (updatedFields.profileImage) await deleteFromCloudinary(updatedFields.profileImage.publicId);
+    if (updatedFields.coverImage) await deleteFromCloudinary(updatedFields.coverImage.publicId);
+    throw new Apierror(500, "Failed to update images");
   }
 
-  // 4️⃣ Delete OLD image AFTER success
-  if (oldPublicId) {
-    await deleteFromCloudinary(oldPublicId);
+  // 4️⃣ Delete OLD images AFTER success
+  for (const oldId of oldPublicIds) {
+    await deleteFromCloudinary(oldId);
   }
 
   return res.status(200).json(
-    new Apiresponse(200, user, "Cover image updated successfully")
+    new Apiresponse(200, user, "Profile & Cover image updated successfully")
   );
 });
 
@@ -311,10 +386,11 @@ export {
   getSuggestedUser,
   updateCurrentPassword,
   updateAccountDetails,
-  updateProfilePic,
-  updateUserCoverImage
+  updateProfileAndCover
+//   updateProfilePic,
+//   updateUserCoverImage
+// }
 }
-
 
 
 // $in:Field value exists in the array */

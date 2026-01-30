@@ -6,7 +6,7 @@ import SignupPage from "../Auth/SignupPage"
 import Rootlayout from "../Root/Rootlayout"
 import { HomePage } from "../Root/index"
 import NotificationPage from "../Root/pages/Nitifications"
-import ProfilePage from "../Root/ProfilePage"
+import ProfilePage from "../Root/pages/ProfilePage"
 import ProtectedRoute from '../components/ProectedRoute'
 import ErrorPage from "../components/ErrorPage"
 

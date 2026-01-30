@@ -15,7 +15,10 @@ export type Comment = {
 export type PostType = {
   _id: string;
   text: string;
-  postimg?: string;
+  postimg?: {
+    url:string,
+    publicId:string,
+  }
   user: User;
   likes: string[]; // userIds
   comments: Comment[];

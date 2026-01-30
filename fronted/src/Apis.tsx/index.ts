@@ -102,70 +102,70 @@ export const CreatePost = async (formData: FormData) => {
 };
 
 export const Notifications = async () => {
-  try {
-    const res = await fetch("/api/v1/notification")
-    const data = await res.json()
-    if (!res.ok) throw new Error(data.message || "cannot fetch notification")
-    console.log(data)
-    return data.data
-  } catch (error) {
-    if (error instanceof Error) {
-      console.log(error)
-      throw error
-    } else {
-      throw new Error("Something went wrong")
 
-    }
-
-  }
+  const res = await fetch("/api/v1/notification")
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.message || "cannot fetch notification")
+  console.log(data)
+  return data.data
+}
 
 
-};
 export const deleteNoti = async () => {
-  try {
-    const res = await fetch("/api/v1/notification", {
-      method: "DELETE",
-      credentials: "include",
 
-    })
-    const data = await res.json()
-    if (!res.ok) throw new Error(data.message || "cannot delet notification")
-    console.log(data)
-    return data
-  } catch (error) {
-    if (error instanceof Error) {
-      console.log(error)
-      throw error
-    } else {
-      throw new Error("Something went wrong")
+  const res = await fetch("/api/v1/notification", {
+    method: "DELETE",
+    credentials: "include",
 
-    }
-
-  }
+  })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.message || "cannot delet notification")
+  console.log(data)
+  return data
+}
 
 
-};
-export const UserProfile = async (username:any) => {
-  try {
-    const res = await fetch(`/api/v1/user/profile/${username}`)
-    const data = await res.json()
-    if (!res.ok) throw new Error(data.message || "cannot fetch user profile")
-    console.log(data)
-    return data.data
-  } catch (error) {
-    if (error instanceof Error) {
-      console.log(error)
-      throw error
-    } else {
-      throw new Error("Something went wrong")
+export const UserProfile = async (username: any) => {
 
-    }
-
-  }
+  const res = await fetch(`/api/v1/user/profile/${username}`)
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.message || "cannot fetch user profile")
+  console.log(data)
+  return data.data
+}
 
 
-};
 
+export const UseUpdateProfilePic = async (formData: FormData) => {
+
+  const res = await fetch("/api/v1/user/update-profile", {
+    method: "PATCH",
+
+    body: formData,
+    credentials: "include"
+  })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.message || "cannot fetch user profile")
+  console.log(data)
+  return data
+}
+
+
+
+// export const UseUpdateCoverPic = async (formData: FormData) => {
+
+//   const res = await fetch("/api/v1/user/profile-image", {
+//     method: "PATCH",
+
+//     body: formData,
+//     credentials: "include"
+
+//   })
+//   const data = await res.json()
+//   if (!res.ok) throw new Error(data.message || "cannot fetch user coverpic")
+//   console.log(data)
+//   return data
+// }
 
 
 

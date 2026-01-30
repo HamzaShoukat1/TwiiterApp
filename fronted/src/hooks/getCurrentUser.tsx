@@ -12,6 +12,7 @@ export const useCurrentUser = () => {
     queryKey: ["authUser"],
     queryFn: fetchAuthUser,
     retry: false, 
+    refetchOnWindowFocus:false
   });
 
   return { authUser, isLoading, isError };

@@ -3,26 +3,36 @@ import { Link, useParams } from "react-router-dom";
 
 // import Posts from "../../components/common/Posts";
 // import ProfileHeaderSkeleton from "../../components/skeletons/ProfileHeaderSkeleton";
-// import EditProfileModal from "./EditProfileModal";
+// import EditProfileModal from "../components/Svgs/shared/EditProfileModel.tsx";
 
 
 import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { useQuery } from "@tanstack/react-query";
-import { UserProfile } from "../Apis.tsx";
-import ProfileHeaderSkeleton from "../components/Svgs/shared/ProfileHeader.tsx";
-import { formatMemberSinceDate } from "../lib/index.ts";
-import Posts from "../components/Svgs/shared/Posts.tsx";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { UserProfile, UseUpdateProfilePic } from "../../Apis.tsx/index.ts";
+import ProfileHeaderSkeleton from "../../components/Svgs/shared/ProfileHeader.tsx";
+import { formatMemberSinceDate } from "../../lib/index.ts";
+import Posts from "../../components/Svgs/shared/Posts.tsx";
+import { useCurrentUser } from "../../hooks/getCurrentUser.tsx";
+import useFollow from "../../hooks/UseFollow.tsx";
+import LoadingSpinner from "../../components/LoadingSpinner.tsx";
+import EditProfileModal from "../../components/Svgs/shared/EditProfileModel.tsx";
+import toast from "react-hot-toast";
 
 const ProfilePage = () => {
 	const [coverImage, setCoverImage] = useState<string | null>(null);
 	const [profileImage, setProfileImage] = useState<string | null>(null);
 	const [feedType, setFeedType] = useState("posts");
-	const coverImgRef = useRef(null);
-	const profileImgRef = useRef(null);
+	const coverImgRef = useRef<HTMLInputElement | null>(null);
+	const profileImgRef = useRef<HTMLInputElement | null>(null);
+	const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+	const [coverImageFile, setcoverImageFile] = useState<File | null>(null);
+
+
 	const { username } = useParams()
+	const queryClient = useQueryClient()
 
 
 	const { data: user, isLoading, refetch, isRefetching } = useQuery({
@@ -31,7 +41,45 @@ const ProfilePage = () => {
 		enabled: !!username
 	})
 
-	const isMyProfile = true
+	useEffect(() => {
+		if (user) {
+			setProfileImage(user.profileImage?.url || null);
+			setCoverImage(user.coverImage?.url || null);
+		}
+	}, [user]);
+
+	const { mutate: updateProfile, isPending: isprofileuploading } = useMutation({
+		mutationFn: (formData: FormData) => UseUpdateProfilePic(formData),
+		onSuccess: () => {
+			// const updatesUser = res.data
+			toast.success("Profile  updated successfully")
+
+			// queryClient.setQueryData(["authUser"], (oldData: any) => {
+			// 	if (!oldData) return {data:updatesUser}
+			// 	return {
+			// 		...oldData,
+			// 		data: {
+			// 			...oldData.data,
+			// 			profileImage: updatesUser.profileImage,
+			// 			coverImage: updatesUser.coverImage,
+			// 		}
+			// 	}
+			// });
+			queryClient.invalidateQueries({ queryKey: ["userProfile"] })
+			queryClient.invalidateQueries({ queryKey: ["authUser"] })
+
+
+
+
+		}
+	});
+
+	const { follow, isPending } = useFollow()
+	const { authUser } = useCurrentUser()
+	console.log("az", authUser)
+
+	const isMyProfile = authUser?.data?._id === user?._id
+	const amIFollowing = authUser?.data.following?.includes(user?._id)
 	const memberSinceData = formatMemberSinceDate(user?.createdAt)
 	const handleImgChange = ({ target }: React.ChangeEvent<HTMLInputElement>, type: "coverImage" | "profileImage") => {
 		const file = target.files?.[0];
@@ -40,15 +88,22 @@ const ProfilePage = () => {
 		const reader = new FileReader();
 		reader.onload = () => {
 			const img = reader.result as string;
-			type === "coverImage" ? setCoverImage(img) : setProfileImage(img);
+			if (type === "profileImage") {
+				setProfileImage(img)
+				setProfileImageFile(file)
+			} else {
+				setCoverImage(img)
+				setcoverImageFile(file)
+			}
 		};
 		reader.readAsDataURL(file);
+
 	};
 	useEffect(() => {
 		refetch()
 	}, [username, refetch])
 
-
+	const hasChanges = !!profileImageFile || !!coverImageFile;
 
 
 
@@ -65,17 +120,15 @@ const ProfilePage = () => {
 								<Link to='/'>
 									<FaArrowLeft className='w-4 h-4' />
 								</Link>
-								<div className='flex flex-col'>
-									<p className='font-bold text-lg'>{user?.fullName}</p>
-									<span className='text-sm text-slate-500'> {user?.postsCount}posts</span>
-								</div>
+
 							</div>
 							{/* COVER IMG */}
 							<div className='relative group/cover'>
 								<img
 									src={coverImage || user?.coverImage || "/cover.png"}
-									className='h-52 w-full object-cover'
-									alt='cover image'
+									alt=""
+									className='h-52 w-full bg-gray-400 object-cover'
+
 								/>
 								{isMyProfile && (
 									<div
@@ -114,22 +167,46 @@ const ProfilePage = () => {
 								</div>
 							</div>
 							<div className='flex justify-end px-4 mt-5'>
-								{isMyProfile}
+								{/* {isMyProfile && <h1 className="text-white">Update</h1>} */}
+								{isMyProfile && (
+									<EditProfileModal authUser={authUser} />
+								)}
 								{!isMyProfile && (
 									<button
 										className='btn btn-outline rounded-full btn-sm'
-										onClick={() => alert("Followed successfully")}
+										onClick={() => follow(user?._id)}
 									>
-										Follow
+										{isPending && <LoadingSpinner />}
+										{!isPending && amIFollowing && "Unfollow"}
+										{!isPending && !amIFollowing && "Follow"}
+
 									</button>
 								)}
 								{(coverImage || profileImage) && (
-									<button
-										className='btn btn-primary rounded-full btn-sm text-white px-4 ml-2'
-										onClick={() => alert("Profile updated successfully")}
-									>
-										Update
-									</button>
+
+								<button
+									disabled={isprofileuploading || !hasChanges}
+									className={`btn btn-primary rounded-full btn-sm text-white px-4 ml-2 `}
+									onClick={(e) => {
+										e.preventDefault()
+										if (!hasChanges) return;
+
+										const formData = new FormData();
+										if (profileImageFile) formData.append("profileImage", profileImageFile);
+										if (coverImageFile) formData.append("coverImage", coverImageFile);
+
+										updateProfile(formData, {
+											onSuccess: () => {
+												// reset local files after successful upload
+												setProfileImageFile(null);
+												setcoverImageFile(null);
+											}
+										});
+									}}
+								>
+									{isprofileuploading ? <LoadingSpinner /> : 'Update'}
+								</button>
+
 								)}
 							</div>
 

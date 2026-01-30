@@ -43,7 +43,7 @@ const Posts = ({ feedType, userId, username }: any) => {
 		enabled: !!POST_ENDPOINT
 
 	})
-
+console.log("a",Posts)
 	useEffect(() => {
 		refetch()
 	 
