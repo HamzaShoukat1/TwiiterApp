@@ -58,12 +58,7 @@ const followUnfollowUser = asynchandler(async (req, res) => {
         $pull: { following: targetUserId }
       })
     ])
-           const follownot = await NOTISCHEMA.create({
-            from: currentUserId,
-            to: targetUser._id,
-            type: "unfollow"
-        })
-        console.log("Created Notification:", follownot);
+       
     //return id of user as res
     return res.status(200).json(
       new Apiresponse(200, {}, "User unfollowed successfully")
