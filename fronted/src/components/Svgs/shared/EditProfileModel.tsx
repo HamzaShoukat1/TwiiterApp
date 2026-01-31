@@ -1,4 +1,4 @@
-import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
+import {  useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { UseupdateAccountDetails } from "../../../Apis.tsx";
 import toast from "react-hot-toast";

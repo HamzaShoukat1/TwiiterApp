@@ -13,7 +13,7 @@ router.get("/suggested", verifyjwt, getSuggestedUser)
 
 
 //for profile updatiing
-router.patch("/password", verifyjwt, updateCurrentPassword);
+router.patch("/change-password", verifyjwt, updateCurrentPassword);
 router.patch("/account", verifyjwt, updateAccountDetails);
 router.patch("/update-profile", verifyjwt,
     upload.fields([

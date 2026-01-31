@@ -134,26 +134,31 @@ const getSuggestedUser = asynchandler(async (req, res) => {
 });
 
 const updateCurrentPassword = asynchandler(async (req, res) => {
-  const { currentPassword, newPassword } = req.body
+  const { currentPassword, newPassword,confirmPassword } = req.body
 
 
-  if (!currentPassword || !newPassword) {
-    throw new Apierror(400, "Both current and new password are required to change password");
+  if (!currentPassword || !newPassword || !confirmPassword) {
+    throw new Apierror(400, "Both current,new and confirm  passwords are required to change password");
   };
-  if (newPassword.length < 6) {
+  if (newPassword.length < 6 || confirmPassword.length < 6) {
     throw new Apierror(400, "Password must be at least 6 characters long");
   }
-  if (newPassword === currentPassword) {
-    throw new Apierror(400, " password must not same ")
+ 
+  if(newPassword !== confirmPassword){
+    throw new Apierror(400, "New and confirm passwords must match");
+
   }
 
   const user = await USERSCHEMA.findById(req.user?._id)
   if (!user) {
-    throw new Apierror(400, "user not found")
+    throw new Apierror(404, "user not found")
   }
   const isPasswordValid = await user.isPasswordCorrect(currentPassword);
   if (!isPasswordValid) {
     throw new Apierror(401, "Invalid current password");
+  }
+    if (newPassword === currentPassword) {
+    throw new Apierror(400, "New password must be different from current");
   }
 
   //update password

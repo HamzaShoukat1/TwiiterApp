@@ -150,17 +150,32 @@ export const UseUpdateProfilePic = async (formData: FormData) => {
   return data
 }
 
-export const UseupdateAccountDetails = async (formData:any) => {
+export const UseupdateAccountDetails = async (formData: any) => {
 
-  const res = await fetch("/api/v1/user/account",{
-    method:"PATCH",
-    headers:{
+  const res = await fetch("/api/v1/user/account", {
+    method: "PATCH",
+    headers: {
       "Content-Type": "application/json"
     },
-    body:JSON.stringify(formData)
+    body: JSON.stringify(formData)
   })
   const data = await res.json()
   if (!res.ok) throw new Error(data.message || "cannot fetch user profile")
+  console.log(data)
+  return data
+};
+
+export const UseUpdatePassword = async (formData: any) => {
+
+  const res = await fetch("/api/v1/user/change-password", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(formData)
+  })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.message || "cannot fetch password")
   console.log(data)
   return data
 }

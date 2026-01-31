@@ -20,6 +20,7 @@ import useFollow from "../../hooks/UseFollow.tsx";
 import LoadingSpinner from "../../components/LoadingSpinner.tsx";
 import EditProfileModal from "../../components/Svgs/shared/EditProfileModel.tsx";
 import toast from "react-hot-toast";
+import EditPasswordModel from "../../components/Svgs/shared/EditPasswordModel.tsx";
 
 const ProfilePage = () => {
 	const [coverImage, setCoverImage] = useState<string | null>(null);
@@ -167,10 +168,13 @@ const ProfilePage = () => {
 									</div>
 								</div>
 							</div>
-							<div className='flex justify-end px-4 mt-5'>
-								{/* {isMyProfile && <h1 className="text-white">Update</h1>} */}
+							<div className='flex justify-end px-4 mt-5 gap-3'>
+
 								{isMyProfile && (
+									<>
 									<EditProfileModal authUser={authUser} />
+									<EditPasswordModel />
+									</>
 								)}
 								{!isMyProfile && (
 									<button
@@ -183,11 +187,13 @@ const ProfilePage = () => {
 
 									</button>
 								)}
+							
 								{(coverImage || profileImage) && (
+									
 
 								<button
 									disabled={isprofileuploading || !hasChanges}
-									className={`btn btn-primary rounded-full btn-sm text-white px-4 ml-2 `}
+									className={`btn btn-primary rounded-full btn-sm text-white px-4 ml-2 ${!hasChanges &&'hidden'}`}
 									onClick={(e) => {
 										e.preventDefault()
 										if (!hasChanges) return;
