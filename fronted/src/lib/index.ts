@@ -26,7 +26,7 @@ export const formatMemberSinceDate = (createdAt:any) => {
 export function formatRelativeTime(timestampString:any) {
     const now = new Date();
     const pastDate = new Date(timestampString);
-    const secondsElapsed = Math.floor((now - pastDate) / 1000);
+const secondsElapsed = Math.floor((now.getTime() - pastDate.getTime()) / 1000);
 
     // Define time intervals in seconds
     const intervals = [
