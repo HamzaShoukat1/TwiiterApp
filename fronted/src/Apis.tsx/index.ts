@@ -150,93 +150,20 @@ export const UseUpdateProfilePic = async (formData: FormData) => {
   return data
 }
 
+export const UseupdateAccountDetails = async (formData:any) => {
+
+  const res = await fetch("/api/v1/user/account",{
+    method:"PATCH",
+    headers:{
+      "Content-Type": "application/json"
+    },
+    body:JSON.stringify(formData)
+  })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.message || "cannot fetch user profile")
+  console.log(data)
+  return data
+}
 
 
-// export const UseUpdateCoverPic = async (formData: FormData) => {
-
-//   const res = await fetch("/api/v1/user/profile-image", {
-//     method: "PATCH",
-
-//     body: formData,
-//     credentials: "include"
-
-//   })
-//   const data = await res.json()
-//   if (!res.ok) throw new Error(data.message || "cannot fetch user coverpic")
-//   console.log(data)
-//   return data
-// }
-
-
-
-
-
-
-
-
-// export const UseNotification = () => {
-//   const { data: notifications, isLoading, isError } = useQuery({
-//     queryKey: ["notifications"],
-//     queryFn: async () => {
-//       try {
-//         const res = await fetch("/api/v1/notification");
-
-//         const data = await res.json()
-//         if (!res.ok) throw new Error(data.message || "cannot fetch posts")
-//         console.log(data)
-//         return data.data
-
-
-//       }
-
-
-//       catch (error) {
-//         if (error instanceof Error) {
-//           console.error(error)
-//           throw error
-//         } else {
-//           throw new Error("Something went wrong")
-
-//         }
-//       }
-//     },
-
-//   })
-//   return { notifications, isLoading, isError }
-
-// }
-// export const UseDeleteNotification = () => {
-//   const queryClient = useQueryClient()
-//   const { mutate: deleteNotification } = useMutation({
-//     mutationFn: async () => {
-//       const res = await fetch("/api/v1/notification", {
-//         method: "DELETE",
-//         credentials: "include",
-//       });
-
-//       const data = await res.json()
-//       if (!res.ok) throw new Error(data.message || "delete notification failed")
-//       console.log("Delete response:", data);
-//       return data
-
-//     },
-
-
-//     onSuccess: () => {
-//       toast.success("notification deleted successfully")
-//       queryClient.invalidateQueries({ queryKey: ["notifications"] })
-//       // queryClient.setQueryData(["notifications"], []);
-
-//     },
-//     onError: (error) => {
-//       if (error instanceof Error) {
-//         toast.error(error.message)
-//       } else {
-//         toast.error("delelte notification  failed")
-//       }
-//     }
-
-//   })
-//   return { deleteNotification }
-// }
 

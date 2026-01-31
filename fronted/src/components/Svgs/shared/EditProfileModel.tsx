@@ -1,7 +1,10 @@
+import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
+import { UseupdateAccountDetails } from "../../../Apis.tsx";
+import toast from "react-hot-toast";
 // import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
 
-const EditProfileModal = ({ authUser }:any) => {
+const EditProfileModal = ({ authUser }: any) => {
 	const [formData, setFormData] = useState({
 		fullName: "",
 		username: "",
@@ -12,38 +15,52 @@ const EditProfileModal = ({ authUser }:any) => {
 		currentPassword: "",
 	});
 	const dialogref = useRef<HTMLDialogElement | null>(null)
+	const queryClient = useQueryClient()
 
-	// const { updateProfile, isUpdatingProfile } = useUpdateUserProfile();
+	const { mutate: updateProfile, isPending: isUpdatingProfile } = useMutation({
+		mutationFn: UseupdateAccountDetails,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["authUser"] })
+			queryClient.invalidateQueries({ queryKey: ["userProfile"] })
 
-	const handleInputChange = (e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+
+			toast.success("account details updates successfully");
+
+		},
+
+	})
+
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
 	useEffect(() => {
 		if (authUser) {
 			setFormData({
-				fullName: authUser.fullName,
-				username: authUser.username,
-				email: authUser.email,
-				bio: authUser.bio,
-				link: authUser.link,
+				fullName: authUser.data.fullName,
+				username: authUser.data.username,
+				email: authUser.data.email,
+				bio: authUser.data.bio,
+				link: authUser.data.link,
 				newPassword: "",
 				currentPassword: "",
 			});
 		}
 	}, [authUser]);
 
+
+
 	return (
 		<>
 			<button
 				className='btn btn-outline rounded-full btn-sm'
-				onClick={()=> dialogref.current?.showModal()}
+				onClick={() => dialogref.current?.showModal()}
 			>
 				Edit profile
 			</button>
-			<dialog 
-			ref={dialogref}
-			 className='modal '>
+			<dialog
+				ref={dialogref}
+				className='modal '>
 				<div className='modal-box border rounded-md border-gray-700 shadow-md'>
 					<h3 className='font-bold text-lg my-3'>Update Profile</h3>
 					<form
@@ -115,7 +132,7 @@ const EditProfileModal = ({ authUser }:any) => {
 							onChange={handleInputChange}
 						/>
 						<button className='btn btn-primary rounded-full btn-sm text-white'>
-							{/* {isUpdatingProfile ? "Updating..." : "Update"} */}
+							{isUpdatingProfile ? "Updating..." : "Update"}
 						</button>
 					</form>
 				</div>
