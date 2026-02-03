@@ -7,7 +7,6 @@ import { Apierror } from "../Utils/apiError.js";
 import { Apiresponse } from "../Utils/apiResponse.js";
 import { asynchandler } from "../Utils/asynchandler.js";
 import { NOTISCHEMA } from "../Models/Notification.model.js";
-import mongoose from "mongoose";
 
 const createPost = asynchandler(async (req, res) => {
     const { text } = req.body;
@@ -125,70 +124,73 @@ const commentonPost = asynchandler(async (req, res) => {
 
 })
 const LikeUnlikePost = asynchandler(async (req, res) => {
-  const userId = req.user._id;
-  const { id: postId } = req.params;
+    const userId = req.user._id;
+    const { id: postId } = req.params;
 
-  const post = await POSTSCHEMA.findById(postId);
-  if (!post) {
-    throw new Apierror(404, "post not found");
-  }
+    const post = await POSTSCHEMA.findById(postId);
+    if (!post) {
+        throw new Apierror(404, "post not found");
+    }
 
-  const alreadyLiked = post.likes.some(
-    (id) => id.toString() === userId.toString()
-  );
-
-  if (alreadyLiked) {
-    // unlike
-    const updatedPost = await POSTSCHEMA.findByIdAndUpdate(
-      postId,
-      { $pull: { likes: userId } },
-      { new: true }
+    const alreadyLiked = post.likes.some(
+        (id) => id.toString() === userId.toString()
     );
 
-    await USERSCHEMA.findByIdAndUpdate(
-      userId,
-      { $pull: { likedPost: postId } }
-    );
+    if (alreadyLiked) {
+        // unlike
+        const updatedPost = await POSTSCHEMA.findByIdAndUpdate(
+            postId,
+            { $pull: { likes: userId } },
+            { new: true }
+        );
 
-    return res.status(200).json(
-      new Apiresponse(201, updatedPost?.likes, "post unliked successfully")
-    );
+        await USERSCHEMA.findByIdAndUpdate(
+            userId,
+            { $pull: { likedPost: postId } }
+        );
 
-  } else {
-    // like
-    const updatedPost = await POSTSCHEMA.findByIdAndUpdate(
-      postId,
-      { $addToSet: { likes: userId } },
-      { new: true }
-    );
+        return res.status(200).json(
+            new Apiresponse(201, updatedPost?.likes, "post unliked successfully")
+        );
 
-    await USERSCHEMA.findByIdAndUpdate(
-      userId,
-      { $addToSet: { likedPost: postId } }
-    );
+    } else {
+        // like
+        const updatedPost = await POSTSCHEMA.findByIdAndUpdate(
+            postId,
+            { $addToSet: { likes: userId } },
+            { new: true }
+        );
 
-    const newNoti = await NOTISCHEMA.create({
-      from: userId,
-      to: post.user,
-      type: "like"
-    });
-    console.log("Created Notification:", newNoti);
+        await USERSCHEMA.findByIdAndUpdate(
+            userId,
+            { $addToSet: { likedPost: postId } }
+        );
 
-    return res.status(200).json(
-      new Apiresponse(201, updatedPost?.likes, "post liked successfully")
-    );
-  }
+        const newNoti = await NOTISCHEMA.create({
+            from: userId,
+            to: post.user,
+            type: "like"
+        });
+        console.log("Created Notification:", newNoti);
+
+        return res.status(200).json(
+            new Apiresponse(201, updatedPost?.likes, "post liked successfully")
+        );
+    }
 });
 
 const getallPost = asynchandler(async (_req, res) => {
     const posts = await POSTSCHEMA.find().sort({ createdAt: -1 }).populate({
         path: "user",
-        select: "-password -refreshToken"
+        select: "-password -refreshToken",
+
     })
+
         .populate({
             path: "comments.user",
             select: "-password -refreshToken"
         })
+
 
     if (posts.length === 0) {
         return res.status(200).json(
@@ -205,18 +207,23 @@ const getLikedPost = asynchandler(async (req, res) => {
     const userId = req.params.id
     console.log("REQ PARAMS ID 👉", req.params.id);
 
-  if (!userId) throw new Apierror(400, "User ID is required");
+    if (!userId) throw new Apierror(400, "User ID is required");
     const user = await USERSCHEMA.findById(userId)
     if (!user) {
         throw new Apierror(404, "user not found")
     }
-    const likedPosts = await POSTSCHEMA.find({ _id: { $in: user.likedPost.map((id)=>  new mongoose.Types.ObjectId(id)) } }).populate({
-        path: "user",
-        select: "-password -refreshToken"
-    }).populate({
-        path: "comments.user",
-        select: "-password -refreshToken"
+    const likedPosts = await POSTSCHEMA.find({
+        likes: userId
     })
+        .populate({
+            path: "user",
+            select: "-password -refreshToken"
+        })
+        .populate({
+            path: "comments.user",
+            select: "-password -refreshToken"
+        });
+
     console.log("USER LIKED POSTS 👉", user.likedPost);
 
 

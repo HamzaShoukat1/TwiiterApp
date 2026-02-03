@@ -38,16 +38,15 @@ const Posts = ({ feedType, userId, username }: any) => {
 	// Fetch current user
 	const { authUser, isLoading } = useCurrentUser()
 	const { data: Posts, isPending: ispostloading ,refetch,isRefetching} = useQuery({
-		queryKey: ["posts",feedType,userId,username],
+		queryKey: ["posts"],
 		queryFn: () => GetAllPosts(POST_ENDPOINT),
-		enabled: !!POST_ENDPOINT
 
 	})
-console.log("a",Posts)
+console.log("all",Posts)
 	useEffect(() => {
 		refetch()
 	 
-	}, [feedType,username,refetch])
+	}, [feedType,username,refetch,userId])
 	
 
 
@@ -64,7 +63,7 @@ console.log("a",Posts)
 					<PostSkeleton />
 				</div>
 			)}
-			{!isLoading && !isRefetching &&  Posts?.length === 0 && <p className='text-center my-4'>No posts in this tab. Switch 👻</p>}
+			{!isLoading && !isRefetching &&  Posts?.length === 0 && <p className='text-center my-4'>No posts in this tab. Switch </p>}
 			{!isLoading  && !isRefetching && Posts && (
 				<div>
 					{Posts?.map((post: any) => (

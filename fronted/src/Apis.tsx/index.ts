@@ -51,6 +51,7 @@ export const fetchAuthUser = async () => {
 export const likePost = async (postId: string) => {
   const res = await fetch(`/api/v1/post/like/${postId}`, {
     method: "POST",
+    "credentials":"include"
   });
 
   const data = await res.json();
@@ -69,7 +70,7 @@ export const GetAllPosts = async (endpoint: string) => {
 
   if (!res.ok) throw new Error(data.message || "cannot fetch posts");
 
-  return data?.data?.posts ?? []
+  return data?.data?.posts ?? data?.data ?? []
 };
 export const CommentPost = async (postId: string, text: string) => {
   const res = await fetch(`/api/v1/post/comment/${postId}`, {

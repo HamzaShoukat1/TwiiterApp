@@ -7,8 +7,8 @@ import UserRoutes from "./Routes/User.Routes.js";
 import PostRoutes from "./Routes/Post.Routes.js";
 import NotificationRoutes from "./Routes/Notification.Routes.js";
 import { errorHandler } from "./Middlewares/error.middleware.js";
-import dotenv from "dotenv";
-dotenv.config({ path: "./backened/.env" }); // make sure path is correct
+// import dotenv from "dotenv";
+// dotenv.config({ path: "./backened/.env" }); // make sure path is correct
 
 const app = express();
 
@@ -33,16 +33,16 @@ app.use("/api/v1/notification", NotificationRoutes);
 // Error handler
 
 // Production frontend
-if (process.env.NODE_ENV === "production") {
-    const frontendPath = path.join(process.cwd(), "fronted", "dist");
-    app.use(express.static(frontendPath));
+// if (process.env.NODE_ENV === "production") {
+//     const frontendPath = path.join(process.cwd(), "fronted", "dist");
+//     app.use(express.static(frontendPath));
     
 
-app.get(/.*/, (_req, res) => {
-    res.sendFile(path.join(frontendPath, "index.html"));
-});
+// app.get(/.*/, (_req, res) => {
+//     res.sendFile(path.join(frontendPath, "index.html"));
+// });
 
-}
+// }
 app.use(errorHandler);
 
 export { app };
