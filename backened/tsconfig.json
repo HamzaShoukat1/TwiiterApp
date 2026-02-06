@@ -8,13 +8,15 @@
     // See also https://aka.ms/tsconfig/module
     "module": "nodenext",
     "target": "esnext",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./Types"
+    ],
     // "types": [],
     // For nodejs:
     // "lib": ["esnext"],
     "types": [
-    ],
-    "typeRoots": [
-      "./Types"
+      // "node",
     ],
     // and npm install -D @types/node
     // Other Outputs
