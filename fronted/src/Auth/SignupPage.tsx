@@ -24,8 +24,8 @@ export default function SignupPage() {
   const {mutate:Signup,isPending,isError,error} = useMutation({
     mutationFn: signup,
     onSuccess: () => {
-      toast.success("Account created successfully");
-      navigate("/");
+      toast.success("Account created successfully,sign in to continue");
+      navigate("/sign-in");
     },
     onError: (error) => {
       if (error instanceof Error) toast.error(error.message);

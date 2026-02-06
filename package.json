@@ -5,7 +5,7 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "dev": "concurrently tsc -w -p backened/tsconfig.json node --watch  backened/dist/server.js",
+    "dev": " tsc -w -p backened/tsconfig.json & node --watch --env-file=backened/.env backened/dist/server.js",
     "start": "cross-env NODE_ENV=production node backened/dist/server.js",
     "build": "tsc -p backened/tsconfig.json && npm run build --prefix fronted"
   },
