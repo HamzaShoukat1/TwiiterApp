@@ -84,7 +84,6 @@ web_modules/
 .env.local
 dist/
 *.js
-*.d.ts
 *.map
 
 # parcel-bundler cache (https://parceljs.org/)
