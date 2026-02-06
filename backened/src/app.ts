@@ -7,8 +7,8 @@ import UserRoutes from "./Routes/User.Routes.js";
 import PostRoutes from "./Routes/Post.Routes.js";
 import NotificationRoutes from "./Routes/Notification.Routes.js";
 import { errorHandler } from "./Middlewares/error.middleware.js";
-// import dotenv from "dotenv";
-// dotenv.config({ path: "./backened/.env" }); // make sure path is correct
+import dotenv from "dotenv";
+dotenv.config({ path: "./backened/.env" }); // make sure path is correct
 
 const app = express();
 
