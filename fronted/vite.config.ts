@@ -10,7 +10,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       "/api": {
-        target: "http://localhost:8003",
+        target: "https://twitgram.netlify.app",
         changeOrigin:true
       }
     }
