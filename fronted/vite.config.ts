@@ -6,14 +6,14 @@ export default defineConfig({
   plugins: [react(),
     tailwindcss()
   ],
-  // server: {
-  //   port: 3000,
-  //   proxy: {
-  //     "/api": {
-  //       target: "https://twitgram.netlify.app",
-  //       changeOrigin:true
-  //     }
-  //   }
-  // },
+  server: {
+    port: 3000,
+    proxy: {
+      "/api": {
+        target: "http://localhost:8003",
+        changeOrigin:true
+      }
+    }
+  },
   
 })
