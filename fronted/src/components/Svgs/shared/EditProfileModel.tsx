@@ -11,8 +11,7 @@ const EditProfileModal = ({ authUser }: any) => {
 		email: "",
 		bio: "",
 		link: "",
-		newPassword: "",
-		currentPassword: "",
+	
 	});
 	const dialogref = useRef<HTMLDialogElement | null>(null)
 	const queryClient = useQueryClient()
@@ -42,8 +41,7 @@ const EditProfileModal = ({ authUser }: any) => {
 				email: authUser.data.email,
 				bio: authUser.data.bio,
 				link: authUser.data.link,
-				newPassword: "",
-				currentPassword: "",
+				
 			});
 		}
 	}, [authUser]);
@@ -106,22 +104,7 @@ const EditProfileModal = ({ authUser }: any) => {
 							/>
 						</div>
 						<div className='flex flex-wrap gap-2'>
-							<input
-								type='password'
-								placeholder='Current Password'
-								className='flex-1 input border border-gray-700 rounded p-2 input-md'
-								value={formData.currentPassword}
-								name='currentPassword'
-								onChange={handleInputChange}
-							/>
-							<input
-								type='password'
-								placeholder='New Password'
-								className='flex-1 input border border-gray-700 rounded p-2 input-md'
-								value={formData.newPassword}
-								name='newPassword'
-								onChange={handleInputChange}
-							/>
+							
 						</div>
 						<input
 							type='text'

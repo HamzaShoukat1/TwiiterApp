@@ -172,8 +172,8 @@ const ProfilePage = () => {
 
 								{isMyProfile && (
 									<>
-									<EditProfileModal authUser={authUser} />
-									<EditPasswordModel />
+										<EditProfileModal authUser={authUser} />
+										<EditPasswordModel />
 									</>
 								)}
 								{!isMyProfile && (
@@ -187,32 +187,32 @@ const ProfilePage = () => {
 
 									</button>
 								)}
-							
+
 								{(coverImage || profileImage) && (
-									
 
-								<button
-									disabled={isprofileuploading || !hasChanges}
-									className={`btn btn-primary rounded-full btn-sm text-white px-4 ml-2 ${!hasChanges &&'hidden'}`}
-									onClick={(e) => {
-										e.preventDefault()
-										if (!hasChanges) return;
 
-										const formData = new FormData();
-										if (profileImageFile) formData.append("profileImage", profileImageFile);
-										if (coverImageFile) formData.append("coverImage", coverImageFile);
+									<button
+										disabled={isprofileuploading || !hasChanges}
+										className={`btn btn-primary rounded-full btn-sm text-white px-4 ml-2 ${!hasChanges && 'hidden'}`}
+										onClick={(e) => {
+											e.preventDefault()
+											if (!hasChanges) return;
 
-										updateProfile(formData, {
-											onSuccess: () => {
-												// reset local files after successful upload
-												setProfileImageFile(null);
-												setcoverImageFile(null);
-											}
-										});
-									}}
-								>
-									{isprofileuploading ? <LoadingSpinner /> : 'Update'}
-								</button>
+											const formData = new FormData();
+											if (profileImageFile) formData.append("profileImage", profileImageFile);
+											if (coverImageFile) formData.append("coverImage", coverImageFile);
+
+											updateProfile(formData, {
+												onSuccess: () => {
+													// reset local files after successful upload
+													setProfileImageFile(null);
+													setcoverImageFile(null);
+												}
+											});
+										}}
+									>
+										{isprofileuploading ? <LoadingSpinner /> : 'Update'}
+									</button>
 
 								)}
 							</div>
@@ -226,18 +226,18 @@ const ProfilePage = () => {
 
 								<div className='flex gap-2 flex-wrap'>
 									{user?.link && (
-  <div className='flex gap-1 items-center'>
-    <FaLink className='w-3 h-3 text-slate-500' />
-    <a
-      href={user.link.startsWith("http") ? user.link : `https://${user.link}`}
-      target='_blank'
-      rel='noreferrer'
-      className='text-sm text-blue-500 hover:underline break-all'
-    >
-      {user.link}
-    </a>
-  </div>
-)}
+										<div className='flex gap-1 items-center'>
+											<FaLink className='w-3 h-3 text-slate-500' />
+											<a
+												href={user.link.startsWith("http") ? user.link : `https://${user.link}`}
+												target='_blank'
+												rel='noreferrer'
+												className='text-sm text-blue-500 hover:underline break-all'
+											>
+												{user.link}
+											</a>
+										</div>
+									)}
 
 									<div className='flex gap-2 items-center'>
 										<IoCalendarOutline className='w-4 h-4 text-slate-500' />
