@@ -1,12 +1,13 @@
 import { Apiresponse } from "../Utils/apiResponse.js";
 import { Apierror } from "../Utils/apiError.js";
+import crypto from "crypto"
 import { asynchandler } from "../Utils/asynchandler.js";
 import { USERSCHEMA } from "../Models/User.Model.js";
-// import type { MulterFile } from "../Types/types.js";
-// import { uploadCloudinary } from "../Services/Cloudinary.js";
 import { generateAccessToken, generateRefreshToken } from "../Services/Token.Service.js";
 import { options } from "../Services/Token.Service.js";
 import type { IUser } from "../Types/Model.Types.js";
+import { generateVerificationCode } from "../Services/generateverificationcode.js";
+import { sendPasswordResetEmail, sendResetSuccessEmail, sendVerificationEmail, sendWelComeEmail } from "../Services/Email/email.js";
 
 const generateAcessandRefreshTokens = async (userId: string) => {
     try {
@@ -34,9 +35,7 @@ const generateAcessandRefreshTokens = async (userId: string) => {
 
 }
 
-
-
-const SignUp = asynchandler(async (req:any, res:any) => {
+const SignUp = asynchandler(async (req, res) => {
     //get userdetails for froneted
     //validation not emtpy
     // format check
@@ -62,7 +61,7 @@ const SignUp = asynchandler(async (req:any, res:any) => {
 
 
     const exitsedUser = await USERSCHEMA.findOne({
-        $or: [{ email }, { username }]
+        $or: [{ email: email.toLowerCase() }, { username: username.toLowerCase() }]
     })
     if (exitsedUser) {
         throw new Apierror(400, "user with this email or username already exist")
@@ -97,6 +96,7 @@ const SignUp = asynchandler(async (req:any, res:any) => {
     //     coverImageUrl = { url: coverPic.url, publicId: coverPic.publicId };
     // }
 
+    const { code, expiresAt } = generateVerificationCode()
 
 
 
@@ -105,27 +105,34 @@ const SignUp = asynchandler(async (req:any, res:any) => {
 
     //create user in db
     const userData: Partial<IUser> = {
-        username,
+        username: username.toLowerCase(),
         fullName,
-        email,
+        email: email.toLowerCase(),
         password,
         // profileImage: { url: ProfilePic.url, publicId: ProfilePic.publicId },
         followers: [],
         following: [],
         bio: "",
         link: "",
-        refreshToken: ""
+        refreshToken: "",
+        emailverificationToken: code,
+        emailverificationTokenExpiresAt: expiresAt
+
+
     };
     // if (coverImageUrl) {
     //     userData.coverImage = { url: coverImageUrl.url, publicId: coverImageUrl.publicId };
     // }
     const user = await USERSCHEMA.create(userData)
+    await sendVerificationEmail(user.email, code)
+
 
 
     const createUser = await USERSCHEMA.findById(user._id).select("-password -refreshToken")
     if (!createUser) {
         throw new Apierror(500, "Something wrong while register User")
     };
+
     return res.status(201).json(
         new Apiresponse(201, createUser, "User register successfully")
     )
@@ -140,7 +147,7 @@ const SignUp = asynchandler(async (req:any, res:any) => {
 
 })
 
-const Signin = asynchandler(async (req:any, res:any) => {
+const Signin = asynchandler(async (req, res) => {
     //get daata
     //find the user
     //password check
@@ -166,7 +173,10 @@ const Signin = asynchandler(async (req:any, res:any) => {
     };
 
     const { accessToken, refreshToken } = await generateAcessandRefreshTokens(user._id.toString())
-    const logedInUser = await USERSCHEMA.findById(user._id).select("-password -refreshToken")
+    const logedInUser = await USERSCHEMA.findById(user._id).select("-password -refreshToken -emailverificationToken -emailverificationTokenExpiresAt")
+    user.lastlogin = new Date()
+    await user.save()
+
 
 
     return res.status(200)
@@ -184,7 +194,7 @@ const Signin = asynchandler(async (req:any, res:any) => {
 
 
 })
-const Logout = asynchandler(async (req:any, res:any) => {
+const Logout = asynchandler(async (req: any, res: any) => {
     await USERSCHEMA.findByIdAndUpdate(
         req.user?._id,
         {
@@ -196,6 +206,7 @@ const Logout = asynchandler(async (req:any, res:any) => {
             new: true
         }
     );
+
 
 
     return res.status(200)
@@ -215,9 +226,86 @@ const getCurrentUser = asynchandler(async (req, res) => {
     )
 
 });
+const verifyEmail = asynchandler(async (req, res) => {
+    const { code } = req.body
+    const user = await USERSCHEMA.findOne({
+        emailverificationToken: code,
+        emailverificationTokenExpiresAt: { $gt: new Date() }
+    })
+    if (!user) {
+        throw new Apierror(400, "invalid or expired verification code")
+    }
+
+    user.isVerified = true;
+    delete user.emailverificationToken;
+    delete user.emailverificationTokenExpiresAt;
+
+    await user.save()
+
+    await sendWelComeEmail(user.email, user.username)
+
+    return res.status(200).json(
+        new Apiresponse(200, "email verified successfully")
+    )
+
+
+
+});
+const forgetPassword = asynchandler(async (req, res) => {
+    const { email } = req.body
+    const user = await USERSCHEMA.findOne({ email })
+    if (!user) {
+        throw new Apierror(400, "user not found")
+    }
+    //generate reset tokens
+    const resetTokens = crypto.randomBytes(20).toString("hex");
+    const resetTokenexpiredAt = new Date(Date.now() + 1 * 60 * 60 * 1000)
+
+    user.resetpasswordtokens = resetTokens
+    user.resetpasswordExpiresAt = resetTokenexpiredAt
+    await user.save()
+
+    await sendPasswordResetEmail(user.email, `${process.env.CORS_ORIGIN}/reset-password/${resetTokens}`)
+
+    return res.status(200).json(
+        new Apiresponse(200, "Password reset link sent to your email")
+    )
+
+
+
+});
+const resetPassword = asynchandler(async (req, res) => {
+    const { token } = req.params
+    const { password } = req.body
+    
+    const user = await USERSCHEMA.findOne({
+        resetpasswordtokens: token,
+        resetpasswordExpiresAt: { $gt: new Date() } 
+    } as any)
+    if (!user) {
+        throw new Apierror(400, "invalid or expired reset tokens")
+    }
+    user.password = password
+    if (!password || password.length < 6) {
+  throw new Apierror(400, "Password must be at least 6 characters");
+}
+    delete user.resetpasswordtokens
+    delete user.resetpasswordExpiresAt
+
+    await user.save()
+    await sendResetSuccessEmail(user.email)
+    return res.status(200).json(
+        new Apiresponse(200, "password reset successfully")
+    )
+
+
+})
 export {
     SignUp,
     Signin,
     Logout,
     getCurrentUser,
+    verifyEmail,
+    forgetPassword,
+    resetPassword
 }

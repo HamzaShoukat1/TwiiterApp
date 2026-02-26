@@ -26,9 +26,10 @@ export const generateRefreshToken = function (payload: TokenPayload) {
 };
 
 
-export const options:CookieOptions = {
+export const options: CookieOptions = {
     httpOnly: true, //prevent xss attack
     sameSite: "strict", //csrd attack
-    secure: process.env.NODE_ENV !== "development" //only true in production
-    
+    secure: process.env.NODE_ENV === "production", //only true in production
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+
 }

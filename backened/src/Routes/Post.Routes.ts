@@ -10,6 +10,8 @@ const router = Router()
 
 router.route("/create").post(
     verifyjwt, upload.single("postimg"), createPost)
+
+    
 router.route("/like/:id").post(
     verifyjwt, LikeUnlikePost)
 router.route("/comment/:id").post(

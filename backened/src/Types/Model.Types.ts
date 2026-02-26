@@ -7,9 +7,9 @@ interface IrofileImage {
 }
 
 interface IComment {
-  user:Types.ObjectId
-  text:string,
-  createdAt?:Date
+  user: Types.ObjectId
+  text: string,
+  createdAt?: Date
 
 }
 export interface IUser extends Document {
@@ -25,8 +25,15 @@ export interface IUser extends Document {
   coverImage?: IrofileImage
   bio: string;
   link: string;
-  likedPost:Types.ObjectId[];
-  refreshToken: string
+  likedPost: Types.ObjectId[];
+  refreshToken: string,
+  lastlogin: Date,
+  isVerified: boolean,
+  resetpasswordtokens?: string;
+  resetpasswordExpiresAt?: Date;
+
+  emailverificationToken?: string;
+  emailverificationTokenExpiresAt?: Date;
   isPasswordCorrect(password: string): Promise<boolean>
 
 };

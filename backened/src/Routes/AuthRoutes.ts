@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getCurrentUser, SignUp } from "../Controllers/Auth.Controller.js";
+import { forgetPassword, getCurrentUser, resetPassword, SignUp, verifyEmail } from "../Controllers/Auth.Controller.js";
 import { upload } from "../Middlewares/Multer.middleware.js";
 import { Signin } from "../Controllers/Auth.Controller.js";
 import { Logout } from "../Controllers/Auth.Controller.js";
@@ -28,5 +28,10 @@ router.route("/logout").post(
     Logout)
 
 router.get("/currentUser", verifyjwt, getCurrentUser)
+router.route("/verify-email").post(verifyEmail)
+router.route("/forget-password").post(forgetPassword)
+router.route("/reset-password/:token").post(resetPassword)
+
+
 
 export default router

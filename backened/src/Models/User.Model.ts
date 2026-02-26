@@ -15,8 +15,9 @@ const userSchema = new Schema<IUser>({
     password: {
         type: String,
         required: true,
-        minLenth: 6,
+        minLength: 6,
     },
+
     email: {
         type: String,
         required: true,
@@ -38,43 +39,57 @@ const userSchema = new Schema<IUser>({
             default: "",
         },
 
-            publicId: {
-                type: String,
-            }
-        },
-         coverImage: {
+        publicId: {
+            type: String,
+        }
+    },
+    coverImage: {
         url: {
             type: String,
             default: "",
         },
 
-            publicId: {
-                type: String,
-            }
-        },
-    
-        bio: {
-            type: String,
-            default: ""
-        },
-        link: {
-            type: String,
-            default: ""
-        },
-        likedPost: [
-            {
-                type:mongoose.Schema.Types.ObjectId,
-                ref: "POSTSCHEMA",
-                default: []
-            },
-        ],
-        refreshToken: {
+        publicId: {
             type: String,
         }
     },
-   
 
-    
+    bio: {
+        type: String,
+        default: ""
+    },
+    link: {
+        type: String,
+        default: ""
+    },
+    likedPost: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "POSTSCHEMA",
+            default: []
+        },
+    ],
+    refreshToken: {
+        type: String,
+    },
+    lastlogin: {
+        type: Date,
+        default: Date.now
+
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    resetpasswordtokens: String,
+    resetpasswordExpiresAt: Date,
+    emailverificationToken: String,
+    emailverificationTokenExpiresAt: Date,
+
+},
+
+
+
     { timestamps: true })
 
 userSchema.pre("save", async function (): Promise<void> {

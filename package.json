@@ -5,9 +5,9 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "dev": " tsc -w -p backened/tsconfig.json & node --watch --env-file=backened/.env backened/dist/server.js",
-    "start": "cross-env NODE_ENV=production node backened/dist/server.js",
-    "build": "tsc -p backened/tsconfig.json && npm run build --prefix fronted"
+    "dev": "tsx --watch --env-file=backened/.env  backened/src/server.ts",
+    "start": "node --env-file=backened/.env backened/dist/server.js",
+    "build": "tsc -p backened/tsconfig.json"
   },
   "keywords": [],
   "author": "",
@@ -21,9 +21,10 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
+    "mailtrap": "^4.4.0",
     "mongoose": "^9.1.3",
     "multer": "^2.0.2",
-    "typescript": "^5.9.3"
+    "tsx": "^4.21.0"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
@@ -32,6 +33,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
     "@types/node": "^25.2.1",
-    "cross-env": "^10.1.0"
+    "cross-env": "^10.1.0",
+    "typescript": "^5.9.3"
   }
 }
