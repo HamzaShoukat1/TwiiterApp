@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom"
 import XSvg from "../components/Svgs/X.svg"
 
 export default function AuthLayout() {
+
   return (
     <div className="flex h-screen">
       <div className="hidden xl:flex h-screen w-1/3 items-center justify-center">

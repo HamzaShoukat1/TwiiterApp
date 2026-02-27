@@ -13,25 +13,26 @@ import ErrorPage from "../components/ErrorPage"
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-      <Route element={<ProtectedRoute />}>
-    <Route errorElement={<ErrorPage />} path='/' element={<App />}>
-      //public route
+    <Route path="/" element={<App />} errorElement={<ErrorPage />}>
+
+      {/* Public Routes */}
       <Route element={<AuthLayout />}>
-        <Route path="/sign-in" element={<SigninPage />} />
-        <Route path="/sign-up" element={<SignupPage />} />
+        <Route path="sign-in" element={<SigninPage />} />
+        <Route path="sign-up" element={<SignupPage />} />
       </Route>
+      {/* //  */}
+      <Route path="forget-password" element={<h1>Forget Password</h1>} />
+      <Route path="verify-email" element={<h1>Verify Email</h1>} />
+      {/* //  */}
 
-      //private route
-
+      {/* Private Routes */}
+      <Route element={<ProtectedRoute />}>
         <Route element={<Rootlayout />}>
-          <Route path="/" element={<HomePage />} />
+          <Route index element={<HomePage />} />
           <Route path="notifications" element={<NotificationPage />} />
           <Route path="profile/:username" element={<ProfilePage />} />
-
-
         </Route>
       </Route>
-
 
     </Route>
   )

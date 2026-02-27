@@ -159,18 +159,24 @@ const Signin = asynchandler(async (req, res) => {
 
     };
     const user = await USERSCHEMA.findOne({
-        $or: [{ email }]
+        email
 
     });
     if (!user) {
         throw new Apierror(400, "user does not exist")
 
     };
+
+    if (!user.isVerified) {
+        throw new Apierror(400, "Please verify your account before login");
+    }
+
     const isPasswordValid = await user.isPasswordCorrect(password)
     if (!isPasswordValid) {
         throw new Apierror(401, "Invalid password ")
 
     };
+
 
     const { accessToken, refreshToken } = await generateAcessandRefreshTokens(user._id.toString())
     const logedInUser = await USERSCHEMA.findById(user._id).select("-password -refreshToken -emailverificationToken -emailverificationTokenExpiresAt")
