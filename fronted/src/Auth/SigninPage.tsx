@@ -16,7 +16,7 @@ export default function SignupPage() {
     email: "",
     password: "",
   })
-  const {mutate:Signin,isPending,isError,error} = useMutation({
+  const { mutate: Signin, isPending, isError, error } = useMutation({
     mutationFn: signin,
     onSuccess: () => {
       toast.success("login  successfully");
@@ -40,7 +40,7 @@ export default function SignupPage() {
     <div className="max-h-screen m-auto flex h-screen ">
 
       <div className='flex-1 flex flex-col justify-center items-center'>
-        <form className="lg:w-2/3 md:mx-20 flex gap-4 flex-col" onSubmit={handleSubmit}>
+        <form className="lg:w-2/3 md:mx-30 flex gap-4 flex-col" onSubmit={handleSubmit}>
           <h1 className='text-4xl font-extrabold text-white'>let's go.</h1>
 
 
@@ -77,8 +77,17 @@ export default function SignupPage() {
               value={formData.password}
             />
           </label>
-          <button type="submit" className='btn rounded-full btn-primary text-white'>{isPending ? (<LoadingSpinner />) : "Signin"}</button>
-          {isError && error instanceof Error && <p className='text-red-500 text-xs' >{error.message}</p>}
+          <Link to="/forget-password">
+            <p className="text-white cursor-pointer">forget password?</p>
+          </Link>
+        
+          <button type="submit" className='btn rounded-full bg-gray-700   btn-primary text-white'>{isPending ? (<LoadingSpinner />) : "Signin"}</button>
+          {isError &&
+            error instanceof Error &&
+            !error.message.toLowerCase().includes("email") && (
+              <p className='text-red-500 text-xs'>{error.message}</p>
+            )}
+
 
 
 

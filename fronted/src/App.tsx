@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import { Toaster } from 'react-hot-toast';
 
 export default function App() {
- 
+
 
 
 
@@ -10,7 +10,13 @@ export default function App() {
     <div>
       <main>
         <Outlet />
-        <Toaster />
+        <Toaster toastOptions={{
+          style: {
+            background: "black",
+            color: "white",
+            padding: "5px",
+          }
+        }} />
       </main>
     </div>
   );

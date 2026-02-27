@@ -277,18 +277,18 @@ const forgetPassword = asynchandler(async (req, res) => {
 const resetPassword = asynchandler(async (req, res) => {
     const { token } = req.params
     const { password } = req.body
-    
+
     const user = await USERSCHEMA.findOne({
         resetpasswordtokens: token,
-        resetpasswordExpiresAt: { $gt: new Date() } 
+        resetpasswordExpiresAt: { $gt: new Date() }
     } as any)
     if (!user) {
         throw new Apierror(400, "invalid or expired reset tokens")
     }
     user.password = password
     if (!password || password.length < 6) {
-  throw new Apierror(400, "Password must be at least 6 characters");
-}
+        throw new Apierror(400, "Password must be at least 6 characters");
+    }
     delete user.resetpasswordtokens
     delete user.resetpasswordExpiresAt
 

@@ -9,6 +9,7 @@ import { signup } from "../Apis.tsx/index.ts";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../components/LoadingSpinner.tsx";
+import PasswordStrengthMeter from "../components/PassCheckMeter.tsx";
 // http://localhost:8003/api/v1/auth/signup 
 
 
@@ -21,7 +22,7 @@ export default function SignupPage() {
     password: "",
   })
 
-  const {mutate:Signup,isPending,isError,error} = useMutation({
+  const { mutate: Signup, isPending, isError, error } = useMutation({
     mutationFn: signup,
     onSuccess: () => {
       toast.success("Account created successfully,sign in to continue");
@@ -46,10 +47,10 @@ export default function SignupPage() {
 
   }
   return (
-    <div className="max-h-screen m-auto flex h-screen ">
+    <div className="max-h-screen   m-auto flex h-screen ">
 
       <div className='flex-1 flex flex-col justify-center items-center'>
-        <form className="lg:w-2/3 md:mx-20 flex gap-4 flex-col" onSubmit={handleSubmit}>
+        <form className="lg:w-3/4 md:mx-30 flex gap-4 flex-col" onSubmit={handleSubmit}>
           <h1 className='text-4xl font-extrabold text-white'>Join today.</h1>
           <label
             className="input input-bordered rounded flex items-center gap-2
@@ -116,8 +117,17 @@ export default function SignupPage() {
               value={formData.password}
             />
           </label>
-          <button type="submit" className='btn rounded-full btn-primary text-white'>{isPending ? (<LoadingSpinner />): "Sign up"}</button>
-          {isError && error instanceof Error && <p className='text-red-500 text-xs' >{error.message}</p>}
+          <PasswordStrengthMeter password={formData.password} />
+          <h1>
+          </h1>
+          <button type="submit" className='btn bg-gray-700 round
+          ed-full btn-primary text-white'>{isPending ? (<LoadingSpinner />) : "Sign up"}</button>
+
+          {isError &&
+            error instanceof Error &&
+            !error.message.toLowerCase().includes("email") && (
+              <p className='text-red-500 text-xs'>{error.message}</p>
+            )}
 
 
 
