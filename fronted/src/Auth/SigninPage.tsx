@@ -7,21 +7,31 @@ import { signin } from "../Apis.tsx/index.ts";
 import toast from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
 import LoadingSpinner from "../components/LoadingSpinner.tsx";
-
+import { useAppDispatch } from "../hooks/useStore.ts";
+import { type LoginResponse, userinfo } from "../Store/AuthSlice.ts"
 
 
 export default function SignupPage() {
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
   const [formData, setformData] = useState({
     email: "",
     password: "",
   })
-  const { mutate: Signin, isPending, isError, error } = useMutation({
+  const { mutate: Signin, isPending, isError, error } = useMutation<LoginResponse, Error, { email: string, password: string }>({
     mutationFn: signin,
-    onSuccess: () => {
-      toast.success("login  successfully");
-      navigate("/");
-    },
+   onSuccess: (userData) => {
+  toast.success("Login successful");
+
+  if (!userData.data.user.isVerified) {
+    // user is NOT verified, redirect to verification page
+    navigate("/verify-email");
+  } else {
+    // user is verified, save user info and go home
+    dispatch(userinfo(userData));
+    navigate("/");
+  }
+},
     onError: (error) => {
       if (error instanceof Error) toast.error(error.message);
       else toast.error("login  failed");
@@ -80,7 +90,7 @@ export default function SignupPage() {
           <Link to="/forget-password">
             <p className="text-white cursor-pointer">forget password?</p>
           </Link>
-        
+
           <button type="submit" className='btn rounded-full bg-gray-700   btn-primary text-white'>{isPending ? (<LoadingSpinner />) : "Signin"}</button>
           {isError &&
             error instanceof Error &&

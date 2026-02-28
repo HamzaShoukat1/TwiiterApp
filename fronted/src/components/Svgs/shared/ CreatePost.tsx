@@ -3,9 +3,9 @@ import { BsEmojiSmileFill } from "react-icons/bs";
 import React, { useRef, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 import toast from "react-hot-toast";
-import { useCurrentUser } from "../../../hooks/getCurrentUser";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CreatePost } from "../../../Apis.tsx/index.ts";
+import { useAppSelector } from "../../../hooks/useStore.ts";
 
 
 const Createpost = () => {
@@ -31,8 +31,8 @@ const Createpost = () => {
 	})
 
 	// Fetch current user
-	const { authUser } = useCurrentUser()
-	console.log(authUser)
+	const { userData } = useAppSelector(state => state.auth);
+	const user = userData?.data?.user
 
 
 	const handleSubmit = (e: React.FormEvent) => {
@@ -65,7 +65,7 @@ const Createpost = () => {
 		<div className='flex p-4 items-start gap-4 border-b border-gray-700'>
 			<div className='avatar'>
 				<div className='w-8 rounded-full'>
-					<img src={ authUser?.data?.profileImage.url || "/avatar-placeholder.png"} />
+					<img src={ user?.profileImage?.url || "/avatar-placeholder.png"} />
 				</div>
 			</div>
 			<form className='flex flex-col gap-2 w-full' onSubmit={handleSubmit}>

@@ -13,12 +13,12 @@ import { UserProfile, UseUpdateProfilePic } from "../../Apis.tsx/index.ts";
 import ProfileHeaderSkeleton from "../../components/Svgs/shared/ProfileHeader.tsx";
 import { formatMemberSinceDate } from "../../lib/index.ts";
 import Posts from "../../components/Svgs/shared/Posts.tsx";
-import { useCurrentUser } from "../../hooks/getCurrentUser.tsx";
 import useFollow from "../../hooks/UseFollow.tsx";
 import LoadingSpinner from "../../components/LoadingSpinner.tsx";
 import EditProfileModal from "../../components/Svgs/shared/EditProfileModel.tsx";
 import toast from "react-hot-toast";
 import EditPasswordModel from "../../components/Svgs/shared/EditPasswordModel.tsx";
+import { useAppSelector } from "../../hooks/useStore.ts";
 
 const ProfilePage = () => {
 	const [coverImage, setCoverImage] = useState<string | null>(null);
@@ -75,11 +75,11 @@ const ProfilePage = () => {
 	});
 
 	const { follow, isPending } = useFollow()
-	const { authUser } = useCurrentUser()
-	console.log("az", authUser)
+		const { userData } = useAppSelector(state => state.auth);
+		const userdata = userData?.data?.user
 
-	const isMyProfile = authUser?.data?._id === user?._id
-	const amIFollowing = authUser?.data.following?.includes(user?._id)
+	const isMyProfile = userdata?._id === user?._id
+	const amIFollowing = userdata?.following?.includes(user?._id)
 	const memberSinceData = formatMemberSinceDate(user?.createdAt)
 	const handleImgChange = ({ target }: React.ChangeEvent<HTMLInputElement>, type: "coverImage" | "profileImage") => {
 		const file = target.files?.[0];
@@ -170,7 +170,7 @@ const ProfilePage = () => {
 
 								{isMyProfile && (
 									<>
-										<EditProfileModal authUser={authUser} />
+										<EditProfileModal authUser={userdata} />
 										<EditPasswordModel />
 									</>
 								)}
@@ -217,8 +217,8 @@ const ProfilePage = () => {
 
 							<div className='flex flex-col gap-4 mt-14 px-4'>
 								<div className='flex flex-col'>
-									<span className='font-bold text-lg'>{user?.fullName}</span>
-									<span className='text-sm text-slate-500'>@{user?.username}</span>
+									<span className='font-bold text-lg'>{userdata?.fullName}</span>
+									<span className='text-sm text-slate-500'>@{userdata?.username}</span>
 									<span className='text-sm my-1'>{user?.bio}</span>
 								</div>
 
@@ -244,11 +244,11 @@ const ProfilePage = () => {
 								</div>
 								<div className='flex gap-2'>
 									<div className='flex gap-1 items-center'>
-										<span className='font-bold text-xs'>{user?.following.length}</span>
+										<span className='font-bold text-xs'>{userdata?.following.length}</span>
 										<span className='text-slate-500 text-xs'>Following</span>
 									</div>
 									<div className='flex gap-1 items-center'>
-										<span className='font-bold text-xs'>{user?.followers.length}</span>
+										<span className='font-bold text-xs'>{userdata?.followers.length}</span>
 										<span className='text-slate-500 text-xs'>Followers</span>
 									</div>
 								</div>

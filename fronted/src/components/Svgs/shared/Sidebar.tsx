@@ -6,52 +6,58 @@ import { Link, useNavigate } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { useCurrentUser } from "../../../hooks/getCurrentUser";
+import { useAppDispatch, useAppSelector } from "../../../hooks/useStore";
+import { logout } from "../../../Store/AuthSlice";
+import { formatRelativeTime } from "../../../lib";
 const Sidebar = () => {
 	const navigate = useNavigate()
-
-    const { mutate:Logout, } = useMutation({
-    mutationFn: async () => {
-      try {
-        const res = await fetch("/api/v1/auth/logout", {
-          method: "POST",
-		  credentials:"include"
-        
-        })
-
-        const AuthUser = await res.json()
-        if (!res.ok) throw new Error(AuthUser.message || "Signup failed")
-        console.log(AuthUser)
-        return AuthUser
-
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error(error)
-          throw error
-        } else {
-          throw new Error("Something went wrong")
-        }
+	const dispatch = useAppDispatch()
+	const { userData } = useAppSelector(state => state.auth);
+	console.log("21", userData)
+	const user = userData?.data?.user
 
 
+	const { mutate: Logout, } = useMutation({
+		mutationFn: async () => {
+			try {
+				const res = await fetch("/api/v1/auth/logout", {
+					method: "POST",
+					credentials: "include"
 
-      };
+				})
 
-    },
-    onSuccess: () => {
-      toast.success("Account logout successfully")
-      navigate("/sign-in")
+				const AuthUser = await res.json()
+				if (!res.ok) throw new Error(AuthUser.message || "Signup failed")
+				console.log(AuthUser)
+				return AuthUser
 
-    },
-    onError: (error) => {
-      if (error instanceof Error) {
-        toast.error(error.message)
-      } else {
-        toast.error("Logout failed")
-      }
-    }
-  })
-//centrialed
-const {authUser} = useCurrentUser()
+			} catch (error) {
+				if (error instanceof Error) {
+					console.error(error)
+					throw error
+				} else {
+					throw new Error("Something went wrong")
+				}
+
+
+
+			};
+
+		},
+		onSuccess: () => {
+			dispatch(logout())
+			toast.success("Account logout successfully")
+			navigate("/sign-in")
+
+		},
+		onError: (error) => {
+			if (error instanceof Error) {
+				toast.error(error.message)
+			} else {
+				toast.error("Logout failed")
+			}
+		}
+	})
 
 
 	return (
@@ -59,6 +65,9 @@ const {authUser} = useCurrentUser()
 			<div className='sticky top-0 left-0 h-screen flex flex-col border-r border-gray-700 w-20 md:w-full'>
 				<Link to='/' className='flex justify-center md:justify-start'>
 					<XSvg className='px-2 w-12 h-12 rounded-full fill-white hover:bg-stone-900' />
+<p className="mt-3 text-gray-300 text-xs">
+  Account created{user?.lastlogin ? ` • Last  ${formatRelativeTime(user.lastlogin)}` : ""}
+</p>
 				</Link>
 				<ul className='flex flex-col gap-3 mt-4'>
 					<li className='flex justify-center md:justify-start'>
@@ -82,7 +91,7 @@ const {authUser} = useCurrentUser()
 
 					<li className='flex justify-center md:justify-start'>
 						<Link
-							to={`/profile/${authUser?.data.username}`}
+							to={`/profile/${user?.username}`}
 							className='flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
 						>
 							<FaUser className='w-6 h-6' />
@@ -90,33 +99,33 @@ const {authUser} = useCurrentUser()
 						</Link>
 					</li>
 				</ul>
-				{authUser && (
+				{userData && (
 					<Link
-						to={`/profile/${authUser.data.username}`}
+						to={`/profile/${user?.username}`}
 						className='mt-auto mb-10 flex gap-2 items-start transition-all duration-300 hover:bg-[#181818] py-2 px-4 rounded-full'
 					>
 						<div className='avatar hidden md:inline-flex'>
 							<div className='w-8 rounded-full'>
-								<img src={authUser?.data.profileImage.url || "/avatar-placeholder.png"} />
+								<img src={user?.profileImage?.url || "/avatar-placeholder.png"} />
 							</div>
 						</div>
 						<div className='flex justify-between flex-1'>
 							<div className='hidden md:block'>
-								<p className='text-white font-bold text-sm w-20 truncate'>{authUser?.data.fullName}</p>
-								<p className='text-slate-500 text-sm'>@{authUser?.data.username}</p>
+								<p className='text-white font-bold text-sm w-20 truncate'>{user?.fullName}</p>
+								<p className='text-slate-500  text-sm'>@{user?.username}</p>
 							</div>
-							
+
 						</div>
-						<BiLogOut className='w-5 h-5 cursor-pointer' 
-							onClick={(e)=> {
-									e.preventDefault(),
-								Logout()
+						<BiLogOut className='w-5 h-5 cursor-pointer'
+							onClick={(e) => {
+								e.preventDefault(),
+									Logout()
 							}
 							}
 
-							
-							
-							/>
+
+
+						/>
 					</Link>
 				)}
 			</div>

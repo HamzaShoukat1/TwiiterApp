@@ -167,9 +167,9 @@ const Signin = asynchandler(async (req, res) => {
 
     };
 
-    if (!user.isVerified) {
-        throw new Apierror(400, "Please verify your account before login");
-    }
+    // if (!user.isVerified) {
+    //     throw new Apierror(400, "Please verify your account before login");
+    // }
 
     const isPasswordValid = await user.isPasswordCorrect(password)
     if (!isPasswordValid) {
