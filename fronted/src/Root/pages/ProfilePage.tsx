@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-// import Posts from "../../components/common/Posts";
-// import ProfileHeaderSkeleton from "../../components/skeletons/ProfileHeaderSkeleton";
-// import EditProfileModal from "../components/Svgs/shared/EditProfileModel.tsx";
+
 
 
 import { FaArrowLeft } from "react-icons/fa6";

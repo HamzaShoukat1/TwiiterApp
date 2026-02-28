@@ -9,6 +9,7 @@ import NotificationPage from "../Root/pages/Nitifications"
 import ProfilePage from "../Root/pages/ProfilePage"
 import ProtectedRoute from '../components/ProectedRoute'
 import ErrorPage from "../components/ErrorPage"
+import VerifymailPage from "../Root/pages/VerifymailPage"
 
 
 const router = createBrowserRouter(
@@ -22,16 +23,18 @@ const router = createBrowserRouter(
       </Route>
       {/* //  */}
       <Route path="forget-password" element={<h1>Forget Password</h1>} />
-      <Route path="verify-email" element={<h1>Verify Email</h1>} />
+      <Route path="verify-email" element={<VerifymailPage />} />
       {/* //  */}
 
       {/* Private Routes */}
       <Route element={<ProtectedRoute />}>
+
         <Route element={<Rootlayout />}>
           <Route index element={<HomePage />} />
           <Route path="notifications" element={<NotificationPage />} />
           <Route path="profile/:username" element={<ProfilePage />} />
         </Route>
+
       </Route>
 
     </Route>

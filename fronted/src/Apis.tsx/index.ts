@@ -51,7 +51,7 @@ export const fetchAuthUser = async () => {
 export const likePost = async (postId: string) => {
   const res = await fetch(`/api/v1/post/like/${postId}`, {
     method: "POST",
-    "credentials":"include"
+    "credentials": "include"
   });
 
   const data = await res.json();
@@ -179,6 +179,24 @@ export const UseUpdatePassword = async (formData: any) => {
   if (!res.ok) throw new Error(data.message || "cannot fetch password")
   console.log(data)
   return data
+};
+
+export const VerifyEmail = async (formData: {
+  code: string;
+}) => {
+  const res = await fetch("/api/v1/auth/verify-email", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) throw new Error(data.message || "verify account failed");
+
+  return data;
 }
 
 

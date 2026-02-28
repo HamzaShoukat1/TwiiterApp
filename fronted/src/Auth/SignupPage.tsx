@@ -9,7 +9,7 @@ import { signup } from "../Apis.tsx/index.ts";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../components/LoadingSpinner.tsx";
-import PasswordStrengthMeter from "../components/PassCheckMeter.tsx";
+import PasswordStrengthMeter from "../components/Svgs/shared/PassCheckMeter.tsx";
 // http://localhost:8003/api/v1/auth/signup 
 
 
@@ -25,8 +25,8 @@ export default function SignupPage() {
   const { mutate: Signup, isPending, isError, error } = useMutation({
     mutationFn: signup,
     onSuccess: () => {
-      toast.success("Account created successfully,sign in to continue");
-      navigate("/sign-in");
+      toast.success("Account created successfully,please verify your account");
+      navigate("/verify-email");
     },
     onError: (error) => {
       if (error instanceof Error) toast.error(error.message);

@@ -27,3 +27,13 @@ export default function App() {
 
   return <Outlet />
 }
+
+
+
+// const authUser = useSelector(state => state.auth.userData);
+
+// if (!authUser) {
+//   navigate("/sign-in"); 
+// }
+
+// return <Outlet />;
