@@ -36,7 +36,12 @@ export default function SigninPage() {
       navigate("/");
     },
     onError: (err) => {
-      if (err instanceof Error) toast.error(err.message);
+      if (err.message.startsWith("Too many requests")) {
+        toast.error(err.message);
+      } else {
+        toast.error(err.message);
+
+      }
     },
   });
 
@@ -52,20 +57,20 @@ export default function SigninPage() {
   return (
     <div className="max-h-screen m-auto flex  grow">
       <div className="flex-1 flex-col flex h-screen  justify-center items-center">
-     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <h1 className="text-4xl font-extrabold text-white">Let’s go.</h1>
 
           <label className="input input-bordered rounded flex items-center gap-2 w-full
                             focus-within:border-base-500 focus-within:outline-none focus-within:ring-0">
             <MdOutlineMail />
-         <input
-  type="email"
-  name="email"
-  placeholder="Email"
-  value={formData.email}
-  onChange={handleInputChange}
-  className="grow border-none outline-none  placeholder-gray-400 focus:outline-none focus:ring-0"
-/>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleInputChange}
+              className="grow border-none outline-none  placeholder-gray-400 focus:outline-none focus:ring-0"
+            />
           </label>
 
           <label className="input input-bordered rounded flex items-center gap-2
@@ -98,7 +103,7 @@ export default function SigninPage() {
             <p className="text-red-500 text-xs">{error.message}</p>
           )}
         </form>
-        
+
 
         <div className="flex gap-3  mt-3">
           <p className="text-white text-xs">Don’t have an account?</p>
@@ -107,12 +112,12 @@ export default function SigninPage() {
               <p className="">Sign up</p>
             </Link>
           </span>
-    </div>
+        </div>
 
       </div>
 
 
     </div>
- 
+
   );
 }

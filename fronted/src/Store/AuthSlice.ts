@@ -7,32 +7,33 @@ type User = {
     profileImage?: {
         url: string
     }
-    following:string
-    followers:string
-    isVerified:boolean
-    lastlogin:Date
+    following: string
+    followers: string
+    isVerified: boolean
+    lastlogin: Date
 }
 export interface LoginResponse {
-  statusCode: number
-  success: boolean
-  message: string
-  data: {
-    user: User
-    accessToken: string
-    refreshToken: string
-  }
+    statusCode: number
+    success: boolean
+    message: string
+    data: {
+        user: User
+        accessToken: string
+        refreshToken: string
+    }
 }
 
 interface authState {
-    status: 'unauthenticated' | 'pending' | 'succeeded'
+    status: 'loading' | 'unauthenticated' | 'authenticated'
     userData: LoginResponse | null
 }
 
-
 const initialState: authState = {
-    status: 'unauthenticated',
+    status: 'loading',
     userData: null,
 }
+
+
 
 
 
@@ -40,11 +41,11 @@ const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-        setPending: (state) => {
-            state.status = 'pending'
+        setLoading: (state) => {
+            state.status = 'loading'
         },
         userinfo: (state, action) => {
-            state.status = "succeeded";
+            state.status = "authenticated";
             state.userData = action.payload
 
         },
@@ -61,5 +62,5 @@ const authSlice = createSlice({
 
 
 })
-export const { logout, userinfo, setPending } = authSlice.actions
+export const { logout, userinfo, setLoading } = authSlice.actions
 export default authSlice.reducer

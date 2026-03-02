@@ -7,7 +7,7 @@ import Rootlayout from "../Root/Rootlayout"
 import { HomePage } from "../Root/index"
 import NotificationPage from "../Root/pages/Nitifications"
 import ProfilePage from "../Root/pages/ProfilePage"
-import ProtectedRoute from '../components/ProectedRoute'
+import ProtectedRoute from '../hooks/ProectedRoute'
 import ErrorPage from "../components/ErrorPage"
 import ForgetPasswordPage from "../Root/pages/ForgetPasswordPage"
 import VerifyemailPage from "../Root/pages/VerifyemailPage"
@@ -40,8 +40,6 @@ const router = createBrowserRouter(
           <Route path="forget-password" element={<ForgetPasswordPage />} />
           <Route path="verify-email" element={<VerifyemailPage />} />
                     <Route path="reset-password/:token" element={<ResetPasswordPage />} />
-
-
         </Route>
         _________________________
 

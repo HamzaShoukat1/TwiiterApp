@@ -55,8 +55,6 @@ const Createpost = () => {
 		const reader = new FileReader();
 		reader.onload = () => {
 			setImg(reader.result as string);
-			console.log("🖼 Base64 image result:", reader.result);
-			console.log("🖼 Base64 type:", typeof reader.result);
 		}
 		reader.readAsDataURL(file);
 	};
@@ -65,12 +63,12 @@ const Createpost = () => {
 		<div className='flex p-4 items-start gap-4 border-b border-gray-700'>
 			<div className='avatar'>
 				<div className='w-8 rounded-full'>
-					<img src={ user?.profileImage?.url || "/avatar-placeholder.png"} />
+					<img src={user?.profileImage?.url || "/avatar-placeholder.png"} />
 				</div>
 			</div>
 			<form className='flex flex-col gap-2 w-full' onSubmit={handleSubmit}>
 				<textarea
-					className='textarea w-full p-0 text-lg resize-none border-none focus:outline-none  border-gray-800'
+					className='textarea bg-black w-full p-0 text-lg resize-none border-none focus:outline-none  '
 					placeholder='What is happening?!'
 					value={text}
 					onChange={(e) => setText(e.target.value)}

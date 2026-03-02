@@ -1,13 +1,17 @@
 <!doctype html>
 <html lang="en" data-theme="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Web App</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/png;base64,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" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Twiiter Web App</title>
+</head>
+
+<body style="background-color:black;color:white">
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>

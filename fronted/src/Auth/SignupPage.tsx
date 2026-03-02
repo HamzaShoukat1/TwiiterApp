@@ -28,9 +28,13 @@ export default function SignupPage() {
       toast.success("Account created successfully,please verify your account");
       navigate("/verify-email");
     },
-    onError: (error) => {
-      if (error instanceof Error) toast.error(error.message);
-      else toast.error("Account creation failed");
+    onError: (err) => {
+      if (err.message.startsWith("Too many requests")) {
+        toast.error(err.message);
+      } else {
+        toast.error(err.message);
+
+      }
     },
   })
 

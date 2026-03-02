@@ -7,6 +7,7 @@ import UserRoutes from "./Routes/User.Routes.js";
 import PostRoutes from "./Routes/Post.Routes.js";
 import NotificationRoutes from "./Routes/Notification.Routes.js";
 import { errorHandler } from "./Middlewares/error.middleware.js";
+import { limiter } from "./Middlewares/express.ratelimit.js";
 // import dotenv from "dotenv";
 // dotenv.config({ path: "./backened/.env" }); // make sure path is correct
 
@@ -23,6 +24,10 @@ app.use(express.urlencoded({ extended: true, limit: "20kb" }));
 // Serve assets properly
 app.use("/assets", express.static(path.join(process.cwd(), "backened", "Public", "assets")));
 app.use(cookieParser());
+
+
+app.use(limiter)
+
 
 // API routes
 app.use("/api/v1/auth", AuthRoutes);

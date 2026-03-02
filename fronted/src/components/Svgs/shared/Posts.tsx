@@ -9,9 +9,7 @@ const Posts = ({ feedType, userId, username }: any) => {
 
 	const getPostsendPoint = () => {
 
-		console.log("FEED TYPE 👉", feedType);
-		console.log("USER ID 👉", userId);
-		console.log("USERNAME 👉", username);
+
 
 		switch (feedType) {
 			case "forYou":
@@ -31,23 +29,23 @@ const Posts = ({ feedType, userId, username }: any) => {
 	}
 
 	const POST_ENDPOINT = getPostsendPoint()
-	console.log("POST ENDPOINT 👉", POST_ENDPOINT);
+	console.log("POST ENDPOINT ", POST_ENDPOINT);
 
 
 
 	// Fetch current user
 	const { authUser, isLoading } = useCurrentUser()
-	const { data: Posts, isPending: ispostloading ,refetch,isRefetching} = useQuery({
+	const { data: Posts, isPending: ispostloading, refetch, isRefetching } = useQuery({
 		queryKey: ["posts"],
 		queryFn: () => GetAllPosts(POST_ENDPOINT),
 
 	})
-console.log("all",Posts)
+	console.log("all", Posts)
 	useEffect(() => {
 		refetch()
-	 
-	}, [feedType,username,refetch,userId])
-	
+
+	}, [feedType, username, refetch, userId])
+
 
 
 
@@ -63,12 +61,15 @@ console.log("all",Posts)
 					<PostSkeleton />
 				</div>
 			)}
-			{!isLoading && !isRefetching &&  Posts?.length === 0 && <p className='text-center my-4'>No posts in this tab. Switch </p>}
-			{!isLoading  && !isRefetching && Posts && (
+			{!isLoading && !isRefetching && Posts?.length === 0 && <p className='text-center my-4'>No posts in this tab. Switch </p>}
+			{!isLoading && !isRefetching && Posts && (
 				<div>
-					{Posts?.map((post: any) => (
-						<Post key={post._id} post={post} currentUserId={authUser?.data._id} />
+
+					{Posts?.map((post: any,) => (
+
+							<Post key={post._id} post={post} currentUserId={authUser?.data._id} />
 					))}
+
 				</div>
 			)}
 		</>
