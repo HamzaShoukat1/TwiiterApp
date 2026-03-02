@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 // import { useAuthStore } from "../store/authStore";
 import toast from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
-import { VerifyEmail } from "../../Apis.tsx";
+import { VerifyEmail } from "../../Apis.tsx/index.ts";
 import { Loader2 } from "lucide-react";
 
 const EmailVerificationPage = () => {
@@ -66,12 +66,17 @@ const EmailVerificationPage = () => {
 
 	}
 
-	useEffect(() => {
-		if (code.every((digit) => digit !== "")) {
-			const fakeEvent = { preventDefault: () => { } } as React.FormEvent<HTMLFormElement>;
-			handleSubmit(fakeEvent);
-		}
-	}, [code]);
+useEffect(() => {
+    // Only auto-submit if all digits are filled AND not already submitting
+    if (code.every((digit) => digit !== "")) {
+        // Optional: add a tiny delay to let the last digit render
+        const timer = setTimeout(() => {
+            handleSubmit({ preventDefault: () => {} } as React.FormEvent<HTMLFormElement>);
+        }, 50);
+
+        return () => clearTimeout(timer);
+    }
+}, [code]);
 
 	return (
 		<div className='  items-center justify-center min-h-screen flex flex-1   bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl overflow-hidden'>

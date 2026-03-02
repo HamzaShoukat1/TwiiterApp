@@ -166,7 +166,7 @@ export const UseupdateAccountDetails = async (formData: any) => {
   return data
 };
 
-export const UseUpdatePassword = async (formData: any) => {
+export const UseUpdatePassword = async (formData:any) => {
 
   const res = await fetch("/api/v1/user/change-password", {
     method: "PATCH",
@@ -197,7 +197,39 @@ export const VerifyEmail = async (formData: {
   if (!res.ok) throw new Error(data.message || "verify account failed");
 
   return data;
+};
+export const forgetPassword = async (formData: {
+  email: string;
+}) => {
+  const res = await fetch("/api/v1/auth/forget-password", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) throw new Error(data.message || "forget password auth failed");
+
+  return data;
 }
+export const resetPassword = async (formData: { newpassword: string; confirmPassword: string, token: string }) => {
+  const res = await fetch(`/api/v1/auth/reset-password/${formData.token}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ newpassword: formData.newpassword, confirmPassword: formData.confirmPassword }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) throw new Error(data.message || "Reset password failed");
+
+  return data;
+};
 
 
 

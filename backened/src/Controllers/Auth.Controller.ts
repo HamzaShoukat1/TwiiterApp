@@ -160,22 +160,37 @@ const Signin = asynchandler(async (req, res) => {
     };
     const user = await USERSCHEMA.findOne({
         email
-
     });
     if (!user) {
         throw new Apierror(400, "user does not exist")
 
     };
 
-    // if (!user.isVerified) {
-    //     throw new Apierror(400, "Please verify your account before login");
-    // }
+
 
     const isPasswordValid = await user.isPasswordCorrect(password)
     if (!isPasswordValid) {
         throw new Apierror(401, "Invalid password ")
 
     };
+    if (!user.isVerified) {
+    const { code, expiresAt } = generateVerificationCode()
+
+        // const hashtoken = crypto.createHash("sha256").update(randomcode).digest("hex")
+
+        user.emailverificationToken = code
+        user.emailverificationTokenExpiresAt = expiresAt
+
+        await user.save()
+
+
+        await sendVerificationEmail(user.email, code)
+
+        throw new Apierror(
+            403,
+            "Email not verified. Verification email has been sent."
+        );
+    }
 
 
     const { accessToken, refreshToken } = await generateAcessandRefreshTokens(user._id.toString())
@@ -234,17 +249,23 @@ const getCurrentUser = asynchandler(async (req, res) => {
 });
 const verifyEmail = asynchandler(async (req, res) => {
     const { code } = req.body
+    if (!code) throw new Apierror(400, "Verification code is required");
     const user = await USERSCHEMA.findOne({
         emailverificationToken: code,
         emailverificationTokenExpiresAt: { $gt: new Date() }
-    })
+    } as any)
+
     if (!user) {
         throw new Apierror(400, "invalid or expired verification code")
     }
 
+    if (user.isVerified) {
+        throw new Apierror(400, "Email already verified");
+    }
+
     user.isVerified = true;
-    delete user.emailverificationToken;
-    delete user.emailverificationTokenExpiresAt;
+    user.emailverificationToken = undefined;
+    user.emailverificationTokenExpiresAt = undefined;
 
     await user.save()
 
@@ -271,7 +292,7 @@ const forgetPassword = asynchandler(async (req, res) => {
     user.resetpasswordExpiresAt = resetTokenexpiredAt
     await user.save()
 
-    await sendPasswordResetEmail(user.email, `${process.env.CORS_ORIGIN}/reset-password/${resetTokens}`)
+    await sendPasswordResetEmail(user.email, `${process.env.CORS_ORIGIN}reset-password/${resetTokens}`)
 
     return res.status(200).json(
         new Apiresponse(200, "Password reset link sent to your email")
@@ -281,31 +302,42 @@ const forgetPassword = asynchandler(async (req, res) => {
 
 });
 const resetPassword = asynchandler(async (req, res) => {
-    const { token } = req.params
-    const { password } = req.body
+    const { token } = req.params;
+    const { newpassword, confirmPassword } = req.body;
 
     const user = await USERSCHEMA.findOne({
         resetpasswordtokens: token,
         resetpasswordExpiresAt: { $gt: new Date() }
-    } as any)
+    } as any);
+
     if (!user) {
-        throw new Apierror(400, "invalid or expired reset tokens")
+        throw new Apierror(400, "Invalid or expired reset token");
     }
-    user.password = password
-    if (!password || password.length < 6) {
-        throw new Apierror(400, "Password must be at least 6 characters");
-    }
-    delete user.resetpasswordtokens
-    delete user.resetpasswordExpiresAt
 
-    await user.save()
-    await sendResetSuccessEmail(user.email)
+    if (!newpassword || !confirmPassword) {
+        throw new Apierror(400, "Both new and confirm passwords are required");
+    }
+
+    if (newpassword.length < 6) {
+        throw new Apierror(400, "Password must be at least 6 characters long");
+    }
+
+    if (newpassword !== confirmPassword) {
+        throw new Apierror(400, "Passwords do not match");
+    }
+
+    user.password = newpassword;
+
+    user.resetpasswordtokens = undefined
+    user.resetpasswordExpiresAt = undefined
+
+    await user.save();
+    await sendResetSuccessEmail(user.email);
+
     return res.status(200).json(
-        new Apiresponse(200, "password reset successfully")
-    )
-
-
-})
+        new Apiresponse(200, "Password reset successfully")
+    );
+});
 export {
     SignUp,
     Signin,

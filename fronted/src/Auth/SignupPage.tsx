@@ -47,9 +47,9 @@ export default function SignupPage() {
 
   }
   return (
-    <div className="max-h-screen   m-auto flex h-screen ">
+    <div className="max-h-screen   m-auto flex  grow ">
 
-      <div className='flex-1 flex flex-col justify-center items-center'>
+      <div className='flex-1 flex flex-col h-screen justify-center items-center'>
         <form className="lg:w-3/4 md:mx-30 flex gap-4 flex-col" onSubmit={handleSubmit}>
           <h1 className='text-4xl font-extrabold text-white'>Join today.</h1>
           <label

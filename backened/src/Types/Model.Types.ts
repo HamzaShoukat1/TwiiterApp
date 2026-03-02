@@ -29,11 +29,11 @@ export interface IUser extends Document {
   refreshToken: string,
   lastlogin: Date,
   isVerified: boolean,
-  resetpasswordtokens?: string;
-  resetpasswordExpiresAt?: Date;
+  resetpasswordtokens?: string | undefined
+  resetpasswordExpiresAt?: Date | undefined
 
-  emailverificationToken?: string;
-  emailverificationTokenExpiresAt?: Date;
+  emailverificationToken?: string | undefined
+  emailverificationTokenExpiresAt?: Date | undefined
   isPasswordCorrect(password: string): Promise<boolean>
 
 };

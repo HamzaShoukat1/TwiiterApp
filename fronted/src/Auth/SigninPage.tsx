@@ -1,4 +1,3 @@
-
 import { MdOutlineMail } from "react-icons/md";
 import { MdPassword } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
@@ -8,118 +7,112 @@ import toast from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
 import LoadingSpinner from "../components/LoadingSpinner.tsx";
 import { useAppDispatch } from "../hooks/useStore.ts";
-import { type LoginResponse, userinfo } from "../Store/AuthSlice.ts"
+import { type LoginResponse, userinfo } from "../Store/AuthSlice.ts";
 
+export default function SigninPage() {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
-export default function SignupPage() {
-  const navigate = useNavigate()
-  const dispatch = useAppDispatch()
   const [formData, setformData] = useState({
     email: "",
     password: "",
-  })
-  const { mutate: Signin, isPending, isError, error } = useMutation<LoginResponse, Error, { email: string, password: string }>({
+  });
+
+  const { mutate: Signin, isPending, isError, error } = useMutation<
+    LoginResponse,
+    Error,
+    { email: string; password: string }
+  >({
     mutationFn: signin,
-   onSuccess: (userData) => {
-  toast.success("Login successful");
+    onSuccess: (userData) => {
+      const isVerified = userData?.data?.user?.isVerified;
+      if (!isVerified) {
+        navigate("/verify-email");
+        return;
+      }
 
-  if (!userData.data.user.isVerified) {
-    // user is NOT verified, redirect to verification page
-    navigate("/verify-email");
-  } else {
-    // user is verified, save user info and go home
-    dispatch(userinfo(userData));
-    navigate("/");
-  }
-},
-    onError: (error) => {
-      if (error instanceof Error) toast.error(error.message);
-      else toast.error("login  failed");
+      toast.success("Login successful");
+      dispatch(userinfo(userData));
+      navigate("/");
     },
-  })
+    onError: (err) => {
+      if (err instanceof Error) toast.error(err.message);
+    },
+  });
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    Signin(formData)
+    e.preventDefault();
+    Signin(formData);
+  };
 
-  }
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setformData({ ...formData, [e.target.name]: e.target.value })
+    setformData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-  }
   return (
-    <div className="max-h-screen m-auto flex h-screen ">
+    <div className="max-h-screen m-auto flex  grow">
+      <div className="flex-1 flex-col flex h-screen  justify-center items-center">
+     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <h1 className="text-4xl font-extrabold text-white">Let’s go.</h1>
 
-      <div className='flex-1 flex flex-col justify-center items-center'>
-        <form className="lg:w-2/3 md:mx-30 flex gap-4 flex-col" onSubmit={handleSubmit}>
-          <h1 className='text-4xl font-extrabold text-white'>let's go.</h1>
-
-
-
-          <label
-            className="input input-bordered rounded flex items-center gap-2 w-full
-             focus-within:border-base-500
-             focus-within:outline-none
-             focus-within:ring-0">
+          <label className="input input-bordered rounded flex items-center gap-2 w-full
+                            focus-within:border-base-500 focus-within:outline-none focus-within:ring-0">
             <MdOutlineMail />
-
-            <input
-              type="email"
-              className="grow border-none outline-none w-full focus:outline-none focus:ring-0"
-              placeholder="email"
-              name="email"
-              onChange={handleInputChange}
-              value={formData.email}
-            />
+         <input
+  type="email"
+  name="email"
+  placeholder="Email"
+  value={formData.email}
+  onChange={handleInputChange}
+  className="grow border-none outline-none  placeholder-gray-400 focus:outline-none focus:ring-0"
+/>
           </label>
-          <label
-            className="input input-bordered rounded flex items-center gap-2
-             focus-within:border-base-500
-             focus-within:outline-none
-             focus-within:ring-0">
-            <MdPassword />
 
+          <label className="input input-bordered rounded flex items-center gap-2
+                            focus-within:border-base-500 focus-within:outline-none focus-within:ring-0">
+            <MdPassword />
             <input
               type="password"
-              className="grow border-none outline-none focus:outline-none focus:ring-0"
-              placeholder="password"
               name="password"
-              onChange={handleInputChange}
+              placeholder="Password"
               value={formData.password}
+              onChange={handleInputChange}
+              className="grow border-none placeholder:gray-400 outline-none focus:outline-none focus:ring-0"
+              required
             />
           </label>
+
           <Link to="/forget-password">
-            <p className="text-white cursor-pointer">forget password?</p>
+            <p className="text-white cursor-pointer">Forgot password?</p>
           </Link>
 
-          <button type="submit" className='btn rounded-full bg-gray-700   btn-primary text-white'>{isPending ? (<LoadingSpinner />) : "Signin"}</button>
-          {isError &&
-            error instanceof Error &&
-            !error.message.toLowerCase().includes("email") && (
-              <p className='text-red-500 text-xs'>{error.message}</p>
-            )}
+          <button
+            type="submit"
+            disabled={isPending}
+            className="btn bg-gray-700 rounded-full btn-primary text-white"
+          >
+            {isPending ? <LoadingSpinner /> : "Sign In"}
+          </button>
 
-
-
-
-
-
-
-
-
+          {isError && error instanceof Error && (
+            <p className="text-red-500 text-xs">{error.message}</p>
+          )}
         </form>
+        
 
-        <div className='flex  lg:w-2/3 gap-1 mt-3' >
-          <p className='text-white text-xs'>Create an Account?</p>
+        <div className="flex gap-3  mt-3">
+          <p className="text-white text-xs">Don’t have an account?</p>
           <span className="text-sm">
-            <Link to="/sign-up"><p>Sign up</p></Link>
+            <Link to="/sign-up">
+              <p className="">Sign up</p>
+            </Link>
           </span>
-
-        </div>
-
+    </div>
 
       </div>
 
 
     </div>
-  )
+ 
+  );
 }

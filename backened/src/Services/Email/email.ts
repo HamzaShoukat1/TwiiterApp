@@ -28,7 +28,7 @@ export const sendWelComeEmail = async (email: any, name: any) => {
         const response = await mailtrapclient.send({
             from: sender,
             to: recipients,
-            template_uuid: "e4d844da-7cdd-47ad-afe1-cbf407515e48",
+            template_uuid: "5acef1fa-4a50-4666-a91c-2461fe0f1902",
             template_variables: {
                 "name": name,
                 "company_info_name": "Twitter INC",
@@ -48,43 +48,43 @@ export const sendWelComeEmail = async (email: any, name: any) => {
 
 
 }
-export const sendPasswordResetEmail = async (email:any, resetURL:any) => {
-	const recipient = [{ email }];
+export const sendPasswordResetEmail = async (email: any, resetURL: any) => {
+    const recipient = [{ email }];
 
-	try {
-		const response = await mailtrapclient.send({
-			from: sender,
-			to: recipient,
-			subject: "Reset your password",
-			html: PASSWORD_RESET_REQUEST_TEMPLATE.replace("{resetURL}", resetURL),
-			category: "Password Reset",
-		});
+    try {
+        const response = await mailtrapclient.send({
+            from: sender,
+            to: recipient,
+            subject: "Reset your password",
+            html: PASSWORD_RESET_REQUEST_TEMPLATE.replace("{resetURL}", resetURL),
+            category: "Password Reset",
+        });
         return response
 
-	} catch (error) {
-		console.error(`Error sending password reset email`, error);
+    } catch (error) {
+        console.error(`Error sending password reset email`, error);
 
-		throw new Error(`Error sending password reset email: ${error}`);
-	}
+        throw new Error(`Error sending password reset email: ${error}`);
+    }
 };
 
-export const sendResetSuccessEmail = async (email:any) => {
-	const recipient = [{ email }];
+export const sendResetSuccessEmail = async (email: any) => {
+    const recipient = [{ email }];
 
-	try {
-		const response = await mailtrapclient.send({
-			from: sender,
-			to: recipient,
-			subject: "Password Reset Successful",
-			html: PASSWORD_RESET_SUCCESS_TEMPLATE,
-			category: "Password Reset",
-		});
+    try {
+        const response = await mailtrapclient.send({
+            from: sender,
+            to: recipient,
+            subject: "Password Reset Successful",
+            html: PASSWORD_RESET_SUCCESS_TEMPLATE,
+            category: "Password Reset",
+        });
 
-		console.log("Password reset email sent successfully", response);
+        console.log("Password reset email sent successfully", response);
         return response
-	} catch (error) {
-		console.error(`Error sending password reset success email`, error);
+    } catch (error) {
+        console.error(`Error sending password reset success email`, error);
 
-		throw new Error(`Error sending password reset success email: ${error}`);
-	}
+        throw new Error(`Error sending password reset success email: ${error}`);
+    }
 };
