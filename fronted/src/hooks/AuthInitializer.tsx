@@ -17,8 +17,8 @@ export default function AuthInitializer({ children }: { children: React.ReactNod
             dispatch(logout())
         }
 
-        const timer = setTimeout(()=>setLoading(false),1000)
-        return ()=>clearTimeout(timer)
+        const timer = setTimeout(() => setLoading(false), 1000)
+        return () => clearTimeout(timer)
     }, [dispatch])
 
     if (loading) {

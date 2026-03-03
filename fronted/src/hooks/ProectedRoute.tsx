@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { useAppSelector } from "./useStore";
 import { Navigate } from "react-router-dom";
-import { Loader } from "lucide-react";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function App() {
 
@@ -31,7 +31,11 @@ export default function App() {
 
     // While checking auth, show spinner
     if (status === "loading") {
-        return <Loader className="animate-spin w-4 h-4"/>;
+      return (
+            <div className="fixed inset-0 flex items-center justify-center bg-black z-50">
+                <LoadingSpinner size="lg" />
+            </div>
+      )
     }
 
     // If unauthenticated, redirect immediately
