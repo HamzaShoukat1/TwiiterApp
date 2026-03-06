@@ -1,9 +1,9 @@
 import PostSkeleton from "./PostSkeletan";
 import Post from "../../Post";
-import { useCurrentUser } from "../../../hooks/getCurrentUser";
 import { GetAllPosts } from "../../../Apis.tsx/index.ts";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { useAppSelector } from "../../../hooks/useStore.ts";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Posts = ({ feedType, userId, username }: any) => {
@@ -35,7 +35,9 @@ const Posts = ({ feedType, userId, username }: any) => {
 
 
 	// Fetch current user
-	const { authUser, isLoading } = useCurrentUser()
+	// const { authUser, isLoading } = useCurrentUser()
+	 const {  userData } = useAppSelector(state => state.auth);
+	
 	const { data: Posts, isPending: ispostloading, refetch, isRefetching } = useQuery({
 		queryKey: ["posts"],
 		queryFn: () => GetAllPosts(POST_ENDPOINT),
@@ -55,20 +57,20 @@ const Posts = ({ feedType, userId, username }: any) => {
 
 	return (
 		<>
-			{(isLoading || ispostloading || isRefetching) && (
+			{( ispostloading || isRefetching) && (
 				<div className='flex flex-col justify-center'>
 					<PostSkeleton />
 					<PostSkeleton />
 					<PostSkeleton />
 				</div>
 			)}
-			{!isLoading && !isRefetching && Posts?.length === 0 && <p className='text-center my-4'>No posts in this tab. Switch </p>}
-			{!isLoading && !isRefetching && Posts && (
+			{ !isRefetching && Posts?.length === 0 && <p className='text-center my-4'>No posts in this tab. Switch </p>}
+			{ !isRefetching && Posts && (
 				<div>
 
 					{Posts?.map((post: any,) => (
 
-						<Post key={post._id} post={post} currentUserId={authUser?.data._id} />
+						<Post key={post._id} post={post} currentUserId={userData?.data.user._id} />
 					))}
 
 				</div>

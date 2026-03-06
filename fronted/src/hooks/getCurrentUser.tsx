@@ -15,5 +15,6 @@ export const useCurrentUser = () => {
     refetchOnWindowFocus:false
   });
 
-  return { authUser, isLoading, isError };
+  const token = authUser?.userData?.data?.accessToken
+  return { authUser, isLoading, isError,token };
 };
