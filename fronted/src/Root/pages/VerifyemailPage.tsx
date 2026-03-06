@@ -79,7 +79,7 @@ useEffect(() => {
 }, [code]);
 
 	return (
-		<div className='  items-center justify-center min-h-screen flex flex-1   bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl overflow-hidden'>
+		<div className='  items-center justify-center min-h-screen flex flex-1 bg-black  bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl overflow-hidden'>
 			<div className='bg-gray-800  border bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-2xl p-8 w-full max-w-md'>
 				<h2 className='text-3xl font-bold mb-6 text-center bg-lienar-to-r from-green-400 to-emerald-500 text-transparent bg-clip-text'>
 					Verify Your Email

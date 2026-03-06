@@ -40,7 +40,7 @@ export default function App() {
 
     // If unauthenticated, redirect immediately
     if (status === "unauthenticated" || !userData) {
-        return <Navigate to="/sign-in" replace />;
+        return <Navigate to="/sign-in" replace />; //replace ensures they cannot go back to the protected page
     }
 
     // Authenticated → render children

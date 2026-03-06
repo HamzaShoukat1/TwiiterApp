@@ -3,14 +3,8 @@ import { createBrowserRouter, createRoutesFromElements, Route } from "react-rout
 import App from "../App"
 import ProtectedRoute from '../hooks/ProectedRoute'
 import ErrorPage from "../components/ErrorPage"
-import LoadingSpinner from "../components/LoadingSpinner"
 
-// Full-screen loader for Suspense fallback
-const LoaderFallback = () => (
-  <div className="fixed inset-0 flex items-center justify-center bg-black z-50">
-    <LoadingSpinner size="lg" />
-  </div>
-)
+
 
 // Lazy-loaded layouts
 const AuthLayout = lazy(() => import("../Auth/AuthLayout"))
@@ -55,12 +49,19 @@ const router = createBrowserRouter(
           <Route path="notifications" element={<NotificationPage />} />
           <Route path="profile/:username" element={<ProfilePage />} />
 
-          {/* Optional private/public routes inside RootLayout */}
+        </Route>
+
+     
+      </Route>
+
+
+      {/* //  */}
+         <Route>
           <Route path="forget-password" element={<ForgetPasswordPage />} />
           <Route path="verify-email" element={<VerifyEmailPage />} />
           <Route path="reset-password/:token" element={<ResetPasswordPage />} />
+          
         </Route>
-      </Route>
 
     </Route>
   )
