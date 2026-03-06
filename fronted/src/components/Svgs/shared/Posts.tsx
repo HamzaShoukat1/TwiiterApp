@@ -14,15 +14,15 @@ const Posts = ({ feedType, userId, username }: any) => {
 
 		switch (feedType) {
 			case "forYou":
-				return `${API_URL}/v1/post/all`
+				return `${API_URL}api/v1/post/all`
 			case "following":
-				return `${API_URL}/v1/post/following`
+				return `${API_URL}api//v1/post/following`
 			case "likes":
-				return `${API_URL}/v1/post/likes/${userId}`
+				return `${API_URL}api/v1/post/likes/${userId}`
 			case "posts":
-				return `${API_URL}/v1/post/user/${username}`
+				return `${API_URL}api/v1/post/user/${username}`
 			default:
-				return `${API_URL}/v1/post/all`
+				return `${API_URL}api//v1/post/all`
 
 		}
 

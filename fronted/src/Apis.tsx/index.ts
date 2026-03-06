@@ -38,7 +38,7 @@ export const signin = async (formData: { email: string; password: string }) => {
   return data;
 };
 export const logout = async () => {
-  const res = await fetch(`${API_URL}/v1/auth/logout`, {
+  const res = await fetch(`${API_URL}/api/v1/auth/logout`, {
     method: "POST",
 
     credentials: "include",
@@ -51,7 +51,7 @@ export const logout = async () => {
 };
 
 export const fetchAuthUser = async () => {
-  const res = await fetch(`${API_URL}/v1/auth/currentUser`, {
+  const res = await fetch(`${API_URL}/api/v1/auth/currentUser`, {
     credentials: "include",
   });
 
@@ -62,7 +62,7 @@ export const fetchAuthUser = async () => {
 // ================= POSTS =================
 
 export const likePost = async (postId: string) => {
-  const res = await fetch(`${API_URL}/v1/post/like/${postId}`, {
+  const res = await fetch(`${API_URL}/api/v1/post/like/${postId}`, {
     method: "POST",
     credentials: "include",
   });
@@ -89,7 +89,7 @@ export const GetAllPosts = async (endpoint: string) => {
 };
 
 export const CommentPost = async (postId: string, text: string) => {
-  const res = await fetch(`${API_URL}/v1/post/comment/${postId}`, {
+  const res = await fetch(`${API_URL}/api/v1/post/comment/${postId}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -105,7 +105,7 @@ export const CommentPost = async (postId: string, text: string) => {
 };
 
 export const CreatePost = async (formData: FormData) => {
-  const res = await fetch(`${API_URL}/v1/post/create`, {
+  const res = await fetch(`${API_URL}/api/v1/post/create`, {
     method: "POST",
     body: formData,
     credentials: "include",
@@ -117,7 +117,7 @@ export const CreatePost = async (formData: FormData) => {
   return data;
 };
 export const deletePost = async (postId: string) => {
-  const res = await fetch(`${API_URL}/v1/post/${postId}`, {
+  const res = await fetch(`${API_URL}/api/v1/post/${postId}`, {
     method: "delete",
     credentials: "include",
   });
@@ -131,7 +131,7 @@ export const deletePost = async (postId: string) => {
 // ================= NOTIFICATIONS =================
 
 export const Notifications = async () => {
-  const res = await fetch(`${API_URL}/v1/notification`, {
+  const res = await fetch(`${API_URL}/api/v1/notification`, {
     credentials: "include",
   });
 
@@ -142,7 +142,7 @@ export const Notifications = async () => {
 };
 
 export const deleteNoti = async () => {
-  const res = await fetch(`${API_URL}/v1/notification`, {
+  const res = await fetch(`${API_URL}/api/v1/notification`, {
     method: "DELETE",
     credentials: "include",
   });
@@ -156,7 +156,7 @@ export const deleteNoti = async () => {
 // ================= USER =================
 
 export const UserProfile = async (username: string) => {
-  const res = await fetch(`${API_URL}/v1/user/profile/${username}`);
+  const res = await fetch(`${API_URL}/api/v1/user/profile/${username}`);
 
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || "cannot fetch user profile");
@@ -165,7 +165,7 @@ export const UserProfile = async (username: string) => {
 };
 
 export const UseUpdateProfilePic = async (formData: FormData) => {
-  const res = await fetch(`${API_URL}/v1/user/update-profile`, {
+  const res = await fetch(`${API_URL}/api/v1/user/update-profile`, {
     method: "PATCH",
     body: formData,
     credentials: "include",
@@ -177,7 +177,7 @@ export const UseUpdateProfilePic = async (formData: FormData) => {
   return data;
 };
 export const useFollow = async (PostId: string) => {
-  const res = await fetch(`${API_URL}/v1/user/follow/${PostId}`, {
+  const res = await fetch(`${API_URL}/api/v1/user/follow/${PostId}`, {
     method: "POST",
     credentials: "include",
   });
@@ -188,7 +188,7 @@ export const useFollow = async (PostId: string) => {
   return data;
 };
 export const UseupdateAccountDetails = async (formData: any) => {
-  const res = await fetch(`${API_URL}/v1/user/account`, {
+  const res = await fetch(`${API_URL}/api/v1/user/account`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -204,7 +204,7 @@ export const UseupdateAccountDetails = async (formData: any) => {
 };
 
 export const UseUpdatePassword = async (formData: any) => {
-  const res = await fetch(`${API_URL}/v1/user/change-password`, {
+  const res = await fetch(`${API_URL}/api/v1/user/change-password`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -219,7 +219,7 @@ export const UseUpdatePassword = async (formData: any) => {
   return data;
 };
 export const suggestedUsers = async () => {
-  const res = await fetch(`${API_URL}/v1/user/suggested`);
+  const res = await fetch(`${API_URL}/api/v1/user/suggested`);
 
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || "cannot fetch suggested password");
@@ -230,7 +230,7 @@ export const suggestedUsers = async () => {
 // ================= EMAIL =================
 
 export const VerifyEmail = async (formData: { code: string }) => {
-  const res = await fetch(`${API_URL}/v1/auth/verify-email`, {
+  const res = await fetch(`${API_URL}/api/v1/auth/verify-email`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -245,7 +245,7 @@ export const VerifyEmail = async (formData: { code: string }) => {
 };
 
 export const forgetPassword = async (formData: { email: string }) => {
-  const res = await fetch(`${API_URL}/v1/auth/forget-password`, {
+  const res = await fetch(`${API_URL}/api/v1/auth/forget-password`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -265,7 +265,7 @@ export const resetPassword = async (formData: {
   token: string;
 }) => {
   const res = await fetch(
-    `${API_URL}/v1/auth/reset-password/${formData.token}`,
+    `${API_URL}/api/v1/auth/reset-password/${formData.token}`,
     {
       method: "POST",
       headers: {
