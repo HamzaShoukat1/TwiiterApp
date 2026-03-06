@@ -9,15 +9,16 @@ import NotificationRoutes from "./Routes/Notification.Routes.js";
 import { errorHandler } from "./Middlewares/error.middleware.js";
 import { limiter } from "./Middlewares/express.ratelimit.js";
 import dotenv from "dotenv";
-dotenv.config({ path: "./backened/.env" }); // make sure path is correct
+// dotenv.config({ path: "./backened/.env" }); // make sure path is correct
+dotenv.config();
 
 const app = express();
 
 // Middleware
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true
-}));
+  origin: ["http://localhost:3000", "https://twittergram1.netlify.app"],
+  credentials: true
+}))
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true, limit: "20kb" }));
 
