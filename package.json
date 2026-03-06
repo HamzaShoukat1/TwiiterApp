@@ -5,7 +5,7 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "dev": "tsx --watch --env-file=backened/.env  backened/src/server.ts",
+    "dev": "tsx --watch --env-file=backened/.env.developement backened/src/server.ts",
     "start": "node backened/dist/server.js",
     "build": "tsc -p backened/tsconfig.json"
   },

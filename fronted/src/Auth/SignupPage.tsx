@@ -12,7 +12,6 @@ import LoadingSpinner from "../components/LoadingSpinner.tsx";
 import PasswordStrengthMeter from "../components/Svgs/shared/PassCheckMeter.tsx";
 // http://localhost:8003/api/v1/auth/signup 
 
-
 export default function SignupPage() {
   const navigate = useNavigate()
   const [formData, setformData] = useState({
