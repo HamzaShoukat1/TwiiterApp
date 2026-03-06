@@ -36,7 +36,7 @@ const ProfilePage = () => {
 
 	const { data: user, isLoading, refetch, isRefetching } = useQuery({
 		queryKey: ["userProfile",],
-		queryFn: () => UserProfile(username),
+		queryFn: () => UserProfile(username || ""),
 		enabled: !!username
 	})
 
