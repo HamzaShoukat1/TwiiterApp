@@ -37,6 +37,18 @@ export const signin = async (formData: { email: string; password: string }) => {
 
   return data;
 };
+export const logout = async () => {
+  const res = await fetch(`${API_URL}/v1/auth/logout`, {
+    method: "POST",
+   
+    credentials: "include",
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "logout failed");
+
+  return data;
+};
 
 export const fetchAuthUser = async () => {
   const res = await fetch(`${API_URL}/v1/auth/currentUser`, {
@@ -100,6 +112,17 @@ export const CreatePost = async (formData: FormData) => {
 
   return data;
 };
+export const deletePost = async (postId:string ) => {
+  const res = await fetch(`${API_URL}/v1/post/${postId}`, {
+    method: "delete",
+    credentials: "include",
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "post deletion failed");
+
+  return data;
+};
 
 // ================= NOTIFICATIONS =================
 
@@ -149,7 +172,17 @@ export const UseUpdateProfilePic = async (formData: FormData) => {
 
   return data;
 };
+export const useFollow = async (PostId:string) => {
+  const res = await fetch(`${API_URL}/v1/user/follow/${PostId}`, {
+    method: "POST",
+    credentials: "include",
+  });
 
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "user follow failed");
+
+  return data;
+};
 export const UseupdateAccountDetails = async (formData: any) => {
   const res = await fetch(`${API_URL}/v1/user/account`, {
     method: "PATCH",
@@ -178,6 +211,14 @@ export const UseUpdatePassword = async (formData: any) => {
 
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || "cannot update password");
+
+  return data;
+};
+export const suggestedUsers = async () => {
+  const res = await fetch(`${API_URL}/v1/user/user/suggested`);
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "cannot fetch suggested password");
 
   return data;
 };

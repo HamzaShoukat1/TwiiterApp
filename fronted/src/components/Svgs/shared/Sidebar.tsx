@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useStore";
 import { logout } from "../../../Store/AuthSlice";
 import { formatRelativeTime } from "../../../lib";
+import { logout as Logoutauth } from "../../../Apis.tsx";
 const Sidebar = () => {
 	const navigate = useNavigate()
 	const dispatch = useAppDispatch()
@@ -18,32 +19,7 @@ const Sidebar = () => {
 
 
 	const { mutate: Logout, } = useMutation({
-		mutationFn: async () => {
-			try {
-				const res = await fetch("/api/v1/auth/logout", {
-					method: "POST",
-					credentials: "include"
-
-				})
-
-				const AuthUser = await res.json()
-				if (!res.ok) throw new Error(AuthUser.message || "Signup failed")
-				console.log(AuthUser)
-				return AuthUser
-
-			} catch (error) {
-				if (error instanceof Error) {
-					console.error(error)
-					throw error
-				} else {
-					throw new Error("Something went wrong")
-				}
-
-
-
-			};
-
-		},
+		mutationFn: Logoutauth,
 		onSuccess: () => {
 			dispatch(logout())
 			toast.success("Account logout successfully")

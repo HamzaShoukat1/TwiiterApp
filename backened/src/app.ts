@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: true, limit: "20kb" }));
 app.use("/assets", express.static(path.join(process.cwd(), "backened", "Public", "assets")));
 app.use(cookieParser());
 
-
+app.set("trust proxy", 1); // trust first proxy (Railway load balancer)
 app.use(limiter)
 
 
@@ -39,16 +39,16 @@ app.use("/api/v1/notification", NotificationRoutes);
 // Error handler
 
 // Production frontend
-if (process.env.NODE_ENV === "production") {
-    const frontendPath = path.join(process.cwd(), "fronted", "dist");
-    app.use(express.static(frontendPath));
+// if (process.env.NODE_ENV === "production") {
+//     const frontendPath = path.join(process.cwd(), "fronted", "dist");
+//     app.use(express.static(frontendPath));
     
 
-app.get(/.*/, (_req, res) => {
-    res.sendFile(path.join(frontendPath, "index.html"));
-});
+// app.get(/.*/, (_req, res) => {
+//     res.sendFile(path.join(frontendPath, "index.html"));
+// });
 
-}
+// }
 app.use(errorHandler);
 
 export { app };

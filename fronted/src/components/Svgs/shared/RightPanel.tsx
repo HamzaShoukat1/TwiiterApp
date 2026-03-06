@@ -3,34 +3,12 @@ import RightPanelSkeleton from "../RightSIdeSkeleton";
 import { useQuery } from "@tanstack/react-query";
 import useFollow from "../../../hooks/UseFollow";
 import LoadingSpinner from "../../LoadingSpinner";
+import { suggestedUsers } from "../../../Apis.tsx";
 const RightPanel = () => {
 	
 	const { data: SuggestedUsers,isLoading } = useQuery({
 		queryKey: ["suggestedUsers"],
-		queryFn: async () => {
-			try {
-				const res = await fetch("/api/v1/user/suggested");
-				const data = await res.json()
-
-				if (!res.ok) throw new Error(data.message || "suggested not shows failed")
-				console.log(data)
-				return data
-
-			} catch (error) {
-				if (error instanceof Error) {
-					console.error(error)
-					throw error
-				} else {
-					throw new Error("Something went wrong")
-				}
-
-
-
-			};
-			
-
-		},
-		
+		queryFn: suggestedUsers
 	})
 const {follow,isPending} = useFollow()
 	return (

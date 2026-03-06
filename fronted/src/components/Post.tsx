@@ -9,6 +9,7 @@ import { FaRegBookmark } from "react-icons/fa6";
 import { formatRelativeTime } from "../lib";
 import PostStates from "./Svgs/shared/PostStates";
 import { useCurrentUser } from "../hooks/getCurrentUser";
+import { deletePost } from "../Apis.tsx";
 type PostProps = {
   post: PostType;
   currentUserId?: string;
@@ -17,30 +18,15 @@ type PostProps = {
 
 const Post = ({ post, currentUserId }: PostProps) => {
 
-  const {authUser} = useCurrentUser()
+  const { authUser } = useCurrentUser()
   //like mutation
 
   const queryClient = useQueryClient()
 
   //delt posts
-  const { mutate: deletePost, isPending } = useMutation({
-    mutationFn: async () => {
-      try {
-        const res = await fetch(`/api/v1/post/${post._id}`, {
-          method: "delete"
-        });
-        const data = await res.json()
-        if (!res.ok) throw new Error(data.message || "delete post failed")
-        return data
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error(error)
-          throw error
-        } else {
-          throw new Error("Something went wrong")
-        }
-      }
-    },
+  const { mutate: deletepost, isPending } = useMutation({
+    mutationFn: () => deletePost(post._id),
+
     onSuccess: () => {
       toast.success("Post created Successfully")
       //invalidate the query to refetch
@@ -59,7 +45,7 @@ const Post = ({ post, currentUserId }: PostProps) => {
   const formattedDate = formatRelativeTime(post.createdAt)
 
   const handleDeletePost = () => {
-    deletePost()
+    deletepost()
 
   };
 
@@ -73,11 +59,11 @@ const Post = ({ post, currentUserId }: PostProps) => {
           to={`/profile/${postOwner.username}`}
           className="w-8 rounded-full overflow-hidden"
         >
-      <img
-  src={authUser?.data?.profileImage?.url || "/avatar-placeholder.png"}
-  className="w-8 h-8 rounded-full object-cover"
-  alt="avatar"
-/>
+          <img
+            src={authUser?.data?.profileImage?.url || "/avatar-placeholder.png"}
+            className="w-8 h-8 rounded-full object-cover"
+            alt="avatar"
+          />
 
         </Link>
       </div>

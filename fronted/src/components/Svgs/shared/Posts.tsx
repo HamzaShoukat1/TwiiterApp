@@ -4,6 +4,7 @@ import { useCurrentUser } from "../../../hooks/getCurrentUser";
 import { GetAllPosts } from "../../../Apis.tsx/index.ts";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Posts = ({ feedType, userId, username }: any) => {
 
@@ -13,15 +14,15 @@ const Posts = ({ feedType, userId, username }: any) => {
 
 		switch (feedType) {
 			case "forYou":
-				return "/api/v1/post/all"
+				return `${API_URL}/v1/post/all `
 			case "following":
-				return "/api/v1/post/following"
+				return `${API_URL}/v1/post/following`
 			case "likes":
-				return `/api/v1/post/likes/${userId}`
+				return `${API_URL}/v1/post/likes/${userId}`
 			case "posts":
-				return `/api/v1/post/user/${username}`
+				return `${API_URL}/v1/post/user/${username}`
 			default:
-				return "/api/v1/post/all"
+				return `${API_URL}/v1/post/all`
 
 		}
 
