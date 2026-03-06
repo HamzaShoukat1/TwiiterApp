@@ -21,7 +21,10 @@ import EditPasswordModel from "../../components/Svgs/shared/EditPasswordModel.ts
 import { useAppSelector } from "../../hooks/useStore.ts";
 
 const ProfilePage = () => {
+	 const {  userData } = useAppSelector(state => state.auth);
+	 const token = userData?.data?.accessToken
 	const [coverImage, setCoverImage] = useState<string | null>(null);
+
 	const [profileImage, setProfileImage] = useState<string | null>(null);
 	const [feedType, setFeedType] = useState("posts");
 	const coverImgRef = useRef<HTMLInputElement | null>(null);
@@ -36,8 +39,8 @@ const ProfilePage = () => {
 
 	const { data: user, isLoading, refetch, isRefetching } = useQuery({
 		queryKey: ["userProfile",],
-		queryFn: () => UserProfile(username || ""),
-		enabled: !!username
+		queryFn: () => UserProfile(username || "",token || ""),
+		enabled: !!username || !!token
 	})
 
 	//when we refresh then img shoulf not removed
@@ -75,7 +78,6 @@ const ProfilePage = () => {
 	});
 
 	const { follow, isPending } = useFollow()
-		const { userData } = useAppSelector(state => state.auth);
 		const userdata = userData?.data?.user
 
 	const isMyProfile = userdata?._id === user?._id

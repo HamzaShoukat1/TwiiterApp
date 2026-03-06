@@ -73,13 +73,13 @@ export const likePost = async (postId: string) => {
   return data.data;
 };
 
-export const GetAllPosts = async (endpoint: string,token:string) => {
+export const GetAllPosts = async (endpoint: string, token: string) => {
   const res = await fetch(endpoint, {
     method: "GET",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
-            ...(token && { "Authorization": `Bearer ${token}` })
+      ...(token && { "Authorization": `Bearer ${token}` })
     },
   });
 
@@ -156,8 +156,14 @@ export const deleteNoti = async () => {
 
 // ================= USER =================
 
-export const UserProfile = async (username: string) => {
-  const res = await fetch(`${API_URL}/api/v1/user/profile/${username}`);
+export const UserProfile = async (username: string, token: string) => {
+  const res = await fetch(`${API_URL}/api/v1/user/profile/${username}`, {
+    method: "GET",
+    headers: {
+      ...(token && { "Authorization": `Bearer ${token}` })
+
+    }
+  });
 
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || "cannot fetch user profile");
@@ -219,9 +225,9 @@ export const UseUpdatePassword = async (formData: any) => {
 
   return data;
 };
-export const suggestedUsers = async (token:string) => {
-  const res = await fetch(`${API_URL}/api/v1/user/suggested`,{
-      method: "GET",
+export const suggestedUsers = async (token: string) => {
+  const res = await fetch(`${API_URL}/api/v1/user/suggested`, {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
       ...(token && { "Authorization": `Bearer ${token}` })
