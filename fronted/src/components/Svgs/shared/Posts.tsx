@@ -16,13 +16,13 @@ const Posts = ({ feedType, userId, username }: any) => {
 			case "forYou":
 				return `${API_URL}/api/v1/post/all`
 			case "following":
-				return `${API_URL}/api//v1/post/following`
+				return `${API_URL}/api/v1/post/following`
 			case "likes":
 				return `${API_URL}/api/v1/post/likes/${userId}`
 			case "posts":
 				return `${API_URL}/api/v1/post/user/${username}`
 			default:
-				return `${API_URL}/api//v1/post/all`
+				return `${API_URL}/api/v1/post/all`
 
 		}
 
@@ -68,7 +68,7 @@ const Posts = ({ feedType, userId, username }: any) => {
 
 					{Posts?.map((post: any,) => (
 
-							<Post key={post._id} post={post} currentUserId={authUser?.data._id} />
+						<Post key={post._id} post={post} currentUserId={authUser?.data._id} />
 					))}
 
 				</div>
