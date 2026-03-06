@@ -215,7 +215,7 @@ export const UseUpdatePassword = async (formData: any) => {
   return data;
 };
 export const suggestedUsers = async () => {
-  const res = await fetch(`${API_URL}/v1/user/user/suggested`);
+  const res = await fetch(`${API_URL}/v1/user/suggested`);
 
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || "cannot fetch suggested password");
