@@ -40,7 +40,7 @@ export const signin = async (formData: { email: string; password: string }) => {
 export const logout = async () => {
   const res = await fetch(`${API_URL}/v1/auth/logout`, {
     method: "POST",
-   
+
     credentials: "include",
   });
 
@@ -74,7 +74,7 @@ export const likePost = async (postId: string) => {
 };
 
 export const GetAllPosts = async (endpoint: string) => {
-  const res = await fetch(`${API_URL}${endpoint}`, {
+  const res = await fetch(`${endpoint}`, {
     credentials: "include",
   });
 
@@ -112,7 +112,7 @@ export const CreatePost = async (formData: FormData) => {
 
   return data;
 };
-export const deletePost = async (postId:string ) => {
+export const deletePost = async (postId: string) => {
   const res = await fetch(`${API_URL}/v1/post/${postId}`, {
     method: "delete",
     credentials: "include",
@@ -172,7 +172,7 @@ export const UseUpdateProfilePic = async (formData: FormData) => {
 
   return data;
 };
-export const useFollow = async (PostId:string) => {
+export const useFollow = async (PostId: string) => {
   const res = await fetch(`${API_URL}/v1/user/follow/${PostId}`, {
     method: "POST",
     credentials: "include",
