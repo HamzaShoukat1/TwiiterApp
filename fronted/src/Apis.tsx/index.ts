@@ -75,9 +75,9 @@ export const likePost = async (postId: string) => {
 
 export const GetAllPosts = async (endpoint: string) => {
   const res = await fetch(endpoint, {
-    method:"GET",
+    method: "GET",
     credentials: "include",
-      headers: {
+    headers: {
       "Content-Type": "application/json",
     },
   });
