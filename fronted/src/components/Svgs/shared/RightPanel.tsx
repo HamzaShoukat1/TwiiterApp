@@ -4,13 +4,17 @@ import { useQuery } from "@tanstack/react-query";
 import useFollow from "../../../hooks/UseFollow";
 import LoadingSpinner from "../../LoadingSpinner";
 import { suggestedUsers } from "../../../Apis.tsx";
+import { useAppSelector } from "../../../hooks/useStore.ts";
 const RightPanel = () => {
-	
-	const { data: SuggestedUsers,isLoading } = useQuery({
+	const { userData } = useAppSelector(state => state.auth);
+	const token = userData?.data?.accessToken
+
+	const { data: SuggestedUsers, isLoading } = useQuery({
 		queryKey: ["suggestedUsers"],
-		queryFn: suggestedUsers
+		queryFn: () => suggestedUsers(token || ""),
+		enabled: !!token
 	})
-const {follow,isPending} = useFollow()
+	const { follow, isPending } = useFollow()
 	return (
 		<div className='hidden lg:block my-4 mx-2'>
 			<div className='bg-[#16181C] p-4 rounded-md sticky top-2'>
@@ -19,13 +23,13 @@ const {follow,isPending} = useFollow()
 					{/* item */}
 					{isLoading && (
 						<div>
-							{Array.from({length:4}).map((_,idx)=> (
+							{Array.from({ length: 4 }).map((_, idx) => (
 								<RightPanelSkeleton key={idx} />
 							))}
 						</div>
 					)}
 					{!isLoading &&
-						SuggestedUsers?.data?.map((user:any) => (
+						SuggestedUsers?.data?.map((user: any) => (
 							<Link
 								to={`/profile/${user.username}`}
 								className='flex items-center justify-between gap-4'
@@ -52,7 +56,7 @@ const {follow,isPending} = useFollow()
 											follow(user._id)
 										}}
 									>
-										{isPending  ? <LoadingSpinner size="s,"/> : "Follow"}
+										{isPending ? <LoadingSpinner size="s," /> : "Follow"}
 									</button>
 								</div>
 							</Link>

@@ -73,12 +73,13 @@ export const likePost = async (postId: string) => {
   return data.data;
 };
 
-export const GetAllPosts = async (endpoint: string) => {
+export const GetAllPosts = async (endpoint: string,token:string) => {
   const res = await fetch(endpoint, {
     method: "GET",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
+            ...(token && { "Authorization": `Bearer ${token}` })
     },
   });
 
@@ -218,8 +219,14 @@ export const UseUpdatePassword = async (formData: any) => {
 
   return data;
 };
-export const suggestedUsers = async () => {
-  const res = await fetch(`${API_URL}/api/v1/user/suggested`);
+export const suggestedUsers = async (token:string) => {
+  const res = await fetch(`${API_URL}/api/v1/user/suggested`,{
+      method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token && { "Authorization": `Bearer ${token}` })
+    },
+  });
 
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || "cannot fetch suggested password");

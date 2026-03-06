@@ -37,10 +37,12 @@ const Posts = ({ feedType, userId, username }: any) => {
 	// Fetch current user
 	// const { authUser, isLoading } = useCurrentUser()
 	 const {  userData } = useAppSelector(state => state.auth);
+	 const token = userData?.data?.accessToken
 	
 	const { data: Posts, isPending: ispostloading, refetch, isRefetching } = useQuery({
 		queryKey: ["posts"],
-		queryFn: () => GetAllPosts(POST_ENDPOINT),
+		queryFn: () => GetAllPosts(POST_ENDPOINT,token || ""),
+		  enabled: !!token,
 
 	})
 	console.log("all", Posts)
