@@ -131,9 +131,14 @@ export const deletePost = async (postId: string) => {
 
 // ================= NOTIFICATIONS =================
 
-export const Notifications = async () => {
+export const Notifications = async (token: string) => {
   const res = await fetch(`${API_URL}/api/v1/notification`, {
     credentials: "include",
+    headers: {
+      ...(token && { "Authorization": `Bearer ${token}` })
+
+
+    }
   });
 
   const data = await res.json();

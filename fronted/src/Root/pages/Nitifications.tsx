@@ -6,12 +6,15 @@ import { FaHeart } from "react-icons/fa6";
 import { deleteNoti, Notifications } from "../../Apis.tsx/index.ts";
 import {  useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { useAppSelector } from "../../hooks/useStore.ts";
 
 const NotificationPage = () => {
+		const { userData } = useAppSelector(state => state.auth);
+		const token = userData?.data?.accessToken
 	const queryClient =  useQueryClient()
 	const { data: notifications, isLoading } = useQuery({
 		queryKey: ["notifications"],
-		queryFn: () => Notifications()
+		queryFn: () => Notifications(token || "")
 	})
 	const { mutate: deleteNotification } = useMutation({
 		mutationFn: () => deleteNoti(),
