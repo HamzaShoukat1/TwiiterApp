@@ -42,7 +42,10 @@ export const logout = async (token: string) => {
     method: "POST",
 
     credentials: "include",
-    ...(token && { "Authorization": `Bearer ${token}` })
+    headers: {
+
+      ...(token && { "Authorization": `Bearer ${token}` })
+    }
 
 
   });
