@@ -3,8 +3,11 @@ import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { UseUpdatePassword } from "../../../Apis.tsx";
 import LoadingSpinner from "../../LoadingSpinner.tsx";
-
+import { useAppSelector } from "../../../hooks/useStore.ts";
+  
 const ChangePasswordModal = () => {
+      const { userData } = useAppSelector(state => state.auth);
+    const token = userData?.data?.accessToken
     const dialogRef = useRef<HTMLDialogElement>(null);
 
     const [formData, setFormData] = useState({
@@ -14,7 +17,7 @@ const ChangePasswordModal = () => {
     });
 
     const { mutate: changePass, isPending, isError, error } = useMutation({
-        mutationFn: UseUpdatePassword,
+        mutationFn:(data:typeof formData)=> UseUpdatePassword(data,token || ""),
         onSuccess: () => {
             toast.success("Password changed successfully");
             setTimeout(() => {

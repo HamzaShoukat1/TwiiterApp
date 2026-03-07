@@ -6,8 +6,10 @@ import { CommentPost, likePost } from "../../../Apis.tsx/index.ts";
 import LoadingSpinner from "../../LoadingSpinner";
 import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAppSelector } from "../../../hooks/useStore.ts";
 
-
+const {userData} = useAppSelector(state=>state.auth)
+const token  = userData?.data?.accessToken
 export default function PostStates({ currentUserId, post }: { currentUserId?: string, post: any }) {
     const [likes, setLikes] = useState(post.likes); // start with initial likes
     // const likes = post.likes;
@@ -18,7 +20,7 @@ export default function PostStates({ currentUserId, post }: { currentUserId?: st
     const queryClient = useQueryClient();
 
     const { mutate: LikedPost, isPending: isLiking } = useMutation({
-        mutationFn: () => likePost(post._id),
+        mutationFn: () => likePost(post._id,token || ""),
         onSuccess: (updatedLikes: string[]) => {
             setLikes(updatedLikes)
 
@@ -40,7 +42,7 @@ export default function PostStates({ currentUserId, post }: { currentUserId?: st
         },
     });
     const { mutate: commentPost, isPending: isCommenting } = useMutation({
-        mutationFn: (text:string) => CommentPost(post._id, text),
+        mutationFn: (text:string) => CommentPost(post._id, text,token || ""),
         onSuccess: () => {
             toast.success("comment addedd successfully")
 

@@ -52,7 +52,7 @@ const ProfilePage = () => {
 	}, [user]);
 
 	const { mutate: updateProfile, isPending: isprofileuploading } = useMutation({
-		mutationFn: (formData: FormData) => UseUpdateProfilePic(formData),
+		mutationFn: (formData: FormData) => UseUpdateProfilePic(formData,token || ""),
 		onSuccess: () => {
 			// const updatesUser = res.data
 			toast.success("Profile  updated successfully")

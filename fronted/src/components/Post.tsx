@@ -10,12 +10,14 @@ import { formatRelativeTime } from "../lib";
 import PostStates from "./Svgs/shared/PostStates";
 import { useCurrentUser } from "../hooks/getCurrentUser";
 import { deletePost } from "../Apis.tsx";
+import { useAppSelector } from "../hooks/useStore.ts";
 type PostProps = {
   post: PostType;
   currentUserId?: string;
 
 };
-
+  const { userData } = useAppSelector(state => state.auth);
+  const token = userData?.data?.accessToken
 const Post = ({ post, currentUserId }: PostProps) => {
 
   const { authUser } = useCurrentUser()
@@ -25,7 +27,7 @@ const Post = ({ post, currentUserId }: PostProps) => {
 
   //delt posts
   const { mutate: deletepost, isPending } = useMutation({
-    mutationFn: () => deletePost(post._id),
+    mutationFn: (token:string) => deletePost(post._id,token || ""),
 
     onSuccess: () => {
       toast.success("Post created Successfully")
@@ -45,7 +47,7 @@ const Post = ({ post, currentUserId }: PostProps) => {
   const formattedDate = formatRelativeTime(post.createdAt)
 
   const handleDeletePost = () => {
-    deletepost()
+    deletepost(token || "")
 
   };
 

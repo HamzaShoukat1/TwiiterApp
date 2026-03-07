@@ -61,10 +61,14 @@ export const fetchAuthUser = async () => {
 
 // ================= POSTS =================
 
-export const likePost = async (postId: string) => {
+export const likePost = async (postId: string, token: string) => {
   const res = await fetch(`${API_URL}/api/v1/post/like/${postId}`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      ...(token && { "Authorization": `Bearer ${token}` })
+
+    }
   });
 
   const data = await res.json();
@@ -80,6 +84,9 @@ export const GetAllPosts = async (endpoint: string, token: string) => {
     headers: {
       "Content-Type": "application/json",
       ...(token && { "Authorization": `Bearer ${token}` })
+
+
+
     },
   });
 
@@ -89,11 +96,13 @@ export const GetAllPosts = async (endpoint: string, token: string) => {
   return data?.data?.posts ?? data?.data ?? [];
 };
 
-export const CommentPost = async (postId: string, text: string) => {
+export const CommentPost = async (postId: string, text: string, token: string) => {
   const res = await fetch(`${API_URL}/api/v1/post/comment/${postId}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      ...(token && { "Authorization": `Bearer ${token}` })
+
     },
     body: JSON.stringify({ text }),
     credentials: "include",
@@ -105,11 +114,15 @@ export const CommentPost = async (postId: string, text: string) => {
   return data.data;
 };
 
-export const CreatePost = async (formData: FormData) => {
+export const CreatePost = async (formData: FormData, token: string) => {
   const res = await fetch(`${API_URL}/api/v1/post/create`, {
     method: "POST",
     body: formData,
     credentials: "include",
+    headers: {
+      ...(token && { "Authorization": `Bearer ${token}` })
+
+    }
   });
 
   const data = await res.json();
@@ -117,10 +130,14 @@ export const CreatePost = async (formData: FormData) => {
 
   return data;
 };
-export const deletePost = async (postId: string) => {
+export const deletePost = async (postId: string, token: string) => {
   const res = await fetch(`${API_URL}/api/v1/post/${postId}`, {
     method: "delete",
     credentials: "include",
+    headers: {
+      ...(token && { "Authorization": `Bearer ${token}` })
+
+    }
   });
 
   const data = await res.json();
@@ -133,7 +150,6 @@ export const deletePost = async (postId: string) => {
 
 export const Notifications = async (token: string) => {
   const res = await fetch(`${API_URL}/api/v1/notification`, {
-    credentials: "include",
     headers: {
       ...(token && { "Authorization": `Bearer ${token}` })
 
@@ -147,10 +163,15 @@ export const Notifications = async (token: string) => {
   return data.data;
 };
 
-export const deleteNoti = async () => {
+export const deleteNoti = async (token: string) => {
   const res = await fetch(`${API_URL}/api/v1/notification`, {
     method: "DELETE",
     credentials: "include",
+    headers: {
+      ...(token && { "Authorization": `Bearer ${token}` })
+
+
+    }
   });
 
   const data = await res.json();
@@ -176,11 +197,16 @@ export const UserProfile = async (username: string, token: string) => {
   return data.data;
 };
 
-export const UseUpdateProfilePic = async (formData: FormData) => {
+export const UseUpdateProfilePic = async (formData: FormData, token: string) => {
   const res = await fetch(`${API_URL}/api/v1/user/update-profile`, {
     method: "PATCH",
     body: formData,
     credentials: "include",
+    headers: {
+      ...(token && { "Authorization": `Bearer ${token}` })
+
+
+    }
   });
 
   const data = await res.json();
@@ -188,10 +214,15 @@ export const UseUpdateProfilePic = async (formData: FormData) => {
 
   return data;
 };
-export const useFollow = async (PostId: string) => {
+export const useFollow = async (PostId: string, token: string) => {
   const res = await fetch(`${API_URL}/api/v1/user/follow/${PostId}`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      ...(token && { "Authorization": `Bearer ${token}` })
+
+
+    }
   });
 
   const data = await res.json();
@@ -199,14 +230,17 @@ export const useFollow = async (PostId: string) => {
 
   return data;
 };
-export const UseupdateAccountDetails = async (formData: any) => {
+export const UseupdateAccountDetails = async (formData: any, token: string) => {
   const res = await fetch(`${API_URL}/api/v1/user/account`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
+      ...(token && { "Authorization": `Bearer ${token}` })
+
     },
     body: JSON.stringify(formData),
     credentials: "include",
+
   });
 
   const data = await res.json();
@@ -214,12 +248,14 @@ export const UseupdateAccountDetails = async (formData: any) => {
 
   return data;
 };
-
-export const UseUpdatePassword = async (formData: any) => {
+export const UseUpdatePassword = async (formData: { currentPassword:string, newPassword:string, confirmPassword:string }, token: string) => {
   const res = await fetch(`${API_URL}/api/v1/user/change-password`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
+      ...(token && { "Authorization": `Bearer ${token}` })
+
+
     },
     body: JSON.stringify(formData),
     credentials: "include",
@@ -252,6 +288,7 @@ export const VerifyEmail = async (formData: { code: string }) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+
     },
     body: JSON.stringify(formData),
   });
@@ -262,11 +299,12 @@ export const VerifyEmail = async (formData: { code: string }) => {
   return data;
 };
 
-export const forgetPassword = async (formData: { email: string }) => {
+export const forgetPassword = async (formData: { email: string },) => {
   const res = await fetch(`${API_URL}/api/v1/auth/forget-password`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+
     },
     body: JSON.stringify(formData),
   });
@@ -288,6 +326,7 @@ export const resetPassword = async (formData: {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+
       },
       body: JSON.stringify({
         newpassword: formData.newpassword,

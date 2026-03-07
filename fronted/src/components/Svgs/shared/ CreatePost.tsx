@@ -9,13 +9,15 @@ import { useAppSelector } from "../../../hooks/useStore.ts";
 
 
 const Createpost = () => {
+	const { userData } = useAppSelector(state => state.auth);
+	const token = userData?.data?.accessToken
 	const queryClient = useQueryClient()
 	const [text, setText] = useState("");
 	const [img, setImg] = useState<string | null>(null);
 	const imgRef = useRef<HTMLInputElement | null>(null);
 	// const {CreatePost,isError,isPending,error} = UseCreatePost()
 	const { mutate: createPost, isPending, isError, error } = useMutation({
-		mutationFn: (formData: FormData) => CreatePost(formData),
+		mutationFn: (formData: FormData) => CreatePost(formData,token || ""),
 		onSuccess: () => {
 			toast.success("Post created successfully!");
 			queryClient.invalidateQueries({ queryKey: ["posts"] });
@@ -31,8 +33,6 @@ const Createpost = () => {
 	})
 
 	// Fetch current user
-	const { userData } = useAppSelector(state => state.auth);
-	const user = userData?.data?.user
 
 
 	const handleSubmit = (e: React.FormEvent) => {
@@ -63,7 +63,7 @@ const Createpost = () => {
 		<div className='flex p-4 items-start gap-4 border-b border-gray-700'>
 			<div className='avatar'>
 				<div className='w-8 rounded-full'>
-					<img src={user?.profileImage?.url || "/avatar-placeholder.png"} />
+					<img src={userData?.data.user?.profileImage?.url || "/avatar-placeholder.png"} />
 				</div>
 			</div>
 			<form className='flex flex-col gap-2 w-full' onSubmit={handleSubmit}>

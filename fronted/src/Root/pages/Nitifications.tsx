@@ -17,7 +17,7 @@ const NotificationPage = () => {
 		queryFn: () => Notifications(token || "")
 	})
 	const { mutate: deleteNotification } = useMutation({
-		mutationFn: () => deleteNoti(),
+		mutationFn: (token:string) => deleteNoti(token || ""),
 
 		onSuccess: () => {
 			toast.success("notification deleted successfully")
@@ -56,7 +56,7 @@ const NotificationPage = () => {
 									className="cursor-pointer"
 										onClick={(e) => {
 											e.preventDefault();
-											deleteNotification()
+											deleteNotification(token || "")
 										}}
 									>
 										Delete all notifications

@@ -2,9 +2,12 @@ import {  useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { UseupdateAccountDetails } from "../../../Apis.tsx";
 import toast from "react-hot-toast";
+import { useAppSelector } from "../../../hooks/useStore.ts";
 // import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
-
+	
 const EditProfileModal = ({ authUser }: any) => {
+	const { userData } = useAppSelector(state => state.auth);
+	const token = userData?.data?.accessToken
 	const [formData, setFormData] = useState({
 		fullName: "",
 		username: "",
@@ -17,7 +20,7 @@ const EditProfileModal = ({ authUser }: any) => {
 	const queryClient = useQueryClient()
 
 	const { mutate: updateProfile, isPending: isUpdatingProfile } = useMutation({
-		mutationFn: UseupdateAccountDetails,
+		mutationFn:(data:typeof formData)=> UseupdateAccountDetails(data,token || ""),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["authUser"] })
 			queryClient.invalidateQueries({ queryKey: ["userProfile"] })
