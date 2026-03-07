@@ -8,9 +8,10 @@ import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAppSelector } from "../../../hooks/useStore.ts";
 
-const {userData} = useAppSelector(state=>state.auth)
-const token  = userData?.data?.accessToken
+
 export default function PostStates({ currentUserId, post }: { currentUserId?: string, post: any }) {
+    const {userData} = useAppSelector(state=>state.auth)
+const token  = userData?.data?.accessToken
     const [likes, setLikes] = useState(post.likes); // start with initial likes
     // const likes = post.likes;
     const [comment, setComment] = useState("");
