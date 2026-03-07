@@ -2,10 +2,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useFollow as usefollow } from "../Apis.tsx";
 import { useAppSelector } from "./useStore.ts";
-    const { userData } = useAppSelector(state => state.auth);
-    const token = userData?.data?.accessToken
+ 
 
 const useFollow = () => {
+       const { userData } = useAppSelector(state => state.auth);
+    const token = userData?.data?.accessToken
     const queryClient = useQueryClient();
 
     const { mutate: follow, isPending } = useMutation({
