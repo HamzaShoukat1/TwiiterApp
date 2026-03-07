@@ -94,7 +94,7 @@ export default function SigninPage() {
           <button
             type="submit"
             disabled={isPending}
-            className={`btn bg-gray-700 cursor-not-allowed rounded-full btn-primary text-white ${isPending &&
+            className={`btn bg-gray-700  rounded-full btn-primary text-white ${isPending &&
               "bg-gray-700 cursor-not-allowed" 
             }`}
           >
