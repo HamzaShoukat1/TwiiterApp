@@ -123,8 +123,8 @@ export default function SignupPage() {
           <PasswordStrengthMeter password={formData.password} />
           <h1>
           </h1>
-          <button type="submit" className='btn bg-gray-700 round
-          ed-full btn-primary text-white'>{isPending ? (<LoadingSpinner />) : "Sign up"}</button>
+          <button type="submit" className={`btn bg-gray-700 round
+          ed-full btn-primary text-white ${isPending && "bg-gray-700 cursor-not-allowed"}`}>{isPending ? (<LoadingSpinner />) : "Sign up"}</button>
 
           {isError &&
             error instanceof Error &&
