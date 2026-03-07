@@ -16,9 +16,10 @@ type PostProps = {
   currentUserId?: string;
 
 };
-  const { userData } = useAppSelector(state => state.auth);
-  const token = userData?.data?.accessToken
+
 const Post = ({ post, currentUserId }: PostProps) => {
+    const { userData } = useAppSelector(state => state.auth);
+  const token = userData?.data?.accessToken
 
   const { authUser } = useCurrentUser()
   //like mutation
