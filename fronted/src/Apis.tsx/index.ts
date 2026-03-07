@@ -37,11 +37,14 @@ export const signin = async (formData: { email: string; password: string }) => {
 
   return data;
 };
-export const logout = async () => {
+export const logout = async (token: string) => {
   const res = await fetch(`${API_URL}/api/v1/auth/logout`, {
     method: "POST",
 
     credentials: "include",
+    ...(token && { "Authorization": `Bearer ${token}` })
+
+
   });
 
   const data = await res.json();
@@ -248,7 +251,7 @@ export const UseupdateAccountDetails = async (formData: any, token: string) => {
 
   return data;
 };
-export const UseUpdatePassword = async (formData: { currentPassword:string, newPassword:string, confirmPassword:string }, token: string) => {
+export const UseUpdatePassword = async (formData: { currentPassword: string, newPassword: string, confirmPassword: string }, token: string) => {
   const res = await fetch(`${API_URL}/api/v1/user/change-password`, {
     method: "PATCH",
     headers: {

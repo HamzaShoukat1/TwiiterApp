@@ -14,12 +14,12 @@ const Sidebar = () => {
 	const navigate = useNavigate()
 	const dispatch = useAppDispatch()
 	const { userData } = useAppSelector(state => state.auth);
-	console.log("21", userData)
+	const token = userData?.data?.accessToken
 	const user = userData?.data?.user
 
 
 	const { mutate: Logout, } = useMutation({
-		mutationFn: Logoutauth,
+		mutationFn: (token:string)=>Logoutauth(token),
 		onSuccess: () => {
 			dispatch(logout())
 			toast.success("Account logout successfully")
@@ -95,7 +95,7 @@ const Sidebar = () => {
 						<BiLogOut className='w-5 h-5 cursor-pointer'
 							onClick={(e) => {
 								e.preventDefault(),
-									Logout()
+									Logout(token || "")
 							}
 							}
 
