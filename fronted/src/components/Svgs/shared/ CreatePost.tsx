@@ -15,9 +15,8 @@ const Createpost = () => {
 	const [text, setText] = useState("");
 	const [img, setImg] = useState<string | null>(null);
 	const imgRef = useRef<HTMLInputElement | null>(null);
-	// const {CreatePost,isError,isPending,error} = UseCreatePost()
 	const { mutate: createPost, isPending, isError, error } = useMutation({
-		mutationFn: (formData: FormData) => CreatePost(formData,token || ""),
+		mutationFn: (formData: FormData) => CreatePost(formData, token || ""),
 		onSuccess: () => {
 			toast.success("Post created successfully!");
 			queryClient.invalidateQueries({ queryKey: ["posts"] });
@@ -32,7 +31,6 @@ const Createpost = () => {
 
 	})
 
-	// Fetch current user
 
 
 	const handleSubmit = (e: React.FormEvent) => {
