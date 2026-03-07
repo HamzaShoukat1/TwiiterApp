@@ -31,7 +31,7 @@ const Post = ({ post, currentUserId }: PostProps) => {
     mutationFn: (token:string) => deletePost(post._id,token || ""),
 
     onSuccess: () => {
-      toast.success("Post created Successfully")
+      toast.success("Post deleted Successfully")
       //invalidate the query to refetch
       queryClient.invalidateQueries({
         queryKey: ["posts"]
