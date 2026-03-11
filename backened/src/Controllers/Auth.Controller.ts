@@ -8,6 +8,8 @@ import { options } from "../Services/Token.Service.js";
 import type { IUser } from "../Types/Model.Types.js";
 import { generateVerificationCode } from "../Services/generateverificationcode.js";
 import { sendPasswordResetEmail, sendResetSuccessEmail, sendVerificationEmail, sendWelComeEmail } from "../Services/Email/email.js";
+import jwt from "jsonwebtoken"
+import type { TokenPayload } from "../Types/types.js";
 
 const generateAcessandRefreshTokens = async (userId: string) => {
     try {
@@ -247,6 +249,51 @@ const getCurrentUser = asynchandler(async (req, res) => {
     )
 
 });
+const generateRefeshTokens = asynchandler(async(req,res)=> {
+    //get token,verify token,generate new token
+    const incomingrefreshtokenfromdb = req.cookies.refreshToken || req.body.refreshToken
+    if(!incomingrefreshtokenfromdb){
+        throw new Apierror(401, "Unauthorized request")
+    }
+    try {
+        const docodetoken = jwt.verify(
+            incomingrefreshtokenfromdb,
+            process.env.REFRESH_TOKEN_SECRET || ""
+
+        ) as TokenPayload
+        const user = await USERSCHEMA.findById(docodetoken?._id)
+
+        if (!user) {
+            throw new Apierror(401, "Invalid refresh token")
+
+        };
+        if(incomingrefreshtokenfromdb !== user.refreshToken){
+                        throw new Apierror(401, "Refresh tokken is expired or used")
+
+        }
+
+        //genrate token
+        const {accessToken,refreshToken} = await generateAcessandRefreshTokens(user._id.toString())
+        return res.status(200)
+        .cookie("accessToken",accessToken,options)
+        .cookie("accessToken",refreshToken,options)
+        .json(
+            new Apiresponse(
+                200,
+                {
+                    accessToken,refreshToken
+                },
+                  "Aceess token refreshed"
+            )
+        )
+
+        
+    } catch (error) {
+                throw new Apierror(401, "Invalid refresh token")
+
+    }
+})
+
 const verifyEmail = asynchandler(async (req, res) => {
     const { code } = req.body
     if (!code) throw new Apierror(400, "Verification code is required");
@@ -342,8 +389,9 @@ export {
     SignUp,
     Signin,
     Logout,
-    getCurrentUser,
     verifyEmail,
     forgetPassword,
-    resetPassword
+    resetPassword,
+    getCurrentUser,
+    generateRefeshTokens
 }

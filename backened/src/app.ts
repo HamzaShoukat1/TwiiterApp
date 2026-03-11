@@ -9,7 +9,7 @@ import NotificationRoutes from "./Routes/Notification.Routes.js";
 import { errorHandler } from "./Middlewares/error.middleware.js";
 import { limiter } from "./Middlewares/express.ratelimit.js";
 import dotenv from "dotenv";
-// dotenv.config({ path: "./backened/.env" }); // make sure path is correct
+dotenv.config({ path: "BackenedProject/.env" });
 dotenv.config();
 
 const app = express();

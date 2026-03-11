@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { forgetPassword, getCurrentUser, resetPassword, SignUp, verifyEmail } from "../Controllers/Auth.Controller.js";
+import { forgetPassword, generateRefeshTokens, getCurrentUser, resetPassword, SignUp, verifyEmail } from "../Controllers/Auth.Controller.js";
 import { upload } from "../Middlewares/Multer.middleware.js";
 import { Signin } from "../Controllers/Auth.Controller.js";
 import { Logout } from "../Controllers/Auth.Controller.js";
@@ -26,7 +26,7 @@ router.route("/signin").post(Signin)
 router.route("/logout").post(
     verifyjwt,
     Logout)
-
+router.route("/refreshtoken").post(generateRefeshTokens)
 router.get("/currentUser", verifyjwt, getCurrentUser)
 router.route("/verify-email").post(verifyEmail)
 router.route("/forget-password").post(forgetPassword)

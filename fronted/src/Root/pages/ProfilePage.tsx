@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 
@@ -21,8 +21,8 @@ import EditPasswordModel from "../../components/Svgs/shared/EditPasswordModel.ts
 import { useAppSelector } from "../../hooks/useStore.ts";
 
 const ProfilePage = () => {
-	 const {  userData } = useAppSelector(state => state.auth);
-	 const token = userData?.data?.accessToken
+	const { userData } = useAppSelector(state => state.auth);
+	const token = userData?.data?.accessToken
 	const [coverImage, setCoverImage] = useState<string | null>(null);
 
 	const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -39,7 +39,7 @@ const ProfilePage = () => {
 
 	const { data: user, isLoading, refetch, isRefetching } = useQuery({
 		queryKey: ["userProfile",],
-		queryFn: () => UserProfile(username || "",token || ""),
+		queryFn: () => UserProfile(username || "", token || ""),
 		enabled: !!username || !!token
 	})
 
@@ -52,7 +52,7 @@ const ProfilePage = () => {
 	}, [user]);
 
 	const { mutate: updateProfile, isPending: isprofileuploading } = useMutation({
-		mutationFn: (formData: FormData) => UseUpdateProfilePic(formData,token || ""),
+		mutationFn: (formData: FormData) => UseUpdateProfilePic(formData, token || ""),
 		onSuccess: () => {
 			// const updatesUser = res.data
 			toast.success("Profile  updated successfully")
@@ -78,29 +78,35 @@ const ProfilePage = () => {
 	});
 
 	const { follow, isPending } = useFollow()
-		const userdata = userData?.data?.user
+	const userdata = userData?.data?.user
+	const isMyProfile = useMemo(() => userdata?._id === user?._id, [userdata, user]);
+	const amIFollowing = useMemo(
+		() => userdata?.following?.includes(user?._id),
+		[userdata, user]
+	);
+	const memberSinceData = useMemo(() => formatMemberSinceDate(user?.createdAt), [user]);
 
-	const isMyProfile = userdata?._id === user?._id
-	const amIFollowing = userdata?.following?.includes(user?._id)
-	const memberSinceData = formatMemberSinceDate(user?.createdAt)
-	const handleImgChange = ({ target }: React.ChangeEvent<HTMLInputElement>, type: "coverImage" | "profileImage") => {
-		const file = target.files?.[0];
-		if (!file) return;
+	const handleImgChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>, type: "coverImage" | "profileImage") => {
+			const file = e.target.files?.[0];
+			if (!file) return;
 
-		const reader = new FileReader();
-		reader.onload = () => {
-			const img = reader.result as string;
-			if (type === "profileImage") {
-				setProfileImage(img)
-				setProfileImageFile(file)
-			} else {
-				setCoverImage(img)
-				setcoverImageFile(file)
-			}
-		};
-		reader.readAsDataURL(file);
+			const reader = new FileReader();
+			reader.onload = () => {
+				const img = reader.result as string;
+				if (type === "profileImage") {
+					setProfileImage(img);
+					setProfileImageFile(file);
+				} else {
+					setCoverImage(img);
+					setcoverImageFile(file);
+				}
+			};
+			reader.readAsDataURL(file);
+		},
+		[]
+	);
 
-	};
 	useEffect(() => {
 		refetch()
 	}, [username, refetch])
