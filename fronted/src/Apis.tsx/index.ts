@@ -1,5 +1,7 @@
-const API_URL = import.meta.env.VITE_API_URL;
+import { apiFetch } from "../hooks/tokenrefresh";
 
+const API_URL = import.meta.env.VITE_API_URL;
+console.log(import.meta.env.VITE_API_URL);
 // ================= AUTH =================
 
 export const signup = async (formData: {
@@ -37,8 +39,21 @@ export const signin = async (formData: { email: string; password: string }) => {
 
   return data;
 };
+
+export const refreshToken = async () => {
+  const res = await fetch(`${API_URL}/api/v1/auth/refreshtoken`, {
+    method: "POST",
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error("Refresh token failed");
+  }
+
+  return res.json();
+};
 export const logout = async (token: string) => {
-  const res = await fetch(`${API_URL}/api/v1/auth/logout`, {
+  const res = await apiFetch(`${API_URL}/api/v1/auth/logout`, {
     method: "POST",
 
     credentials: "include",
@@ -57,7 +72,7 @@ export const logout = async (token: string) => {
 };
 
 export const fetchAuthUser = async () => {
-  const res = await fetch(`${API_URL}/api/v1/auth/currentUser`, {
+  const res = await apiFetch(`${API_URL}/api/v1/auth/currentUser`, {
     credentials: "include",
   });
 
@@ -68,7 +83,7 @@ export const fetchAuthUser = async () => {
 // ================= POSTS =================
 
 export const likePost = async (postId: string, token: string) => {
-  const res = await fetch(`${API_URL}/api/v1/post/like/${postId}`, {
+  const res = await apiFetch(`${API_URL}/api/v1/post/like/${postId}`, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -84,7 +99,7 @@ export const likePost = async (postId: string, token: string) => {
 };
 
 export const GetAllPosts = async (endpoint: string, token: string) => {
-  const res = await fetch(endpoint, {
+  const res = await apiFetch(endpoint, {
     method: "GET",
     credentials: "include",
     headers: {
@@ -103,7 +118,7 @@ export const GetAllPosts = async (endpoint: string, token: string) => {
 };
 
 export const CommentPost = async (postId: string, text: string, token: string) => {
-  const res = await fetch(`${API_URL}/api/v1/post/comment/${postId}`, {
+  const res = await apiFetch(`${API_URL}/api/v1/post/comment/${postId}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -121,7 +136,7 @@ export const CommentPost = async (postId: string, text: string, token: string) =
 };
 
 export const CreatePost = async (formData: FormData, token: string) => {
-  const res = await fetch(`${API_URL}/api/v1/post/create`, {
+  const res = await apiFetch(`${API_URL}/api/v1/post/create`, {
     method: "POST",
     body: formData,
     credentials: "include",
@@ -137,7 +152,7 @@ export const CreatePost = async (formData: FormData, token: string) => {
   return data;
 };
 export const deletePost = async (postId: string, token: string) => {
-  const res = await fetch(`${API_URL}/api/v1/post/${postId}`, {
+  const res = await apiFetch(`${API_URL}/api/v1/post/${postId}`, {
     method: "delete",
     credentials: "include",
     headers: {
@@ -155,7 +170,7 @@ export const deletePost = async (postId: string, token: string) => {
 // ================= NOTIFICATIONS =================
 
 export const Notifications = async (token: string) => {
-  const res = await fetch(`${API_URL}/api/v1/notification`, {
+  const res = await apiFetch(`${API_URL}/api/v1/notification`, {
     headers: {
       ...(token && { "Authorization": `Bearer ${token}` })
 
@@ -170,7 +185,7 @@ export const Notifications = async (token: string) => {
 };
 
 export const deleteNoti = async (token: string) => {
-  const res = await fetch(`${API_URL}/api/v1/notification`, {
+  const res = await apiFetch(`${API_URL}/api/v1/notification`, {
     method: "DELETE",
     credentials: "include",
     headers: {
@@ -189,7 +204,7 @@ export const deleteNoti = async (token: string) => {
 // ================= USER =================
 
 export const UserProfile = async (username: string, token: string) => {
-  const res = await fetch(`${API_URL}/api/v1/user/profile/${username}`, {
+  const res = await apiFetch(`${API_URL}/api/v1/user/profile/${username}`, {
     method: "GET",
     headers: {
       ...(token && { "Authorization": `Bearer ${token}` })
@@ -204,7 +219,7 @@ export const UserProfile = async (username: string, token: string) => {
 };
 
 export const UseUpdateProfilePic = async (formData: FormData, token: string) => {
-  const res = await fetch(`${API_URL}/api/v1/user/update-profile`, {
+  const res = await apiFetch(`${API_URL}/api/v1/user/update-profile`, {
     method: "PATCH",
     body: formData,
     credentials: "include",
@@ -221,7 +236,7 @@ export const UseUpdateProfilePic = async (formData: FormData, token: string) => 
   return data;
 };
 export const useFollow = async (PostId: string, token: string) => {
-  const res = await fetch(`${API_URL}/api/v1/user/follow/${PostId}`, {
+  const res = await apiFetch(`${API_URL}/api/v1/user/follow/${PostId}`, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -237,7 +252,7 @@ export const useFollow = async (PostId: string, token: string) => {
   return data;
 };
 export const UseupdateAccountDetails = async (formData: any, token: string) => {
-  const res = await fetch(`${API_URL}/api/v1/user/account`, {
+  const res = await apiFetch(`${API_URL}/api/v1/user/account`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -255,7 +270,7 @@ export const UseupdateAccountDetails = async (formData: any, token: string) => {
   return data;
 };
 export const UseUpdatePassword = async (formData: { currentPassword: string, newPassword: string, confirmPassword: string }, token: string) => {
-  const res = await fetch(`${API_URL}/api/v1/user/change-password`, {
+  const res = await apiFetch(`${API_URL}/api/v1/user/change-password`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -273,7 +288,7 @@ export const UseUpdatePassword = async (formData: { currentPassword: string, new
   return data;
 };
 export const suggestedUsers = async (token: string) => {
-  const res = await fetch(`${API_URL}/api/v1/user/suggested`, {
+  const res = await apiFetch(`${API_URL}/api/v1/user/suggested`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -290,7 +305,7 @@ export const suggestedUsers = async (token: string) => {
 // ================= EMAIL =================
 
 export const VerifyEmail = async (formData: { code: string }) => {
-  const res = await fetch(`${API_URL}/api/v1/auth/verify-email`, {
+  const res = await apiFetch(`${API_URL}/api/v1/auth/verify-email`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -306,7 +321,7 @@ export const VerifyEmail = async (formData: { code: string }) => {
 };
 
 export const forgetPassword = async (formData: { email: string },) => {
-  const res = await fetch(`${API_URL}/api/v1/auth/forget-password`, {
+  const res = await apiFetch(`${API_URL}/api/v1/auth/forget-password`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -326,7 +341,7 @@ export const resetPassword = async (formData: {
   confirmPassword: string;
   token: string;
 }) => {
-  const res = await fetch(
+  const res = await apiFetch(
     `${API_URL}/api/v1/auth/reset-password/${formData.token}`,
     {
       method: "POST",

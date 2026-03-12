@@ -85,25 +85,34 @@ const ProfilePage = () => {
 		[userdata, user]
 	);
 	const memberSinceData = useMemo(() => formatMemberSinceDate(user?.createdAt), [user]);
+	const handleFollow = useCallback((id: string) => (e: React.MouseEvent<HTMLButtonElement>) =>{
+		e.preventDefault(),
+		follow(id)
+	},
+ [follow]
+)
+
 
 	const handleImgChange = useCallback(
-		(e: React.ChangeEvent<HTMLInputElement>, type: "coverImage" | "profileImage") => {
-			const file = e.target.files?.[0];
-			if (!file) return;
+		(type: "coverImage" | "profileImage") =>
+			(e: React.ChangeEvent<HTMLInputElement>) => {
+				e.preventDefault()
+				const file = e.target.files?.[0];
+				if (!file) return;
 
-			const reader = new FileReader();
-			reader.onload = () => {
-				const img = reader.result as string;
-				if (type === "profileImage") {
-					setProfileImage(img);
-					setProfileImageFile(file);
-				} else {
-					setCoverImage(img);
-					setcoverImageFile(file);
-				}
-			};
-			reader.readAsDataURL(file);
-		},
+				const reader = new FileReader();
+				reader.onload = () => {
+					const img = reader.result as string;
+					if (type === "profileImage") {
+						setProfileImage(img);
+						setProfileImageFile(file);
+					} else {
+						setCoverImage(img);
+						setcoverImageFile(file);
+					}
+				};
+				reader.readAsDataURL(file);
+			},
 		[]
 	);
 
@@ -151,13 +160,14 @@ const ProfilePage = () => {
 									type='file'
 									hidden
 									ref={coverImgRef}
-									onChange={(e) => handleImgChange(e, "coverImage")}
+									onChange={handleImgChange("coverImage")}
 								/>
 								<input
 									type='file'
 									hidden
 									ref={profileImgRef}
-									onChange={(e) => handleImgChange(e, "profileImage")}
+									onChange={handleImgChange("profileImage")}
+
 								/>
 								{/* USER AVATAR */}
 								<div className='avatar absolute -bottom-16 left-4'>
@@ -185,7 +195,7 @@ const ProfilePage = () => {
 								{!isMyProfile && (
 									<button
 										className='btn btn-outline rounded-full btn-sm'
-										onClick={() => follow(user?._id)}
+										onClick={handleFollow(user._id)}
 									>
 										{isPending && <LoadingSpinner />}
 										{!isPending && amIFollowing && "Unfollow"}
@@ -265,6 +275,7 @@ const ProfilePage = () => {
 								<div
 									className='flex justify-center flex-1 p-3  transition duration-300 relative cursor-pointer'
 									onClick={() => setFeedType("posts")}
+									
 								>
 									Posts
 									{feedType === "posts" && (

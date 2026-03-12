@@ -8,7 +8,6 @@ import { FaRegBookmark } from "react-icons/fa6";
 
 import { formatRelativeTime } from "../lib";
 import PostStates from "./Svgs/shared/PostStates";
-import { useCurrentUser } from "../hooks/getCurrentUser";
 import { deletePost } from "../Apis.tsx";
 import { useAppSelector } from "../hooks/useStore.ts";
 type PostProps = {
@@ -21,7 +20,7 @@ const Post = ({ post, currentUserId }: PostProps) => {
     const { userData } = useAppSelector(state => state.auth);
   const token = userData?.data?.accessToken
 
-  const { authUser } = useCurrentUser()
+  // const { authUser } = useCurrentUser()
   //like mutation
 
   const queryClient = useQueryClient()
@@ -63,7 +62,7 @@ const Post = ({ post, currentUserId }: PostProps) => {
           className="w-8 rounded-full overflow-hidden"
         >
           <img
-            src={authUser?.data?.profileImage?.url || "/avatar-placeholder.png"}
+            src={userData?.data?.user?.profileImage?.url || "/avatar-placeholder.png"}
             className="w-8 h-8 rounded-full object-cover"
             alt="avatar"
           />
