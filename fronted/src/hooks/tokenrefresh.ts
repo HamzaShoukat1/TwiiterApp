@@ -10,7 +10,7 @@ export const apiFetch = async (url: string, options: RequestInit = {}) => {
     credentials: "include",
   });
 
-  if (res.status === 401 && !isRefreshing) {
+  if (res.status === 500 && !isRefreshing) {
     try {
       isRefreshing = true;
 
