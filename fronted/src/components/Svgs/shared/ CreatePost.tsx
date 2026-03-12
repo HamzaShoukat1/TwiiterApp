@@ -1,11 +1,12 @@
 import { CiImageOn } from "react-icons/ci";
 import { BsEmojiSmileFill } from "react-icons/bs";
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CreatePost } from "../../../Apis.tsx/index.ts";
 import { useAppSelector } from "../../../hooks/useStore.ts";
+import LoadingSpinner from "../../LoadingSpinner.tsx";
 
 
 const Createpost = () => {
@@ -32,11 +33,11 @@ const Createpost = () => {
 	})
 
 
-
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = useCallback((e: React.FormEvent) => {
 		e.preventDefault();
-		if (!text.trim() && !img) {
-			toast.error("Post cannot be empty");
+		const file = imgRef.current?.files?.[0];
+		if (!text.trim() && !file && !img) {
+			toast.error("add title or image both");
 			return
 		}
 		const formData = new FormData()
@@ -45,9 +46,9 @@ const Createpost = () => {
 			formData.append("postimg", imgRef.current.files[0]);
 		}
 		createPost(formData)
-	};
+	}, [])
 
-	const handleImgChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleImgChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0]
 		if (!file) return;
 		const reader = new FileReader();
@@ -55,7 +56,7 @@ const Createpost = () => {
 			setImg(reader.result as string);
 		}
 		reader.readAsDataURL(file);
-	};
+	}, [])
 
 	return (
 		<div className='flex p-4 items-start gap-4 border-b border-gray-700'>
@@ -96,8 +97,8 @@ const Createpost = () => {
 						<BsEmojiSmileFill className='fill-primary w-5 h-5 cursor-pointer' />
 					</div>
 					<input type='file' hidden ref={imgRef} onChange={handleImgChange} />
-					<button type="submit" className='btn btn-primary rounded-full btn-sm text-white px-4'>
-						{isPending ? "Posting..." : "Post"}
+					<button type="submit" className={`btn btn-primary rounded-full btn-sm text-white px-4 ${isPending && "cursor-not-allowed"}`}>
+						{isPending ? <LoadingSpinner /> : "Post"}
 					</button>
 				</div>
 				{isError && <div className='text-red-500'>{error?.message}</div>}
