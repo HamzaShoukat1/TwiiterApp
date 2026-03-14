@@ -27,7 +27,7 @@ const Post = ({ post, currentUserId }: PostProps) => {
 
   //delt posts
   const { mutate: deletepost, isPending } = useMutation({
-    mutationFn: (token:string) => deletePost(post._id,token || ""),
+    mutationFn: (token:string) => deletePost(post?._id,token || ""),
 
     onSuccess: () => {
       toast.success("Post deleted Successfully")
@@ -39,9 +39,9 @@ const Post = ({ post, currentUserId }: PostProps) => {
 
   })
 
-  const postOwner = post.user;
+  const postOwner = post?.user;
 
-  const isMyPost = currentUserId === postOwner._id;
+  const isMyPost = currentUserId === postOwner?._id;
 
 
   const formattedDate = formatRelativeTime(post.createdAt)
