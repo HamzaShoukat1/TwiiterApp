@@ -17,7 +17,7 @@ type PostProps = {
 };
 
 const Post = ({ post, currentUserId }: PostProps) => {
-    const { userData } = useAppSelector(state => state.auth);
+  const { userData } = useAppSelector(state => state.auth);
   const token = userData?.data?.accessToken
 
   // const { authUser } = useCurrentUser()
@@ -27,7 +27,7 @@ const Post = ({ post, currentUserId }: PostProps) => {
 
   //delt posts
   const { mutate: deletepost, isPending } = useMutation({
-    mutationFn: (token:string) => deletePost(post?._id,token || ""),
+    mutationFn: (token: string) => deletePost(post?._id, token || ""),
 
     onSuccess: () => {
       toast.success("Post deleted Successfully")
@@ -58,7 +58,7 @@ const Post = ({ post, currentUserId }: PostProps) => {
       {/* Avatar */}
       <div className="avatar">
         <Link
-          to={`/profile/${postOwner.username}`}
+          to={`/profile/${postOwner?.username}`}
           className="w-8 rounded-full overflow-hidden"
         >
           <img
@@ -75,15 +75,15 @@ const Post = ({ post, currentUserId }: PostProps) => {
         {/* Header */}
         <div className="flex gap-2 items-center">
           <Link
-            to={`/profile/${postOwner.username}`}
+            to={`/profile/${postOwner?.username}`}
             className="font-bold"
           >
-            {postOwner.fullName}
+            {postOwner?.fullName}
           </Link>
 
           <span className="text-gray-700 flex gap-1 text-sm">
-            <Link to={`/profile/${postOwner.username}`}>
-              @{postOwner.username}
+            <Link to={`/profile/${postOwner?.username}`}>
+              @{postOwner?.username}
             </Link>
             <span>·</span>
             <span>{formattedDate}</span>
