@@ -41,16 +41,17 @@ const Post = ({ post, currentUserId }: PostProps) => {
   })
 
   const postOwner = post?.user;
+  if (!postOwner) return null;
 
   const isMyPost = currentUserId === postOwner?._id;
 
 
   const formattedDate = formatRelativeTime(post.createdAt)
 
-const handleDeletePost = useCallback(() => {
-  if (!token) return;
-  deletepost(token);
-}, [token, deletepost]);
+  const handleDeletePost = useCallback(() => {
+    if (!token) return;
+    deletepost(token);
+  }, [token, deletepost]);
 
 
 
@@ -64,7 +65,7 @@ const handleDeletePost = useCallback(() => {
           className="w-8 rounded-full overflow-hidden"
         >
           <img
-            src={userData?.data?.user?.profileImage?.url || "/avatar-placeholder.png"}
+            src={postOwner?.profileImage?.url || "/avatar-placeholder.png"}
             className="w-8 h-8 rounded-full object-cover"
             alt="avatar"
           />
