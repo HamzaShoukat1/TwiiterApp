@@ -9,7 +9,7 @@ export const signup = async (formData: {
   fullName: string;
   password: string;
 }) => {
-  const res = await fetch(`${API_URL}/v1/auth/signup`, {
+  const res = await fetch(`${API_URL}/api/v1/auth/signup`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
