@@ -10,6 +10,7 @@ import { formatRelativeTime } from "../lib";
 import PostStates from "./Svgs/shared/PostStates";
 import { deletePost } from "../Apis.tsx";
 import { useAppSelector } from "../hooks/useStore.ts";
+import { useCallback } from "react";
 type PostProps = {
   post: PostType;
   currentUserId?: string;
@@ -46,10 +47,11 @@ const Post = ({ post, currentUserId }: PostProps) => {
 
   const formattedDate = formatRelativeTime(post.createdAt)
 
-  const handleDeletePost = () => {
-    deletepost(token || "")
+const handleDeletePost = useCallback(() => {
+  if (!token) return;
+  deletepost(token);
+}, [token, deletepost]);
 
-  };
 
 
 
