@@ -54,7 +54,7 @@ const Posts = ({ feedType, userId, username }: any) => {
 
       {!isFetching && posts && (
         <div>
-          {posts.map((post: any) => (
+          {posts?.map((post: any) => (
             <Post key={post._id} post={post} currentUserId={userData?.data.user._id} />
           ))}
         </div>

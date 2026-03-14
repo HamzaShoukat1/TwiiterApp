@@ -84,7 +84,7 @@ export default function PostStates({ currentUserId, post }: { currentUserId?: st
             {post.comments.length === 0 && <p className="text-sm text-slate-500">No comments yet</p>}
 
             {post.comments.map((c: any) => (
-              <div key={c._id} className="flex gap-2 items-start">
+             c.user ? ( <div key={c._id} className="flex gap-2 items-start">
                 <div className="avatar w-8 rounded-full">
                   <img src={c.user.profileImage?.url || "/avatar-placeholder.png"} alt={c.user.fullName} />
                 </div>
@@ -94,7 +94,7 @@ export default function PostStates({ currentUserId, post }: { currentUserId?: st
                   </div>
                   <div className="text-sm">{c.text}</div>
                 </div>
-              </div>
+              </div>) : null
             ))}
           </div>
 
