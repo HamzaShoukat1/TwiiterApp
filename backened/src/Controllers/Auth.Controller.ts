@@ -339,7 +339,7 @@ const forgetPassword = asynchandler(async (req, res) => {
     user.resetpasswordExpiresAt = resetTokenexpiredAt
     await user.save()
 
-    await sendPasswordResetEmail(user.email, `${process.env.CORS_ORIGIN}reset-password/${resetTokens}`)
+    await sendPasswordResetEmail(user.email, `${process.env.CORS_ORIGIN}/reset-password/${resetTokens}`)
 
     return res.status(200).json(
         new Apiresponse(200, "Password reset link sent to your email")
