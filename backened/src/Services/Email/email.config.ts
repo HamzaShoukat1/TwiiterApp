@@ -8,17 +8,8 @@ export const mailtrapclient = new MailtrapClient({
 });
 
 export const sender = {
-    email: "hello@demomailtrap.co",
-    name: "Hamza",
+  email: "hello@demomailtrap.co",
+  name: "Twitter Support",
 };
 
 
-// client
-//     .send({
-//         from: sender,
-//         to: recipients,
-//         subject: "You are awesome!",
-//         html: "Congrats for sending test email with Mailtrap!",
-//         category: "Integration Test",
-//     })
-//     .then(console.log, console.error);

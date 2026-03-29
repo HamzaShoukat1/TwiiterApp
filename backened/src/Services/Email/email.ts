@@ -22,32 +22,32 @@ export const sendVerificationEmail = async (email: any, emailverificationToken: 
     }
 
 }
-export const sendWelComeEmail = async (email: any, name: any) => {
-    const recipients = [{ email }]
-    try {
-        const response = await mailtrapclient.send({
-            from: sender,
-            to: recipients,
-            template_uuid: "5acef1fa-4a50-4666-a91c-2461fe0f1902",
-            template_variables: {
-                "name": name,
-                "company_info_name": "Twitter INC",
-            }
-        })
+// export const sendWelComeEmail = async (email: any, name: any) => {
+//     const recipients = [{ email }]
+//     try {
+//         const response = await mailtrapclient.send({
+//             from: sender,
+//             to: recipients,
+//             template_uuid: "5acef1fa-4a50-4666-a91c-2461fe0f1902",
+//             template_variables: {
+//                 "name": name,
+//                 "company_info_name": "Twitter INC",
+//             }
+//         })
 
-        console.log("Welcome email sent successfully", response)
-        return response
-
-
-    } catch (error) {
-        console.log("error sending email", error)
-        throw new Error(`error sending email:${error}`)
+//         console.log("Welcome email sent successfully", response)
+//         return response
 
 
-    }
+//     } catch (error) {
+//         console.log("error sending email", error)
+//         throw new Error(`error sending email:${error}`)
 
 
-}
+//     }
+
+
+// }
 export const sendPasswordResetEmail = async (email: any, resetURL: any) => {
     const recipient = [{ email }];
 

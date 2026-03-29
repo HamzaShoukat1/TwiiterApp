@@ -7,7 +7,7 @@ import { generateAccessToken, generateRefreshToken } from "../Services/Token.Ser
 import { options } from "../Services/Token.Service.js";
 import type { IUser } from "../Types/Model.Types.js";
 import { generateVerificationCode } from "../Services/generateverificationcode.js";
-import { sendPasswordResetEmail, sendResetSuccessEmail, sendVerificationEmail, sendWelComeEmail } from "../Services/Email/email.js";
+import { sendPasswordResetEmail, sendResetSuccessEmail, sendVerificationEmail, } from "../Services/Email/email.js";
 import jwt from "jsonwebtoken"
 import type { TokenPayload } from "../Types/types.js";
 
@@ -316,7 +316,6 @@ const verifyEmail = asynchandler(async (req, res) => {
 
     await user.save()
 
-    await sendWelComeEmail(user.email, user.username)
 
     return res.status(200).json(
         new Apiresponse(200, "email verified successfully")
